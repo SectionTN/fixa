@@ -1,0 +1,28 @@
+{
+  "name": "@fixa/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@fixa/ui": "workspace:*",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native-web": "~0.21.4",
+    "react-native-svg": "15.16.0",
+    "react-router": "8.5.1",
+    "tamagui": "3.3.3"
+  },
+  "devDependencies": {
+    "@tamagui/vite-plugin": "3.3.3",
+    "@types/react": "~19.3.0",
+    "@types/react-dom": "~19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "vite": "8.3.8"
+  }
+}

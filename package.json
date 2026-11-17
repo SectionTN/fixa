@@ -1,0 +1,30 @@
+{
+  "name": "fixa",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "appwrite/functions/*",
+    "appwrite/seed"
+  ],
+  "scripts": {
+    "test": "bun run --filter '*' test",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "bun run --filter '*' typecheck",
+    "seed": "bun appwrite/seed/seed.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.8",
+    "appwrite-cli": "28.12.1",
+    "typescript": "~6.0.3"
+  },
+  "resolutions": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.88.1",
+    "tamagui": "3.3.3",
+    "@tamagui/core": "3.3.3",
+    "@tamagui/web": "3.3.3"
+  }
+}
