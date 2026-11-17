@@ -1,0 +1,327 @@
+{
+  "projectId": "6afcb6080038462afb76",
+  "endpoint": "https://fra.cloud.appwrite.io/v1",
+  "projectName": "fixa",
+  "tablesDB": [{ "$id": "fixa", "name": "fixa", "enabled": true }],
+  "tables": [
+    {
+      "$id": "categories",
+      "name": "categories",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")"
+      ],
+      "columns": [
+        { "key": "nom", "type": "varchar", "size": 64, "required": true },
+        { "key": "icone", "type": "varchar", "size": 64, "required": true },
+        { "key": "couleur", "type": "varchar", "size": 16, "required": true },
+        { "key": "ordre", "type": "integer", "required": true },
+        { "key": "estActive", "type": "boolean", "required": true }
+      ],
+      "indexes": [{ "key": "idx_ordre", "type": "key", "columns": ["ordre"] }]
+    },
+    {
+      "$id": "profils",
+      "name": "profils",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": true,
+      "$permissions": ["read(\"label:admin\")"],
+      "columns": [
+        { "key": "prenom", "type": "varchar", "size": 64, "required": false, "default": null },
+        { "key": "nom", "type": "varchar", "size": 128, "required": false, "default": null },
+        { "key": "telephone", "type": "varchar", "size": 32, "required": false, "default": null },
+        {
+          "key": "langue",
+          "type": "string",
+          "format": "enum",
+          "elements": ["fr", "ar", "en"],
+          "required": true
+        },
+        { "key": "ville", "type": "varchar", "size": 64, "required": false, "default": null },
+        { "key": "specialites", "type": "varchar", "size": 64, "required": false, "array": true },
+        { "key": "description", "type": "text", "required": false, "default": null },
+        { "key": "adresse", "type": "varchar", "size": 256, "required": false, "default": null },
+        { "key": "latitude", "type": "double", "required": false, "default": null },
+        { "key": "longitude", "type": "double", "required": false, "default": null }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "fournisseurs",
+      "name": "fournisseurs",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": ["read(\"any\")"],
+      "columns": [
+        { "key": "nom", "type": "varchar", "size": 128, "required": true },
+        { "key": "categorieId", "type": "varchar", "size": 36, "required": false, "default": null },
+        { "key": "ville", "type": "varchar", "size": 64, "required": false, "default": null },
+        { "key": "latitude", "type": "double", "required": false, "default": null },
+        { "key": "longitude", "type": "double", "required": false, "default": null },
+        { "key": "prixMin", "type": "double", "required": false, "default": null },
+        {
+          "key": "statutVerification",
+          "type": "string",
+          "format": "enum",
+          "elements": ["EN_ATTENTE", "VALIDE", "REFUSE"],
+          "required": true
+        },
+        { "key": "noteMoyenne", "type": "double", "required": true },
+        { "key": "nbAvis", "type": "integer", "required": true },
+        { "key": "visible", "type": "boolean", "required": true },
+        { "key": "finEssai", "type": "datetime", "required": false, "default": null },
+        { "key": "finAbonnement", "type": "datetime", "required": false, "default": null },
+        { "key": "motifRefus", "type": "varchar", "size": 500, "required": false, "default": null }
+      ],
+      "indexes": [
+        { "key": "idx_categorie", "type": "key", "columns": ["categorieId"] },
+        { "key": "idx_ville", "type": "key", "columns": ["ville"] },
+        { "key": "idx_note", "type": "key", "columns": ["noteMoyenne"] },
+        { "key": "idx_prix", "type": "key", "columns": ["prixMin"] },
+        { "key": "idx_visible", "type": "key", "columns": ["visible"] },
+        { "key": "idx_nom", "type": "fulltext", "columns": ["nom"] }
+      ]
+    },
+    {
+      "$id": "services",
+      "name": "services",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": ["read(\"any\")"],
+      "columns": [
+        { "key": "fournisseurId", "type": "varchar", "size": 36, "required": true },
+        { "key": "titre", "type": "varchar", "size": 128, "required": true },
+        { "key": "description", "type": "text", "required": false, "default": null },
+        {
+          "key": "typePrix",
+          "type": "string",
+          "format": "enum",
+          "elements": ["FIXE", "A_PARTIR_DE", "SUR_DEVIS"],
+          "required": true
+        },
+        { "key": "prix", "type": "double", "required": false, "default": null },
+        { "key": "duree", "type": "integer", "required": true },
+        { "key": "estVisible", "type": "boolean", "required": true }
+      ],
+      "indexes": [{ "key": "idx_fournisseur", "type": "key", "columns": ["fournisseurId"] }]
+    },
+    {
+      "$id": "disponibilites",
+      "name": "disponibilites",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": ["read(\"any\")"],
+      "columns": [
+        { "key": "fournisseurId", "type": "varchar", "size": 36, "required": true },
+        { "key": "jour", "type": "integer", "min": 1, "max": 7, "required": true },
+        { "key": "debut", "type": "varchar", "size": 5, "required": true },
+        { "key": "fin", "type": "varchar", "size": 5, "required": true }
+      ],
+      "indexes": [{ "key": "idx_fournisseur", "type": "key", "columns": ["fournisseurId"] }]
+    },
+    {
+      "$id": "conges",
+      "name": "conges",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": ["read(\"any\")"],
+      "columns": [
+        { "key": "fournisseurId", "type": "varchar", "size": 36, "required": true },
+        { "key": "debut", "type": "varchar", "size": 10, "required": true },
+        { "key": "fin", "type": "varchar", "size": 10, "required": true },
+        { "key": "motif", "type": "varchar", "size": 256, "required": false, "default": null }
+      ],
+      "indexes": [{ "key": "idx_fournisseur", "type": "key", "columns": ["fournisseurId"] }]
+    },
+    {
+      "$id": "creneaux_occupes",
+      "name": "creneaux_occupes",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": ["read(\"any\")"],
+      "columns": [
+        { "key": "fournisseurId", "type": "varchar", "size": 36, "required": true },
+        { "key": "cellule", "type": "varchar", "size": 24, "required": true },
+        { "key": "rendezVousId", "type": "varchar", "size": 36, "required": true }
+      ],
+      "indexes": [
+        { "key": "uniq_cellule", "type": "unique", "columns": ["fournisseurId", "cellule"] },
+        { "key": "idx_rendez_vous", "type": "key", "columns": ["rendezVousId"] }
+      ]
+    },
+    {
+      "$id": "rendez_vous",
+      "name": "rendez_vous",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": true,
+      "$permissions": ["read(\"label:admin\")"],
+      "columns": [
+        { "key": "clientId", "type": "varchar", "size": 36, "required": true },
+        { "key": "fournisseurId", "type": "varchar", "size": 36, "required": true },
+        { "key": "serviceId", "type": "varchar", "size": 36, "required": true },
+        { "key": "serviceTitre", "type": "varchar", "size": 128, "required": true },
+        {
+          "key": "typePrix",
+          "type": "string",
+          "format": "enum",
+          "elements": ["FIXE", "A_PARTIR_DE", "SUR_DEVIS"],
+          "required": true
+        },
+        { "key": "prix", "type": "double", "required": false, "default": null },
+        { "key": "duree", "type": "integer", "required": true },
+        { "key": "debut", "type": "datetime", "required": true },
+        { "key": "adresse", "type": "varchar", "size": 256, "required": false, "default": null },
+        { "key": "description", "type": "text", "required": false, "default": null },
+        { "key": "estUrgent", "type": "boolean", "required": true },
+        {
+          "key": "source",
+          "type": "string",
+          "format": "enum",
+          "elements": ["APP", "CHATBOT"],
+          "required": true
+        },
+        {
+          "key": "statut",
+          "type": "string",
+          "format": "enum",
+          "elements": ["EN_ATTENTE", "CONFIRME", "REFUSE", "EXPIRE", "ANNULE", "TERMINE"],
+          "required": true
+        },
+        { "key": "dateLimiteReponse", "type": "datetime", "required": true },
+        { "key": "motif", "type": "varchar", "size": 500, "required": false, "default": null },
+        {
+          "key": "annulePar",
+          "type": "string",
+          "format": "enum",
+          "elements": ["client", "fournisseur", "systeme"],
+          "required": false,
+          "default": null
+        },
+        { "key": "annulationTardive", "type": "boolean", "required": true },
+        { "key": "clientNom", "type": "varchar", "size": 128, "required": true },
+        {
+          "key": "clientTelephone",
+          "type": "varchar",
+          "size": 32,
+          "required": false,
+          "default": null
+        },
+        { "key": "fournisseurNom", "type": "varchar", "size": 128, "required": true },
+        { "key": "aAvis", "type": "boolean", "required": true },
+        {
+          "key": "dernierStatutNotifie",
+          "type": "string",
+          "format": "enum",
+          "elements": ["EN_ATTENTE", "CONFIRME", "REFUSE", "EXPIRE", "ANNULE", "TERMINE"],
+          "required": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        { "key": "idx_client", "type": "key", "columns": ["clientId"] },
+        { "key": "idx_fournisseur", "type": "key", "columns": ["fournisseurId"] },
+        { "key": "idx_statut", "type": "key", "columns": ["statut"] },
+        { "key": "idx_debut", "type": "key", "columns": ["debut"] }
+      ]
+    },
+    {
+      "$id": "avis",
+      "name": "avis",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": ["read(\"any\")"],
+      "columns": [
+        { "key": "rendezVousId", "type": "varchar", "size": 36, "required": true },
+        { "key": "fournisseurId", "type": "varchar", "size": 36, "required": true },
+        { "key": "clientId", "type": "varchar", "size": 36, "required": true },
+        { "key": "clientNom", "type": "varchar", "size": 128, "required": true },
+        { "key": "serviceTitre", "type": "varchar", "size": 128, "required": true },
+        { "key": "note", "type": "integer", "min": 1, "max": 5, "required": true },
+        { "key": "criteres", "type": "varchar", "size": 64, "required": false, "array": true },
+        { "key": "commentaire", "type": "text", "required": false, "default": null }
+      ],
+      "indexes": [
+        { "key": "uniq_rendez_vous", "type": "unique", "columns": ["rendezVousId"] },
+        { "key": "idx_fournisseur", "type": "key", "columns": ["fournisseurId"] }
+      ]
+    },
+    {
+      "$id": "transitions",
+      "name": "transitions",
+      "databaseId": "fixa",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": [],
+      "columns": [
+        { "key": "rendezVousId", "type": "varchar", "size": 36, "required": true },
+        {
+          "key": "de",
+          "type": "string",
+          "format": "enum",
+          "elements": ["EN_ATTENTE", "CONFIRME", "REFUSE", "EXPIRE", "ANNULE", "TERMINE"],
+          "required": true
+        },
+        {
+          "key": "vers",
+          "type": "string",
+          "format": "enum",
+          "elements": ["EN_ATTENTE", "CONFIRME", "REFUSE", "EXPIRE", "ANNULE", "TERMINE"],
+          "required": true
+        },
+        {
+          "key": "par",
+          "type": "string",
+          "format": "enum",
+          "elements": ["client", "fournisseur", "admin", "systeme"],
+          "required": true
+        }
+      ],
+      "indexes": [{ "key": "idx_rendez_vous", "type": "key", "columns": ["rendezVousId"] }]
+    }
+  ],
+  "buckets": [
+    {
+      "$id": "fichiers",
+      "name": "fichiers",
+      "enabled": true,
+      "fileSecurity": true,
+      "$permissions": [],
+      "maximumFileSize": 10485760,
+      "allowedFileExtensions": ["jpg", "jpeg", "png", "webp", "pdf"],
+      "compression": "none",
+      "encryption": true,
+      "antivirus": true
+    }
+  ],
+  "functions": [
+    {
+      "$id": "api",
+      "name": "api",
+      "runtime": "node-22",
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "dist/main.js",
+      "commands": "",
+      "path": "functions/api",
+      "ignore": ["node_modules", "src", "test", "tsconfig.json", "vitest.config.ts"],
+      "scopes": ["rows.read", "rows.write", "users.read", "users.write"]
+    }
+  ]
+}
