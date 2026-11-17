@@ -1,0 +1,13 @@
+node_modules/
+.expo/
+.tamagui/
+dist/
+ios/
+android/
+docs/
+design/
+.superpowers/
+.env*
+!.env.example
+.DS_Store
+*.tsbuildinfo
