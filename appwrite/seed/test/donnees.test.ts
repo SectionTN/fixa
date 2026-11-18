@@ -17,7 +17,7 @@ const rdvs = lignes('rendez_vous');
 const fournisseur = (id: string) => lignes('fournisseurs').find((f) => f.$id === id) as Fournisseur;
 
 describe('donnees du seed', () => {
-  it('place les plombiers aux distances de C2 depuis chez Yasmine', () => {
+  it('place les plombiers aux distances du design depuis chez Yasmine', () => {
     const yasmine = lignes('profils').find((p) => p.$id === 'u-yasmine');
     const chez = { lat: yasmine?.latitude ?? 0, lng: yasmine?.longitude ?? 0 };
     const km = (id: string) =>

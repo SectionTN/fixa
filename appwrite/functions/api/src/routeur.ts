@@ -1,11 +1,4 @@
-import {
-  type Acteur,
-  type CodeErreur,
-  LABELS,
-  LONGUEUR_MAX,
-  type ReponseApi,
-  type Role,
-} from '@fixa/core';
+import { type Acteur, type CodeErreur, LONGUEUR_MAX, type ReponseApi, roleDe } from '@fixa/core';
 import type { Db } from '@fixa/fn-commun';
 import { echec } from './reponse';
 import { deciderFournisseur } from './routes/admin';
@@ -36,13 +29,6 @@ const repondre = (corps: ReponseApi<unknown>, statut?: number): Resultat => ({
   statut: statut ?? (corps.ok ? 200 : STATUT_HTTP[corps.code]),
   corps,
 });
-
-function roleDe(labels: string[]): Role | null {
-  if (labels.includes(LABELS.admin)) return 'admin';
-  if (labels.includes(LABELS.fournisseur)) return 'fournisseur';
-  if (labels.includes(LABELS.client)) return 'client';
-  return null;
-}
 
 const tropLong = (cle: string, valeur: string) =>
   cle in LONGUEUR_MAX && valeur.length > LONGUEUR_MAX[cle as keyof typeof LONGUEUR_MAX];

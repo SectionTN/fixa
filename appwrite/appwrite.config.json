@@ -86,6 +86,7 @@
         { "key": "idx_note", "type": "key", "columns": ["noteMoyenne"] },
         { "key": "idx_prix", "type": "key", "columns": ["prixMin"] },
         { "key": "idx_visible", "type": "key", "columns": ["visible"] },
+        { "key": "idx_statut", "type": "key", "columns": ["statutVerification"] },
         { "key": "idx_nom", "type": "fulltext", "columns": ["nom"] }
       ]
     },
@@ -304,6 +305,23 @@
       "compression": "none",
       "encryption": true,
       "antivirus": true
+    }
+  ],
+  "sites": [
+    {
+      "$id": "fixa-web",
+      "name": "fixa-web",
+      "enabled": true,
+      "logging": true,
+      "framework": "vite",
+      "buildRuntime": "node-22",
+      "adapter": "static",
+      "installCommand": "true",
+      "buildCommand": "true",
+      "outputDirectory": "./",
+      "fallbackFile": "index.html",
+      "path": "../apps/web/dist",
+      "timeout": 30
     }
   ],
   "functions": [
