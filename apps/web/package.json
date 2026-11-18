@@ -10,11 +10,13 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
+    "@fixa/core": "workspace:*",
     "@fixa/ui": "workspace:*",
+    "appwrite": "29.3.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "react-native-web": "~0.21.4",
     "react-native-svg": "15.16.0",
+    "react-native-web": "~0.21.4",
     "react-router": "8.5.1",
     "tamagui": "3.3.3"
   },
