@@ -1,11 +1,15 @@
 import type { ReactNode } from 'react';
-import { styled, Theme, XStack } from 'tamagui';
+import { isWeb, styled, Theme, XStack } from 'tamagui';
 import { Icone } from './Icone';
 import type { NomIcone } from './icones.generated';
 import { Texte } from './Texte';
 
 export type VarianteBouton = 'primary' | 'soft' | 'outline' | 'ghost' | 'danger';
 export type TailleBouton = 'sm' | 'md' | 'lg';
+
+const CIBLE_TACTILE = 44;
+const HAUTEUR = { sm: 36, md: 44, lg: 52 } as const;
+const TEXTE = { sm: 14, md: 15, lg: 16 } as const;
 
 const Cadre = styled(XStack, {
   role: 'button',
@@ -17,13 +21,13 @@ const Cadre = styled(XStack, {
   cursor: 'pointer',
   variants: {
     taille: {
-      sm: { height: '3', paddingHorizontal: '4' },
-      md: { height: '4', paddingHorizontal: '5' },
-      lg: { height: '5', paddingHorizontal: '6' },
+      sm: { height: HAUTEUR.sm, paddingHorizontal: '4' },
+      md: { height: HAUTEUR.md, paddingHorizontal: '5' },
+      lg: { height: HAUTEUR.lg, paddingHorizontal: '6' },
     },
     contour: {
       true: {
-        borderWidth: 1,
+        borderWidth: 1.5,
         borderColor: 'border-strong',
         backgroundColor: 'transparent press:background-press',
       },
@@ -32,7 +36,7 @@ const Cadre = styled(XStack, {
       true: { backgroundColor: 'transparent press:background-press' },
     },
     desactive: {
-      true: { opacity: 0.5 },
+      true: { backgroundColor: 'background-press', borderColor: 'transparent', cursor: 'default' },
     },
   } as const,
   defaultVariants: { taille: 'md' },
@@ -43,6 +47,7 @@ export type BoutonProps = {
   variante?: VarianteBouton;
   taille?: TailleBouton;
   icone?: NomIcone;
+  debut?: ReactNode;
   desactive?: boolean;
   onPress?: () => void;
 };
@@ -52,28 +57,34 @@ export function Bouton({
   variante = 'primary',
   taille = 'md',
   icone,
+  debut,
   desactive = false,
   onPress,
 }: BoutonProps) {
-  const couleurTexte = variante === 'ghost' ? 'primary' : 'color';
+  const couleurTexte = desactive ? 'color-subtle' : variante === 'ghost' ? 'primary' : 'color';
+  const marge = Math.max(0, (CIBLE_TACTILE - HAUTEUR[taille]) / 2);
   const contenu = (
     <Cadre
+      // iOS reads a view with a role as one control only when it is accessible, the DOM has no such attribute.
+      accessible={isWeb ? undefined : true}
       taille={taille}
       contour={variante === 'outline'}
       transparent={variante === 'ghost'}
       desactive={desactive}
       aria-disabled={desactive}
+      hitSlop={marge > 0 ? { top: marge, bottom: marge } : undefined}
       onPress={desactive ? undefined : onPress}
     >
+      {debut}
       {icone ? (
         <Icone nom={icone} taille={taille === 'sm' ? 18 : 20} couleur={couleurTexte} />
       ) : null}
-      <Texte color={couleurTexte} fontWeight="600" fontSize={taille === 'sm' ? '4' : '5'}>
+      <Texte color={couleurTexte} fontWeight="500" fontSize={TEXTE[taille]}>
         {children}
       </Texte>
     </Cadre>
   );
-  return variante === 'outline' || variante === 'ghost' ? (
+  return desactive || variante === 'outline' || variante === 'ghost' ? (
     contenu
   ) : (
     <Theme name={variante}>{contenu}</Theme>

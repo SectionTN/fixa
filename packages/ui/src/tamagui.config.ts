@@ -34,6 +34,16 @@ const face = {
 };
 const family = isWeb ? '"Readex Pro", system-ui, sans-serif' : 'ReadexPro_400Regular';
 
+export const ESPACEMENT_LETTRES: Readonly<Record<string, number>> = {
+  4: 0,
+  8: -0.2,
+  9: -0.5,
+  10: -0.7,
+  11: -1,
+  12: -1.6,
+  13: -2.4,
+};
+
 const body = createFont({
   family,
   size,
@@ -53,7 +63,7 @@ const body = createFont({
     13: 72,
   },
   weight,
-  letterSpacing: { 4: 0, 8: -0.2, 9: -0.5, 10: -0.7, 11: -1, 12: -1.6, 13: -2.4 },
+  letterSpacing: ESPACEMENT_LETTRES,
   face,
 });
 
@@ -90,6 +100,8 @@ const light = {
   surface: '#FFFCF9',
   'border-color': '#EADCCF',
   'border-color-hover': '#D8C5B5',
+  'border-color-focus': '#BF5535',
+  'outline-color': 'transparent',
   'border-strong': '#D8C5B5',
   color: '#2B201B',
   'color-muted': '#6D5F56',
@@ -140,6 +152,8 @@ const dark: typeof light = {
   surface: '#221C18',
   'border-color': '#3A302A',
   'border-color-hover': '#4E423A',
+  'border-color-focus': '#EE8A64',
+  'outline-color': 'transparent',
   'border-strong': '#4E423A',
   color: '#F6EEE7',
   'color-muted': '#C2B4A9',

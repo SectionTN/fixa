@@ -1,6 +1,16 @@
 export { Bouton, type BoutonProps, type TailleBouton, type VarianteBouton } from './Bouton';
+export { CarteFournisseur, type CarteFournisseurProps } from './CarteFournisseur';
+export { CarteStat, type CarteStatProps } from './CarteStat';
+export { ChampRecherche, type ChampRechercheProps } from './ChampRecherche';
+export { ChampTexte, type ChampTexteProps } from './ChampTexte';
+export { CurseurPlage, type CurseurPlageProps } from './CurseurPlage';
+export { EtatVide, type EtatVideProps } from './EtatVide';
+export { Etoiles } from './Etoiles';
+export { Feuille, type FeuilleProps } from './Feuille';
 export { FixaProvider } from './FixaProvider';
 export { Icone, type IconeProps } from './Icone';
 export { ICONES, type NomIcone } from './icones.generated';
-export { Texte } from './Texte';
+export { type EtatPuce, Puce, type PuceProps } from './Puce';
+export { Texte, type TexteProps } from './Texte';
+export { TuileCategorie, type TuileCategorieProps } from './TuileCategorie';
 export { config } from './tamagui.config';
