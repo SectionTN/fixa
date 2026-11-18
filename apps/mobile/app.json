@@ -9,6 +9,7 @@
     "userInterfaceStyle": "light",
     "ios": {
       "bundleIdentifier": "me.sectiontn.fixa",
+      "appleTeamId": "283L98RV99",
       "supportsTablet": false
     },
     "android": {
@@ -21,7 +22,17 @@
       },
       "predictiveBackGestureEnabled": false
     },
-    "plugins": ["expo-router", "expo-font", "expo-splash-screen"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-splash-screen",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.50035838261-73ornk942ad453vo5h1n88a3hek3kckj"
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     }

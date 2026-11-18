@@ -10,27 +10,73 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { SessionProvider, useSession } from '../lib/session';
 
 SplashScreen.preventAutoHideAsync();
 
+// Each group opens only for its state, so a role change or a sign-out moves the user without a manual redirect.
+function Navigation({ policesPretes }: { policesPretes: boolean }) {
+  const { utilisateur, role, chargement } = useSession();
+  const pret = policesPretes && !chargement;
+
+  useEffect(() => {
+    if (pret) SplashScreen.hideAsync();
+  }, [pret]);
+
+  if (!pret) return null;
+  const connecte = utilisateur !== null;
+  // Where a closed route sends the user, since the root stack has no screen at / for every state.
+  const accueil = !connecte
+    ? '/'
+    : role === null
+      ? '/role'
+      : role === 'fournisseur'
+        ? '/demandes'
+        : role === 'admin'
+          ? '/admin'
+          : '/';
+  // Visitors browse the client tabs, so that group comes first and is the start screen.
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={!connecte || role === 'client'} redirectTo={accueil}>
+        <Stack.Screen name="(client)" />
+        <Stack.Screen name="categorie/[id]" />
+        <Stack.Screen name="pro/[id]" />
+      </Stack.Protected>
+      <Stack.Protected guard={!connecte} redirectTo={accueil}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+      <Stack.Protected guard={connecte && role === null} redirectTo={accueil}>
+        <Stack.Screen name="role" />
+      </Stack.Protected>
+      <Stack.Protected guard={role === 'fournisseur'} redirectTo={accueil}>
+        <Stack.Screen name="(fournisseur)" />
+      </Stack.Protected>
+      <Stack.Protected guard={role === 'admin'} redirectTo={accueil}>
+        <Stack.Screen name="admin" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
-  const [policesChargees] = useFonts({
+  // A font that fails to load falls back to the system font instead of holding the splash.
+  const [policesChargees, erreurPolices] = useFonts({
     ReadexPro_300Light,
     ReadexPro_400Regular,
     ReadexPro_500Medium,
     ReadexPro_600SemiBold,
   });
 
-  useEffect(() => {
-    if (policesChargees) SplashScreen.hideAsync();
-  }, [policesChargees]);
-
-  if (!policesChargees) return null;
-
   return (
-    <FixaProvider>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }} />
-    </FixaProvider>
+    <KeyboardProvider>
+      <FixaProvider>
+        <StatusBar style="dark" />
+        <SessionProvider>
+          <Navigation policesPretes={policesChargees || erreurPolices !== null} />
+        </SessionProvider>
+      </FixaProvider>
+    </KeyboardProvider>
   );
 }
