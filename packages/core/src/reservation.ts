@@ -1,5 +1,5 @@
 import { creneauxLibres } from './creneaux';
-import type { RendezVous, StatutRendezVous } from './domaine';
+import type { RendezVous, Service, StatutRendezVous } from './domaine';
 import { JOURS_FERIES_TN } from './feries';
 import { fr } from './i18n/fr';
 import { LONGUEUR_MAX } from './limites';
@@ -97,6 +97,10 @@ export function libelleRecue(iso: string, maintenant: Date): string {
   if (ecart === 0) return fr.demandes.aujourdhuiA(heure);
   if (ecart === -1) return fr.demandes.hierA(heure);
   return fr.demandes.leA(jourCourt(iso), heure);
+}
+
+export function adresseManquante(service: Pick<Service, 'aDomicile'>, adresse: string): boolean {
+  return service.aDomicile && adresse.trim() === '';
 }
 
 // The route stores one motif, so the reason and the optional message share its column.

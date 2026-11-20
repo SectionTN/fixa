@@ -54,6 +54,7 @@ function service(fournisseurId: string, duree: number, champs: Partial<Service> 
     prix: 50,
     duree,
     estVisible: true,
+    aDomicile: true,
     ...champs,
   };
 }

@@ -10,6 +10,7 @@ export type CodeErreur =
   | 'DEJA_EVALUE'
   | 'INTROUVABLE'
   | 'REQUETE_INVALIDE'
+  | 'ADRESSE_REQUISE'
   | 'SESSION_EXPIREE'
   | 'RESEAU';
 

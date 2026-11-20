@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Disponibilite } from '../src/domaine';
 import {
+  adresseManquante,
   creneauxDuJour,
   delaiDepasse,
   ilYA,
@@ -150,6 +151,14 @@ describe('dates de reception', () => {
     expect(libelleRecue('2026-11-17T23:30:00Z', maintenant)).toBe("aujourd'hui à 00:30");
     expect(libelleRecue('2026-11-17T08:00:00Z', maintenant)).toBe('hier à 09:00');
     expect(libelleRecue('2026-11-16T08:00:00Z', maintenant)).toBe('le lun. 16 nov. à 09:00');
+  });
+});
+
+describe('adresseManquante', () => {
+  it('demande une adresse seulement quand le pro se deplace chez le client', () => {
+    expect(adresseManquante({ aDomicile: true }, '  ')).toBe(true);
+    expect(adresseManquante({ aDomicile: true }, '12 rue Hédi Nouira')).toBe(false);
+    expect(adresseManquante({ aDomicile: false }, '')).toBe(false);
   });
 });
 

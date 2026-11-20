@@ -88,6 +88,8 @@ export interface Service extends Ligne {
   prix: number | null;
   duree: number;
   estVisible: boolean;
+  // The provider travels to the client, so the booking needs an address.
+  aDomicile: boolean;
 }
 
 export interface Avis extends Ligne {
