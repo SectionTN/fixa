@@ -1,27 +1,28 @@
 import { fr } from '@fixa/core';
-import { TabList, TabSlot, Tabs, TabTrigger } from 'expo-router/ui';
-import { Onglet, useStyleBarre } from '../../composants/Onglet';
+import { NativeTabs } from 'expo-router/native-tabs';
+import { HauteurOngletsContexte, useCouleur } from '../../composants/Onglet';
 
 const t = fr.onglets;
 
-// The client tab bar: Favoris waits until favourites exist.
+// The client tab bar as the system draws it, Liquid Glass and the iPhone Duo side bar included. Android has its own file.
 export default function ClientLayout() {
-  const style = useStyleBarre();
+  const primaire = useCouleur('primary');
   return (
-    <Tabs>
-      <TabSlot />
-      {/* Tabs and TabList read their direct children to find the routes, so the bar is styled in place. */}
-      <TabList style={style}>
-        <TabTrigger name="index" href="/" asChild>
-          <Onglet icone="home" iconeActive="home_fill" libelle={t.accueil} />
-        </TabTrigger>
-        <TabTrigger name="rendez-vous" href="/rendez-vous" asChild>
-          <Onglet icone="calendar_month" iconeActive="calendar_month_fill" libelle={t.mesRdv} />
-        </TabTrigger>
-        <TabTrigger name="profil" href="/profil" asChild>
-          <Onglet icone="person" iconeActive="person_fill" libelle={t.profil} />
-        </TabTrigger>
-      </TabList>
-    </Tabs>
+    <HauteurOngletsContexte.Provider value="systeme">
+      <NativeTabs tintColor={primaire}>
+        <NativeTabs.Trigger name="index">
+          <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} />
+          <NativeTabs.Trigger.Label>{t.accueil}</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="rendez-vous">
+          <NativeTabs.Trigger.Icon sf="calendar" />
+          <NativeTabs.Trigger.Label>{t.mesRdv}</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="profil">
+          <NativeTabs.Trigger.Icon sf={{ default: 'person', selected: 'person.fill' }} />
+          <NativeTabs.Trigger.Label>{t.profil}</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+      </NativeTabs>
+    </HauteurOngletsContexte.Provider>
   );
 }

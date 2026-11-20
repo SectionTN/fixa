@@ -8,6 +8,7 @@ import { XStack, YStack } from 'tamagui';
 import { repondre, useDemandes } from '../lib/demandes';
 import { CarteRdvPro } from './CarteRdvPro';
 import { BORDS_ECRAN, MARGE_HAUT_MIN } from './Ecran';
+import { useBasOnglets } from './Onglet';
 import { ErreurChargement } from './Section';
 
 const t = fr.demandes;
@@ -16,6 +17,7 @@ const ONGLETS: OngletDemande[] = ['attente', 'acceptees', 'refusees'];
 // The provider's requests in three tabs, read again on every visit since nothing pushes changes yet.
 export function ListeDemandes({ onOuvrir }: { onOuvrir?: (id: string, refuser: boolean) => void }) {
   const lecture = useDemandes();
+  const bas = useBasOnglets();
   const d = lecture.donnees;
   const [onglet, setOnglet] = useState<OngletDemande>('attente');
   const [message, setMessage] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export function ListeDemandes({ onOuvrir }: { onOuvrir?: (id: string, refuser: b
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingTop: 8,
-            paddingBottom: 20,
+            paddingBottom: 20 + bas,
             gap: 14,
             flexGrow: 1,
           }}

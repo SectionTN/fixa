@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XStack, YStack, type YStackProps } from 'tamagui';
+import { useBasOnglets } from './Onglet';
 
 const ESPACE_AU_DESSUS_DU_CLAVIER = 24;
 /** The least space above a screen's content when no status bar sits there, as on the iPhone Duo panels. */
@@ -17,12 +18,13 @@ export function useHaut(): number {
 
 // A scrolling screen under the status bar that keeps the focused field above the keyboard.
 export function Ecran({ children, ...corps }: { children: ReactNode } & YStackProps) {
+  const bas = useBasOnglets();
   return (
     <YStack flex={1} backgroundColor="background">
       <SafeAreaView edges={BORDS_ECRAN} style={{ flex: 1, paddingTop: MARGE_HAUT_MIN }}>
         <KeyboardAwareScrollView
           bottomOffset={ESPACE_AU_DESSUS_DU_CLAVIER}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: bas }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >

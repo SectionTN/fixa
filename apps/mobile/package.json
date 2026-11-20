@@ -8,6 +8,7 @@
     "@fixa/core": "workspace:*",
     "@fixa/ui": "workspace:*",
     "@react-native-google-signin/google-signin": "17.0.0",
+    "@sbaiahmed1/react-native-blur": "7.0.0-beta.3",
     "expo": "~58.0.26",
     "expo-constants": "~58.0.16",
     "expo-file-system": "~58.0.14",

@@ -1,5 +1,6 @@
 import { Icone, type NomIcone, Texte } from '@fixa/ui';
 import type { TabTriggerSlotProps } from 'expo-router/ui';
+import { createContext, useContext } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme, XStack, YStack } from 'tamagui';
 
@@ -55,17 +56,19 @@ export function Onglet({ isFocused, onPress, icone, iconeActive, libelle, pastil
   );
 }
 
-// The style both tab bars share, as TabList takes a plain style object.
-export function useStyleBarre() {
+/** The tab bar over the screens: 'systeme' when the system bar adds itself to each tab's safe area, else the JS bar's measured height. */
+export const HauteurOngletsContexte = createContext<'systeme' | number | null>(null);
+
+// The space a tab screen leaves under its last row so it scrolls clear of the tab bar, 0 outside the tabs.
+export function useBasOnglets(): number {
+  const barre = useContext(HauteurOngletsContexte);
   const { bottom } = useSafeAreaInsets();
+  if (barre === 'systeme') return bottom;
+  return barre ?? 0;
+}
+
+// A theme colour as the plain value native props take.
+export function useCouleur(cle: string): string {
   const theme = useTheme() as Record<string, { get: () => unknown } | undefined>;
-  const couleur = (cle: string) => String(theme[cle]?.get() ?? 'transparent');
-  return {
-    justifyContent: 'space-around' as const,
-    backgroundColor: couleur('surface'),
-    borderTopWidth: 1,
-    borderTopColor: couleur('border-color'),
-    paddingTop: 10,
-    paddingBottom: Math.max(bottom, 10),
-  };
+  return String(theme[cle]?.get() ?? 'transparent');
 }
