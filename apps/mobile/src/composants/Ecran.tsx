@@ -2,16 +2,24 @@ import { fr } from '@fixa/core';
 import { Icone } from '@fixa/ui';
 import type { ReactNode } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XStack, YStack, type YStackProps } from 'tamagui';
 
 const ESPACE_AU_DESSUS_DU_CLAVIER = 24;
+/** The least space above a screen's content when no status bar sits there, as on the iPhone Duo panels. */
+export const MARGE_HAUT_MIN = 20;
+export const BORDS_ECRAN = { top: 'maximum', left: 'additive', right: 'additive' } as const;
+
+// The top inset, never less than MARGE_HAUT_MIN, for screens that place content from it in JS.
+export function useHaut(): number {
+  return Math.max(useSafeAreaInsets().top, MARGE_HAUT_MIN);
+}
 
 // A scrolling screen under the status bar that keeps the focused field above the keyboard.
 export function Ecran({ children, ...corps }: { children: ReactNode } & YStackProps) {
   return (
     <YStack flex={1} backgroundColor="background">
-      <SafeAreaView edges={['top']} style={{ flex: 1 }}>
+      <SafeAreaView edges={BORDS_ECRAN} style={{ flex: 1, paddingTop: MARGE_HAUT_MIN }}>
         <KeyboardAwareScrollView
           bottomOffset={ESPACE_AU_DESSUS_DU_CLAVIER}
           contentContainerStyle={{ flexGrow: 1 }}
@@ -22,6 +30,17 @@ export function Ecran({ children, ...corps }: { children: ReactNode } & YStackPr
             {children}
           </YStack>
         </KeyboardAwareScrollView>
+      </SafeAreaView>
+    </YStack>
+  );
+}
+
+// Keeps a screen with pinned bars clear of the side insets, while the background behind it runs edge to edge.
+export function CadreLateral({ children }: { children: ReactNode }) {
+  return (
+    <YStack flex={1} backgroundColor="background">
+      <SafeAreaView edges={['left', 'right']} mode="margin" style={{ flex: 1 }}>
+        {children}
       </SafeAreaView>
     </YStack>
   );

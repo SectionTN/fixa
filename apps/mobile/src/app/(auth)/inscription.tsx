@@ -1,7 +1,7 @@
 import { erreursParChamp, forceMotDePasse, fr, LONGUEUR_MAX, schemaInscription } from '@fixa/core';
-import { Bouton, ChampTexte, Icone, Texte } from '@fixa/ui';
+import { Bouton, ChampTexte, Icone, type InputRef, Texte } from '@fixa/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { XStack, YStack } from 'tamagui';
 import { BoutonRetour, Ecran } from '../../composants/Ecran';
 import { type TypeCompte, useSession } from '../../lib/session';
@@ -24,6 +24,8 @@ export default function Inscription() {
   const [email, setEmail] = useState('');
   const [chiffres, setChiffres] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
+  const champEmail = useRef<InputRef>(null);
+  const champTelephone = useRef<InputRef>(null);
   const [accepte, setAccepte] = useState(false);
   const [tente, setTente] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -100,9 +102,13 @@ export default function Inscription() {
           autoCapitalize="words"
           autoComplete="name"
           textContentType="name"
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => champEmail.current?.focus()}
           erreur={affiche(erreurs.nomComplet)}
         />
         <ChampTexte
+          ref={champEmail}
           libelle={t.email}
           icone="mail"
           valeur={email}
@@ -112,9 +118,13 @@ export default function Inscription() {
           autoCapitalize="none"
           autoComplete="email"
           textContentType="emailAddress"
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => champTelephone.current?.focus()}
           erreur={affiche(erreurs.email)}
         />
         <ChampTexte
+          ref={champTelephone}
           libelle={t.telephone}
           prefixe="+216"
           valeur={grouper(chiffres)}

@@ -1,12 +1,4 @@
-import {
-  appelerApi,
-  fr,
-  messageAuth,
-  nonceDuJeton,
-  type Role,
-  roleDe,
-  separerNom,
-} from '@fixa/core';
+import { fr, messageAuth, nonceDuJeton, type Role, roleDe, separerNom } from '@fixa/core';
 import {
   createContext,
   type ReactNode,
@@ -17,7 +9,8 @@ import {
   useState,
 } from 'react';
 import { AppwriteException, ID, IdTokenProvider } from 'react-native-appwrite';
-import { compte, fonctions } from './appwrite';
+import { api, quandSessionExpire } from './api';
+import { compte } from './appwrite';
 import { jetonGoogle, oublierGoogle } from './google';
 
 export type Utilisateur = { id: string; email: string; nom: string };
@@ -70,11 +63,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     rafraichir();
   }, [rafraichir]);
 
+  useEffect(() => quandSessionExpire(rafraichir), [rafraichir]);
+
   // The role goes to the function before the account is read again, so the guards never show the role screen mid sign-up.
   const envoyerRole = useCallback(
     async (type: TypeCompte, nomComplet: string, telephone: string): Promise<Resultat> => {
       const { prenom, nom } = separerNom(nomComplet);
-      const r = await appelerApi<{ role: Role }>(fonctions, '/role', {
+      const r = await api<{ role: Role }>('/role', {
         type,
         prenom,
         nom,

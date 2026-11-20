@@ -1,7 +1,7 @@
 import { fr, schemaConnexion } from '@fixa/core';
-import { Bouton, ChampTexte, Texte } from '@fixa/ui';
+import { Bouton, ChampTexte, type InputRef, Texte } from '@fixa/ui';
 import { useCanGoBack, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { XStack, YStack } from 'tamagui';
 import { BoutonRetour, Ecran } from '../../composants/Ecran';
 import { useSession } from '../../lib/session';
@@ -19,6 +19,7 @@ export default function Connexion() {
   };
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
+  const champMotDePasse = useRef<InputRef>(null);
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
   const pret = schemaConnexion.safeParse({ email, motDePasse }).success;
@@ -90,8 +91,11 @@ export default function Connexion() {
           autoComplete="email"
           textContentType="emailAddress"
           returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => champMotDePasse.current?.focus()}
         />
         <ChampTexte
+          ref={champMotDePasse}
           libelle={fr.auth.inscription.motDePasse}
           motDePasse
           valeur={motDePasse}

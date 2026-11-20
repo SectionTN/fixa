@@ -44,6 +44,9 @@ function Navigation({ policesPretes }: { policesPretes: boolean }) {
         <Stack.Screen name="categorie/[id]" />
         <Stack.Screen name="pro/[id]" />
       </Stack.Protected>
+      <Stack.Protected guard={connecte && role === 'client'} redirectTo={accueil}>
+        <Stack.Screen name="reserver/[fournisseurId]" />
+      </Stack.Protected>
       <Stack.Protected guard={!connecte} redirectTo={accueil}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
@@ -52,6 +55,7 @@ function Navigation({ policesPretes }: { policesPretes: boolean }) {
       </Stack.Protected>
       <Stack.Protected guard={role === 'fournisseur'} redirectTo={accueil}>
         <Stack.Screen name="(fournisseur)" />
+        <Stack.Screen name="demande/[id]" />
       </Stack.Protected>
       <Stack.Protected guard={role === 'admin'} redirectTo={accueil}>
         <Stack.Screen name="admin" />

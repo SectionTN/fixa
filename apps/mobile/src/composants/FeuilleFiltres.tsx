@@ -80,7 +80,7 @@ type FeuilleFiltresProps = {
 
 // Edits a draft, so closing the sheet without "Voir" leaves the list as it was.
 export function FeuilleFiltres(p: FeuilleFiltresProps) {
-  const { bottom } = useSafeAreaInsets();
+  const { bottom, left, right } = useSafeAreaInsets();
   const [brouillon, setBrouillon] = useState(p.filtres);
   const { ouverte, filtres } = p;
   useEffect(() => {
@@ -95,6 +95,7 @@ export function FeuilleFiltres(p: FeuilleFiltresProps) {
       ouverte={p.ouverte}
       onFermer={p.onFermer}
       margeBas={bottom}
+      margesCotes={{ left, right }}
       pied={
         <YStack flex={1}>
           <Bouton taille="lg" onPress={() => p.onAppliquer(brouillon)}>

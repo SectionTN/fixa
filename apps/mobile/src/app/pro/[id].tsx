@@ -28,7 +28,7 @@ import { ScrollView } from 'react-native';
 import { Query } from 'react-native-appwrite';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XStack, YStack } from 'tamagui';
-import { BoutonRetour } from '../../composants/Ecran';
+import { BoutonRetour, CadreLateral, useHaut } from '../../composants/Ecran';
 import { ErreurChargement } from '../../composants/Section';
 import { tables } from '../../lib/appwrite';
 import { couleurDe, lireCategories, lireProfil, positionDe, useLecture } from '../../lib/donnees';
@@ -130,10 +130,11 @@ function Titre({ children }: { children: string }) {
 }
 
 // The provider profile. Sur devis services stay out of the list, as their price says nothing yet.
-export default function ProfilPro() {
+function ProfilPro() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { top, bottom } = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
+  const top = useHaut();
   const { utilisateur } = useSession();
   const uid = utilisateur?.id ?? null;
 
@@ -164,8 +165,8 @@ export default function ProfilPro() {
   const d = lecture.donnees;
 
   const prendreRdv = () => {
-    // Booking for a signed-in client lands with the booking screens.
     if (!utilisateur) router.push('/connexion');
+    else router.push({ pathname: '/reserver/[fournisseurId]', params: { fournisseurId: id } });
   };
 
   if (!d) {
@@ -392,5 +393,13 @@ export default function ProfilPro() {
         </YStack>
       </XStack>
     </YStack>
+  );
+}
+
+export default function EcranProfilPro() {
+  return (
+    <CadreLateral>
+      <ProfilPro />
+    </CadreLateral>
   );
 }

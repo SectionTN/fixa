@@ -1,61 +1,25 @@
-import { Icone, type NomIcone, Texte } from '@fixa/ui';
-import { TabList, TabSlot, Tabs, TabTrigger, type TabTriggerSlotProps } from 'expo-router/ui';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTheme, YStack } from 'tamagui';
+import { fr } from '@fixa/core';
+import { TabList, TabSlot, Tabs, TabTrigger } from 'expo-router/ui';
+import { Onglet, useStyleBarre } from '../../composants/Onglet';
 
-type OngletProps = TabTriggerSlotProps & {
-  icone: NomIcone;
-  iconeActive: NomIcone;
-  libelle: string;
-};
-
-function Onglet({ isFocused, onPress, icone, iconeActive, libelle }: OngletProps) {
-  const couleur = isFocused ? 'primary' : 'color-muted';
-  return (
-    <YStack
-      role="tab"
-      aria-selected={isFocused}
-      aria-label={libelle}
-      width={72}
-      alignItems="center"
-      gap={3}
-      onPress={onPress ?? undefined}
-    >
-      <Icone nom={isFocused ? iconeActive : icone} taille={25} couleur={couleur} />
-      <Texte fontSize="1" fontWeight={isFocused ? '600' : '500'} color={couleur}>
-        {libelle}
-      </Texte>
-    </YStack>
-  );
-}
+const t = fr.onglets;
 
 // The client tab bar: Favoris waits until favourites exist.
 export default function ClientLayout() {
-  const { bottom } = useSafeAreaInsets();
-  const theme = useTheme() as Record<string, { get: () => unknown } | undefined>;
-  const couleur = (cle: string) => String(theme[cle]?.get() ?? 'transparent');
+  const style = useStyleBarre();
   return (
     <Tabs>
       <TabSlot />
       {/* Tabs and TabList read their direct children to find the routes, so the bar is styled in place. */}
-      <TabList
-        style={{
-          justifyContent: 'space-around',
-          backgroundColor: couleur('surface'),
-          borderTopWidth: 1,
-          borderTopColor: couleur('border-color'),
-          paddingTop: 10,
-          paddingBottom: Math.max(bottom, 10),
-        }}
-      >
+      <TabList style={style}>
         <TabTrigger name="index" href="/" asChild>
-          <Onglet icone="home" iconeActive="home_fill" libelle="Accueil" />
+          <Onglet icone="home" iconeActive="home_fill" libelle={t.accueil} />
         </TabTrigger>
         <TabTrigger name="rendez-vous" href="/rendez-vous" asChild>
-          <Onglet icone="calendar_month" iconeActive="calendar_month_fill" libelle="Mes RDV" />
+          <Onglet icone="calendar_month" iconeActive="calendar_month_fill" libelle={t.mesRdv} />
         </TabTrigger>
         <TabTrigger name="profil" href="/profil" asChild>
-          <Onglet icone="person" iconeActive="person_fill" libelle="Profil" />
+          <Onglet icone="person" iconeActive="person_fill" libelle={t.profil} />
         </TabTrigger>
       </TabList>
     </Tabs>
