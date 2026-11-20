@@ -20,6 +20,8 @@ const STATUT_HTTP: Record<CodeErreur, number> = {
   CRENEAU_PRIS: 409,
   FOURNISSEUR_INDISPONIBLE: 409,
   DEJA_EVALUE: 409,
+  SESSION_EXPIREE: 401,
+  RESEAU: 503,
 };
 
 const ROUTE_STATUT = /^\/rendez-vous\/([^/]+)\/(accepter|refuser|annuler|terminer)$/;

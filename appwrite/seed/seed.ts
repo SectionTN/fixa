@@ -5,6 +5,7 @@ import { donnees, type LigneSemee, type NomTable } from './donnees';
 const PAR_LOT = 10;
 const PAGE = 100;
 const REMISES_A_ZERO: NomTable[] = ['avis', 'rendez_vous', 'creneaux_occupes', 'transitions'];
+const REMETTRE_MOTS_DE_PASSE = process.argv.includes('--mots-de-passe');
 
 async function idsDe(tablesDb: TablesDB, table: string): Promise<string[]> {
   const ids: string[] = [];
@@ -55,21 +56,20 @@ async function semer() {
       crees++;
     } catch (e) {
       if (code(e) !== 409) throw e;
-      await users.updatePassword({ userId: c.$id, password: motDePasse });
+      // A password reset revokes the account's sessions, so it only runs on request.
+      if (REMETTRE_MOTS_DE_PASSE)
+        await users.updatePassword({ userId: c.$id, password: motDePasse });
     }
     await users.updateLabels({ userId: c.$id, labels: c.labels });
     await users.updateEmailVerification({ userId: c.$id, emailVerification: true });
   });
   console.log(`comptes: ${d.comptes.length} (${crees} crees)`);
 
-  // Booking rows the app wrote since the last seed go first, so the demo starts from the seeded state and moved cells free their slot.
+  // Booking tables are emptied so seeded rows get a fresh $createdAt that matches their deadlines.
   for (const table of REMISES_A_ZERO) {
-    const semes = new Set(d.tables[table].map((l) => l.ligne.$id));
-    const enTrop = (await idsDe(tablesDb, table)).filter((id) => !semes.has(id));
-    await parLots(enTrop, (rowId) =>
-      tablesDb.deleteRow({ databaseId: BASE, tableId: table, rowId }),
-    );
-    if (enTrop.length > 0) console.log(`${table}: ${enTrop.length} lignes hors seed supprimees`);
+    const ids = await idsDe(tablesDb, table);
+    await parLots(ids, (rowId) => tablesDb.deleteRow({ databaseId: BASE, tableId: table, rowId }));
+    console.log(`${table}: ${ids.length} lignes supprimees`);
   }
 
   for (const table of Object.keys(d.tables) as NomTable[]) {
