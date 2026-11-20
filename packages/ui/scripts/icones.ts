@@ -60,6 +60,12 @@ const NOMS = [
   'star-fill',
   'verified-fill',
   'location_on-fill',
+  'wb_sunny',
+  'wb_twilight',
+  'arrow_forward',
+  'inbox',
+  'timer',
+  'notes',
 ] as const;
 
 const racine = dirname(

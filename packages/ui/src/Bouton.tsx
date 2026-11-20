@@ -4,7 +4,7 @@ import { Icone } from './Icone';
 import type { NomIcone } from './icones.generated';
 import { Texte } from './Texte';
 
-export type VarianteBouton = 'primary' | 'soft' | 'outline' | 'ghost' | 'danger';
+export type VarianteBouton = 'primary' | 'soft' | 'outline' | 'ghost' | 'danger' | 'destructif';
 export type TailleBouton = 'sm' | 'md' | 'lg';
 
 const CIBLE_TACTILE = 44;
@@ -47,6 +47,8 @@ export type BoutonProps = {
   variante?: VarianteBouton;
   taille?: TailleBouton;
   icone?: NomIcone;
+  /** An icon after the label, such as an arrow on a step forward. */
+  iconeFin?: NomIcone;
   debut?: ReactNode;
   desactive?: boolean;
   onPress?: () => void;
@@ -57,6 +59,7 @@ export function Bouton({
   variante = 'primary',
   taille = 'md',
   icone,
+  iconeFin,
   debut,
   desactive = false,
   onPress,
@@ -82,6 +85,9 @@ export function Bouton({
       <Texte color={couleurTexte} fontWeight="500" fontSize={TEXTE[taille]}>
         {children}
       </Texte>
+      {iconeFin ? (
+        <Icone nom={iconeFin} taille={taille === 'sm' ? 18 : 20} couleur={couleurTexte} />
+      ) : null}
     </Cadre>
   );
   return desactive || variante === 'outline' || variante === 'ghost' ? (

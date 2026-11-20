@@ -13,6 +13,8 @@ export type FeuilleProps = {
   pied?: ReactNode;
   /** The bottom safe-area inset, added under the footer. */
   margeBas?: number;
+  /** The left and right safe-area insets, physical edges such as the iPhone Duo cover camera strip. */
+  margesCotes?: { left: number; right: number };
 };
 
 // A bottom sheet rendered in place, so the screen's contexts reach its content.
@@ -23,6 +25,7 @@ export function Feuille({
   children,
   pied,
   margeBas = 0,
+  margesCotes = { left: 0, right: 0 },
 }: FeuilleProps) {
   // In place, Android back would pop the screen under the sheet.
   useEffect(() => {
@@ -46,7 +49,7 @@ export function Feuille({
       dismissOnSnapToBottom
       transition="feuille"
     >
-      <Sheet.Overlay backgroundColor="overlay" />
+      <Sheet.Overlay backgroundColor="overlay" opacity={1} />
       <Sheet.Container>
         <Sheet.Background
           backgroundColor="surface"
@@ -57,13 +60,20 @@ export function Feuille({
           <YStack width={40} height={5} borderRadius="round" backgroundColor="border-strong" />
         </XStack>
         {/* 12 lands the content at the design's 20, measured on iOS and Android. */}
-        <Sheet.ScrollView contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 20 }}>
+        <Sheet.ScrollView
+          contentContainerStyle={{
+            paddingLeft: 12 + margesCotes.left,
+            paddingRight: 12 + margesCotes.right,
+            paddingBottom: 20,
+          }}
+        >
           {children}
         </Sheet.ScrollView>
         {pied ? (
           <XStack
             paddingTop={14}
-            paddingHorizontal={20}
+            paddingLeft={20 + margesCotes.left}
+            paddingRight={20 + margesCotes.right}
             paddingBottom={Math.max(margeBas, 14) + 8}
             borderTopWidth={1}
             borderColor="border-color"

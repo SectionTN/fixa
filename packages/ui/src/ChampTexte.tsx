@@ -1,5 +1,5 @@
-import { Input, type InputProps } from '@tamagui/input';
-import { useState } from 'react';
+import { Input, type InputProps, type InputRef } from '@tamagui/input';
+import { type Ref, useState } from 'react';
 import { XStack, YStack } from 'tamagui';
 import { Icone } from './Icone';
 import type { NomIcone } from './icones.generated';
@@ -14,8 +14,10 @@ export type ChampTexteProps = Pick<
   | 'onSubmitEditing'
   | 'placeholder'
   | 'returnKeyType'
+  | 'submitBehavior'
   | 'textContentType'
 > & {
+  ref?: Ref<InputRef>;
   libelle: string;
   valeur: string;
   onChange: (valeur: string) => void;
@@ -24,9 +26,12 @@ export type ChampTexteProps = Pick<
   motDePasse?: boolean;
   erreur?: string | null;
   aide?: string;
+  /** A taller field that wraps, for a description or a message. */
+  multiligne?: boolean;
 };
 
 export function ChampTexte({
+  ref,
   libelle,
   valeur,
   onChange,
@@ -35,6 +40,7 @@ export function ChampTexte({
   motDePasse = false,
   erreur,
   aide,
+  multiligne = false,
   ...entree
 }: ChampTexteProps) {
   const [focus, setFocus] = useState(false);
@@ -46,11 +52,13 @@ export function ChampTexte({
         {libelle}
       </Texte>
       <XStack
-        height="5"
+        height={multiligne ? undefined : '5'}
+        minHeight={multiligne ? 120 : undefined}
+        paddingVertical={multiligne ? 12 : 0}
         borderRadius="4"
         paddingHorizontal="4"
         gap={10}
-        alignItems="center"
+        alignItems={multiligne ? 'flex-start' : 'center'}
         borderWidth={2}
         borderColor={erreur ? 'cancelled' : focus ? 'primary' : 'transparent'}
         backgroundColor={focus && !erreur ? 'surface' : 'background-soft'}
@@ -68,9 +76,14 @@ export function ChampTexte({
           </Texte>
         ) : null}
         <Input
+          ref={ref}
           flex={1}
           minWidth={0}
-          height="100%"
+          height={multiligne ? undefined : '100%'}
+          minHeight={multiligne ? 96 : undefined}
+          multiline={multiligne}
+          textAlignVertical={multiligne ? 'top' : undefined}
+          lineHeight={multiligne ? '22px' : undefined}
           padding={0}
           borderWidth={0}
           outlineWidth={0}
