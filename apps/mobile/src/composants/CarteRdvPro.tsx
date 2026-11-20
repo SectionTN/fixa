@@ -20,11 +20,14 @@ export function CarteRdvPro({
   maintenant,
   occupe,
   onAccepter,
+  onOuvrir,
 }: {
   rdv: RendezVousLu;
   maintenant: Date;
   occupe: boolean;
   onAccepter: (id: string) => void;
+  /** Shows the request somewhere other than its own screen, such as the pane next to the list. */
+  onOuvrir?: (id: string, refuser: boolean) => void;
 }) {
   const router = useRouter();
   const enRetard = delaiDepasse(rdv, maintenant);
@@ -32,11 +35,16 @@ export function CarteRdvPro({
   const sousTitre = [ilYA(rdv.$createdAt, maintenant), rdv.source === 'CHATBOT' ? t.viaYosr : null]
     .filter(Boolean)
     .join(' · ');
-  const ouvrir = (refuser?: boolean) =>
+  const ouvrir = (refuser = false) => {
+    if (onOuvrir) {
+      onOuvrir(rdv.$id, refuser);
+      return;
+    }
     router.push({
       pathname: '/demande/[id]',
       params: refuser ? { id: rdv.$id, refuser: '1' } : { id: rdv.$id },
     });
+  };
   return (
     <CarteDemande
       nom={rdv.clientNom}

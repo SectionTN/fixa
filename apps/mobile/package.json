@@ -4,6 +4,7 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@expo-google-fonts/readex-pro": "^0.4.1",
+    "@expo/ui": "~58.0.29",
     "@fixa/core": "workspace:*",
     "@fixa/ui": "workspace:*",
     "@react-native-google-signin/google-signin": "17.0.0",

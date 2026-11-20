@@ -229,6 +229,8 @@ export const fr = {
     motifs: ['Pas disponible à cette heure', 'Hors de ma zone', 'Service non proposé', 'Autre'],
     messageA: (prenom: string) => `Message à ${prenom} (optionnel)`,
     introuvable: "Cette demande n'existe plus.",
+    choisir: 'Choisissez une demande',
+    choisirTexte: "Elle s'affiche ici, à côté de la liste.",
   },
   espacePro: {
     bonjour: (prenom: string) => `Bonjour ${prenom}`,
