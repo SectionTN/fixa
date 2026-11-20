@@ -83,7 +83,9 @@ type Pro = {
   note: number;
   nbAvis: number;
   description: string;
-  services: Omit<Service, 'fournisseurId' | 'estVisible'>[];
+  // Every service of the pro takes it: the pro travels, or the client comes over.
+  aDomicile: boolean;
+  services: Omit<Service, 'fournisseurId' | 'estVisible' | 'aDomicile'>[];
 };
 
 const s = (
@@ -103,6 +105,7 @@ const PROS: Pro[] = [
     enseigne: 'Karim Ben Salah',
     specialite: 'Plombier',
     categorieId: 'plomberie',
+    aDomicile: true,
     ville: 'La Marsa',
     position: [36.87022, 10.3193],
     note: 4.9,
@@ -123,6 +126,7 @@ const PROS: Pro[] = [
     enseigne: 'Dr Amira Gharbi',
     specialite: 'Médecin généraliste',
     categorieId: 'medecins',
+    aDomicile: false,
     ville: 'Lac 2',
     position: [36.8435, 10.273],
     note: 4.9,
@@ -137,6 +141,7 @@ const PROS: Pro[] = [
     enseigne: 'Sami Trabelsi',
     specialite: 'Plombier',
     categorieId: 'plomberie',
+    aDomicile: true,
     ville: 'Le Kram',
     position: [36.8552, 10.31954],
     note: 4.8,
@@ -151,6 +156,7 @@ const PROS: Pro[] = [
     enseigne: 'Hédi Jaziri',
     specialite: 'Plombier',
     categorieId: 'plomberie',
+    aDomicile: true,
     ville: 'Carthage',
     position: [36.85254, 10.33105],
     note: 4.7,
@@ -165,6 +171,7 @@ const PROS: Pro[] = [
     enseigne: 'Plomberie Ennour',
     specialite: 'Plombier',
     categorieId: 'plomberie',
+    aDomicile: true,
     ville: 'Sidi Bou Saïd',
     position: [36.85244, 10.3539],
     note: 4.6,
@@ -179,6 +186,7 @@ const PROS: Pro[] = [
     enseigne: 'Salon Leïla',
     specialite: 'Coiffeuse',
     categorieId: 'coiffure',
+    aDomicile: false,
     ville: 'Ennasr',
     position: [36.861, 10.164],
     note: 4.8,
@@ -193,6 +201,7 @@ const PROS: Pro[] = [
     enseigne: 'Garage Mansour',
     specialite: 'Mécanicien',
     categorieId: 'mecanique',
+    aDomicile: false,
     ville: 'Ariana',
     position: [36.8665, 10.193],
     note: 4.5,
@@ -207,6 +216,7 @@ const PROS: Pro[] = [
     enseigne: 'Nadia Mejri',
     specialite: 'Aide ménagère',
     categorieId: 'menage',
+    aDomicile: true,
     ville: 'La Marsa',
     position: [36.88623, 10.3295],
     note: 5,
@@ -224,6 +234,7 @@ const PROS: Pro[] = [
     enseigne: 'Walid Hammami',
     specialite: 'Électricien',
     categorieId: 'electricite',
+    aDomicile: true,
     ville: 'Ariana',
     position: [36.86, 10.196],
     note: 0,
@@ -298,7 +309,12 @@ export function donnees(maintenant: Date): Donnees {
   ];
 
   const services: Service[] = PROS.flatMap((p) =>
-    p.services.map((sv) => ({ ...sv, fournisseurId: p.id, estVisible: true })),
+    p.services.map((sv) => ({
+      ...sv,
+      fournisseurId: p.id,
+      estVisible: true,
+      aDomicile: p.aDomicile,
+    })),
   );
 
   const fournisseurs: Fournisseur[] = PROS.map((p) => {
@@ -366,6 +382,7 @@ export function donnees(maintenant: Date): Donnees {
     const sv = service(serviceId);
     const creation = ajouterMinutes(debut, statut === 'EN_ATTENTE' ? 0 : -24 * 60);
     const cree = statut === 'EN_ATTENTE' ? new Date(ancre) : new Date(creation);
+    const chezLeClient = clientId === 'u-yasmine' ? YASMINE.adresse : 'La Marsa';
     return {
       $id,
       clientId,
@@ -376,7 +393,7 @@ export function donnees(maintenant: Date): Donnees {
       prix: sv.prix,
       duree: sv.duree,
       debut,
-      adresse: clientId === 'u-yasmine' ? YASMINE.adresse : 'La Marsa',
+      adresse: sv.aDomicile ? chezLeClient : '',
       description: '',
       estUrgent: false,
       source: 'APP',

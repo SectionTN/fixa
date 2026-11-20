@@ -111,6 +111,12 @@ describe('router, champs texte', () => {
     }
   });
 
+  it('repond 400 a une adresse vide quand le pro se deplace', async () => {
+    const corps = { ...reservation, adresse: '' };
+    const r = await router(base(), yasmineAppel, 'POST', '/rendez-vous', corps, maintenant);
+    expect(r).toMatchObject({ statut: 400, corps: { ok: false, code: 'ADRESSE_REQUISE' } });
+  });
+
   it('refuse un motif trop long sans changer le statut', async () => {
     const db = base();
     const r = await router(db, yasmineAppel, 'POST', '/rendez-vous', reservation, maintenant);

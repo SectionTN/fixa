@@ -60,6 +60,18 @@ export function base() {
       prix: 60,
       duree: 45,
       estVisible: true,
+      aDomicile: true,
+    },
+    {
+      $id: 's-magasin',
+      fournisseurId: 'u-karim',
+      titre: 'Diagnostic au magasin',
+      description: '',
+      typePrix: 'FIXE',
+      prix: 20,
+      duree: 30,
+      estVisible: true,
+      aDomicile: false,
     },
     {
       $id: 's-walid',
@@ -70,6 +82,7 @@ export function base() {
       prix: 40,
       duree: 60,
       estVisible: true,
+      aDomicile: true,
     },
   ]);
   db.inserer(

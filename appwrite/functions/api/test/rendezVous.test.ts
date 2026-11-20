@@ -77,6 +77,49 @@ describe('reserver', () => {
     expect(db.table('creneaux_occupes').rows).toHaveLength(0);
   });
 
+  it('exige une adresse quand le pro se deplace, sans prendre de cellule', async () => {
+    const db = base();
+    expect(
+      await reserver(db, yasmine, { ...reservation, adresse: '   ' }, maintenant),
+    ).toMatchObject({ ok: false, code: 'ADRESSE_REQUISE' });
+    expect(db.table('rendez_vous').rows).toHaveLength(0);
+    expect(db.table('creneaux_occupes').rows).toHaveLength(0);
+  });
+
+  it("garde l'adresse sans espaces autour, et aucune quand le client va chez le pro", async () => {
+    const db = base();
+    const chez = await reserver(
+      db,
+      yasmine,
+      { ...reservation, adresse: '  12 rue Hédi Nouira, La Marsa ' },
+      maintenant,
+    );
+    const magasin = await reserver(
+      db,
+      ines,
+      { ...reservation, serviceId: 's-magasin', debut: '2026-10-26T09:00:00.000Z' },
+      maintenant,
+    );
+    if (!chez.ok || !magasin.ok) throw new Error('reservation refusee');
+    expect(db.table('rendez_vous').get(chez.data.rendezVousId)).toMatchObject({
+      adresse: '12 rue Hédi Nouira, La Marsa',
+    });
+    expect(db.table('rendez_vous').get(magasin.data.rendezVousId)).toMatchObject({
+      adresse: '',
+    });
+  });
+
+  it('reserve sans adresse quand le client va chez le pro', async () => {
+    const db = base();
+    const r = await reserver(
+      db,
+      yasmine,
+      { ...reservation, serviceId: 's-magasin', adresse: '' },
+      maintenant,
+    );
+    expect(r).toMatchObject({ ok: true });
+  });
+
   it('refuse un service d un autre fournisseur et un appelant non client', async () => {
     const db = base();
     expect(

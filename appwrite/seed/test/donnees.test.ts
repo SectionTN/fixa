@@ -37,6 +37,19 @@ describe('donnees du seed', () => {
     }
   });
 
+  it('envoie les artisans chez le client, et le client au cabinet, au salon ou au garage', () => {
+    const chez = (id: string) => lignes('services').find((s) => s.$id === id)?.aDomicile;
+    expect(chez('s-karim-fuite')).toBe(true);
+    expect(chez('s-nadia-complet')).toBe(true);
+    expect(chez('s-walid-depannage')).toBe(true);
+    expect(chez('s-amira-consultation')).toBe(false);
+    expect(chez('s-leila-brushing')).toBe(false);
+    expect(chez('s-mansour-vidange')).toBe(false);
+    for (const r of rdvs) {
+      expect([r.$id, r.adresse !== '']).toEqual([r.$id, chez(r.serviceId)]);
+    }
+  });
+
   it('donne a Yasmine un rendez-vous par statut', () => {
     const siens = rdvs.filter((r) => r.clientId === 'u-yasmine');
     const statuts: StatutRendezVous[] = [

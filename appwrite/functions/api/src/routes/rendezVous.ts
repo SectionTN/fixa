@@ -1,6 +1,7 @@
 import {
   type Acteur,
   type ActionRendezVous,
+  adresseManquante,
   appliquerAction,
   type Conge,
   type CreneauOccupe,
@@ -74,6 +75,7 @@ export async function reserver(
   if (!service || !fournisseur) return echec('INTROUVABLE');
   if (service.fournisseurId !== fournisseur.$id) return echec('REQUETE_INVALIDE');
   if (!fournisseur.visible || !service.estVisible) return echec('FOURNISSEUR_INDISPONIBLE');
+  if (adresseManquante(service, corps.adresse)) return echec('ADRESSE_REQUISE');
 
   const jour = dateLocale(debut);
   const [disponibilites, conges, occupees] = await Promise.all([
@@ -131,7 +133,8 @@ export async function reserver(
         prix: service.prix,
         duree: service.duree,
         debut,
-        adresse: corps.adresse,
+        // The provider only needs the client's address when going there.
+        adresse: service.aDomicile ? corps.adresse.trim() : '',
         description: corps.description,
         estUrgent: false,
         source: 'APP',

@@ -110,7 +110,8 @@
         },
         { "key": "prix", "type": "double", "required": false, "default": null },
         { "key": "duree", "type": "integer", "required": true },
-        { "key": "estVisible", "type": "boolean", "required": true }
+        { "key": "estVisible", "type": "boolean", "required": true },
+        { "key": "aDomicile", "type": "boolean", "required": true }
       ],
       "indexes": [{ "key": "idx_fournisseur", "type": "key", "columns": ["fournisseurId"] }]
     },
