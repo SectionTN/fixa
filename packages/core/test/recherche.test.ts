@@ -172,7 +172,7 @@ describe('preparerFournisseurs', () => {
     expect(karim?.distanceKm).toBeCloseTo(1.2, 0);
   });
 
-  it("ne calcule pas de distance pour un pro encore place en 0, 0", () => {
+  it('ne calcule pas de distance pour un pro encore place en 0, 0', () => {
     const [nouveau] = preparerFournisseurs({
       fournisseurs: [fournisseur('nouveau', { latitude: 0, longitude: 0 })],
       services: [service('nouveau', 30)],

@@ -6,6 +6,7 @@ import type {
   Disponibilite,
   Fournisseur,
   Profil,
+  RendezVous,
   Service,
 } from './domaine';
 import { BASE, TABLES } from './ids';
@@ -247,4 +248,23 @@ export function getFournisseur(db: LecteurTables, id: string): Promise<Fournisse
 
 export function getProfil(db: LecteurTables, id: string): Promise<Profil | null> {
   return ligneOuNull(db, TABLES.profils, id);
+}
+
+export type RendezVousLu = RendezVous & { $createdAt: string };
+
+// The newest starts first, so a long history never pushes the open requests out of the limit.
+export function listerRendezVousFournisseur(
+  db: TablesLike,
+  Q: RequeteLike,
+  fournisseurId: string,
+): Promise<RendezVousLu[]> {
+  return lignes(db, TABLES.rendezVous, [
+    Q.equal('fournisseurId', fournisseurId),
+    Q.orderDesc('debut'),
+    Q.limit(LIMITE_LISTE),
+  ]);
+}
+
+export function getRendezVous(db: LecteurTables, id: string): Promise<RendezVousLu | null> {
+  return ligneOuNull(db, TABLES.rendezVous, id);
 }

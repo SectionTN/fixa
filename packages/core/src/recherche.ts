@@ -76,7 +76,8 @@ function ecartJours(de: string, a: string): number {
   return Math.round((Date.parse(a) - Date.parse(de)) / 86_400_000);
 }
 
-function ecartDepuis(iso: string, maintenant: Date): number {
+// Days from the Tunis date of `maintenant` to the Tunis date of `iso`, negative in the past.
+export function ecartDepuis(iso: string, maintenant: Date): number {
   return ecartJours(dateLocale(maintenant.toISOString()), dateLocale(iso));
 }
 

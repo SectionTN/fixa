@@ -5,9 +5,11 @@ import {
   donneesCreneaux,
   getFournisseur,
   getProfil,
+  getRendezVous,
   type LecteurTables,
   listerAvis,
   listerCategories,
+  listerRendezVousFournisseur,
   listerServices,
   type RequeteLike,
   rechercherFournisseurs,
@@ -198,5 +200,23 @@ describe('lectures de la recherche', () => {
     expect(await getFournisseur(db, 'absent')).toBeNull();
     expect(await getProfil(db, 'absent')).toBeNull();
     await expect(getFournisseur(db, 'panne')).rejects.toThrow('Server error');
+  });
+});
+
+describe('lectures des rendez-vous', () => {
+  it("lit les rendez-vous d'un pro, les plus recents d'abord, avec une limite", async () => {
+    const { db, appels } = lecteur({
+      rendez_vous: [{ fournisseurId: 'karim', debut: '2026-11-19T07:30:00Z' }],
+    });
+    const liste = await listerRendezVousFournisseur(db, Q, 'karim');
+    expect(liste).toHaveLength(1);
+    expect(liste[0]).toHaveProperty('$createdAt');
+    expect(appels[0]?.queries).toEqual(['equal fournisseurId "karim"', 'desc debut', 'limit 100']);
+  });
+
+  it('rend null pour un rendez-vous absent', async () => {
+    const { db } = lecteur({}, new Set(['absent']));
+    expect(await getRendezVous(db, 'r1')).toMatchObject({ $id: 'r1', table: 'rendez_vous' });
+    expect(await getRendezVous(db, 'absent')).toBeNull();
   });
 });

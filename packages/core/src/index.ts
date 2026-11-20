@@ -14,5 +14,6 @@ export { fr } from './i18n/fr';
 export * from './ids';
 export * from './limites';
 export * from './recherche';
+export * from './reservation';
 export * from './temps';
 export * from './transitions';

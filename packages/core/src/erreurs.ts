@@ -9,7 +9,9 @@ export type CodeErreur =
   | 'FOURNISSEUR_INDISPONIBLE'
   | 'DEJA_EVALUE'
   | 'INTROUVABLE'
-  | 'REQUETE_INVALIDE';
+  | 'REQUETE_INVALIDE'
+  | 'SESSION_EXPIREE'
+  | 'RESEAU';
 
 export const MESSAGES_ERREUR: Record<CodeErreur, string> = fr.erreurs;
 

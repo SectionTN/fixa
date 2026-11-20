@@ -49,9 +49,34 @@ describe('appelerApi', () => {
     expect(await appelerApi(f, '/rendez-vous', {})).toEqual(corps);
   });
 
-  it('transforme une panne de transport en REQUETE_INVALIDE', async () => {
+  it.each([
+    ['sans code', Object.assign(new Error('Network request failed'), {})],
+    ['de code 0', Object.assign(new Error('Network request failed'), { code: 0 })],
+  ])('transforme une panne de transport %s en RESEAU', async (_, erreur) => {
     const { f } = fonctions(async () => {
-      throw new Error('Network request failed');
+      throw erreur;
+    });
+    expect(await appelerApi(f, '/avis', {})).toEqual({
+      ok: false,
+      code: 'RESEAU',
+      message: MESSAGES_ERREUR.RESEAU,
+    });
+  });
+
+  it('transforme un refus 401 du SDK en SESSION_EXPIREE', async () => {
+    const { f } = fonctions(async () => {
+      throw Object.assign(new Error('User (role: guests) missing scopes'), { code: 401 });
+    });
+    expect(await appelerApi(f, '/avis', {})).toEqual({
+      ok: false,
+      code: 'SESSION_EXPIREE',
+      message: MESSAGES_ERREUR.SESSION_EXPIREE,
+    });
+  });
+
+  it('garde REQUETE_INVALIDE pour une autre erreur du SDK', async () => {
+    const { f } = fonctions(async () => {
+      throw Object.assign(new Error('Rate limit'), { code: 429 });
     });
     expect(await appelerApi(f, '/avis', {})).toEqual(invalide);
   });

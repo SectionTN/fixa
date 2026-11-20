@@ -1,4 +1,4 @@
-import { MESSAGES_ERREUR, type ReponseApi } from './erreurs';
+import { type CodeErreur, MESSAGES_ERREUR, type ReponseApi } from './erreurs';
 import { FONCTIONS } from './ids';
 
 // The one method the web and React Native Functions services share, so core imports neither SDK.
@@ -12,11 +12,19 @@ export interface FonctionsLike {
   }): Promise<{ responseBody: string; responseStatusCode: number }>;
 }
 
-const invalide = <T>(): ReponseApi<T> => ({
+const echec = <T>(code: CodeErreur): ReponseApi<T> => ({
   ok: false,
-  code: 'REQUETE_INVALIDE',
-  message: MESSAGES_ERREUR.REQUETE_INVALIDE,
+  code,
+  message: MESSAGES_ERREUR[code],
 });
+
+// Both SDKs throw an AppwriteException, with code 0 when the request never got an answer.
+function codeLance(e: unknown): CodeErreur {
+  const statut = (e as { code?: unknown } | null)?.code;
+  if (statut === 401) return 'SESSION_EXPIREE';
+  if (statut === undefined || statut === 0) return 'RESEAU';
+  return 'REQUETE_INVALIDE';
+}
 
 const estReponse = <T>(valeur: unknown): valeur is ReponseApi<T> =>
   typeof valeur === 'object' &&
@@ -38,8 +46,8 @@ export async function appelerApi<T>(
       headers: { 'content-type': 'application/json' },
     });
     const reponse: unknown = JSON.parse(execution.responseBody);
-    return estReponse<T>(reponse) ? reponse : invalide();
-  } catch {
-    return invalide();
+    return estReponse<T>(reponse) ? reponse : echec('REQUETE_INVALIDE');
+  } catch (e) {
+    return echec(e instanceof SyntaxError ? 'REQUETE_INVALIDE' : codeLance(e));
   }
 }
