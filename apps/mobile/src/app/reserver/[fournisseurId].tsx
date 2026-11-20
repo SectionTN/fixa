@@ -1,4 +1,5 @@
 import {
+  adresseManquante,
   ajouterJours,
   type Creneau,
   creneauxDuJour,
@@ -298,6 +299,7 @@ function Reserver() {
   const choisi =
     debut && jour && parJour[jour]?.some((c) => c.libre && c.debut === debut) ? debut : null;
   const adresseFinale = adresse ?? d?.adresse ?? '';
+  const sansAdresse = service ? adresseManquante(service, adresseFinale) : false;
 
   const precedent = () => {
     if (verrou.current) return;
@@ -319,7 +321,7 @@ function Reserver() {
   }, [etape, envoye]);
 
   const confirmer = async () => {
-    if (!service || !choisi || verrou.current) return;
+    if (!service || !choisi || sansAdresse || verrou.current) return;
     verrou.current = true;
     setEnvoi(true);
     setMessage(null);
@@ -327,7 +329,7 @@ function Reserver() {
       fournisseurId,
       serviceId: service.$id,
       debut: choisi,
-      adresse: adresseFinale.trim(),
+      adresse: service.aDomicile ? adresseFinale.trim() : '',
       description: description.trim(),
     });
     verrou.current = false;
@@ -512,7 +514,7 @@ function Reserver() {
             {t.annulationGratuite}
           </Texte>
         </XStack>
-        <Bouton taille="lg" desactive={!choisi || envoi} onPress={confirmer}>
+        <Bouton taille="lg" desactive={!choisi || sansAdresse || envoi} onPress={confirmer}>
           {t.confirmer}
         </Bouton>
       </YStack>
@@ -695,11 +697,36 @@ function Reserver() {
                 </Texte>
               </Ligne>
               <YStack height={1} backgroundColor="border-color" />
-              <Ligne
-                icone="location_on"
-                libelle={t.adresse}
-                fin={
-                  editionAdresse ? null : (
+              {!service.aDomicile ? (
+                <Ligne icone="location_on" libelle={t.lieu}>
+                  <Texte fontSize={15} fontWeight="500">
+                    {t.chezLePro(fournisseur.ville)}
+                  </Texte>
+                </Ligne>
+              ) : editionAdresse || sansAdresse ? (
+                // A blank address keeps the field open, as the pro cannot come without one.
+                <YStack paddingVertical="3">
+                  <ChampTexte
+                    libelle={t.adresse}
+                    valeur={adresseFinale}
+                    onChange={(valeur) => {
+                      setAdresse(valeur);
+                      setEditionAdresse(true);
+                    }}
+                    placeholder={t.indiceAdresse}
+                    aide={sansAdresse ? t.adresseRequise : undefined}
+                    maxLength={LONGUEUR_MAX.adresse}
+                    autoComplete="street-address"
+                    textContentType="fullStreetAddress"
+                    returnKeyType="done"
+                    onSubmitEditing={() => setEditionAdresse(false)}
+                  />
+                </YStack>
+              ) : (
+                <Ligne
+                  icone="location_on"
+                  libelle={t.adresse}
+                  fin={
                     <Texte
                       role="button"
                       fontSize="4"
@@ -710,34 +737,13 @@ function Reserver() {
                     >
                       {t.modifier}
                     </Texte>
-                  )
-                }
-              >
-                {editionAdresse ? null : (
-                  <Texte
-                    fontSize={15}
-                    fontWeight="500"
-                    color={adresseFinale ? 'color' : 'color-subtle'}
-                  >
-                    {adresseFinale || t.adresseVide}
+                  }
+                >
+                  <Texte fontSize={15} fontWeight="500">
+                    {adresseFinale}
                   </Texte>
-                )}
-              </Ligne>
-              {editionAdresse ? (
-                <YStack paddingBottom="3">
-                  <ChampTexte
-                    libelle={t.adresse}
-                    valeur={adresseFinale}
-                    onChange={setAdresse}
-                    placeholder={t.indiceAdresse}
-                    maxLength={LONGUEUR_MAX.adresse}
-                    autoComplete="street-address"
-                    textContentType="fullStreetAddress"
-                    returnKeyType="done"
-                    onSubmitEditing={() => setEditionAdresse(false)}
-                  />
-                </YStack>
-              ) : null}
+                </Ligne>
+              )}
             </YStack>
             <YStack
               paddingVertical={14}
