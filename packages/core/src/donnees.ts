@@ -320,6 +320,39 @@ export async function lireMesRendezVous(
   };
 }
 
+export type DossierAValider = {
+  fournisseur: Fournisseur & { $createdAt: string };
+  profil: Pick<Profil, '$id' | 'telephone' | 'specialites' | 'description'> | null;
+  services: Service[];
+};
+
+// Providers waiting for the admin, newest first, with what the admin checks before deciding.
+export async function lireDossiersAValider(
+  db: TablesLike,
+  Q: RequeteLike,
+): Promise<DossierAValider[]> {
+  const fournisseurs = await lignes<Fournisseur & { $createdAt: string }>(db, TABLES.fournisseurs, [
+    Q.equal('statutVerification', 'EN_ATTENTE'),
+    Q.orderDesc('$createdAt'),
+    Q.limit(LIMITE_LISTE),
+  ]);
+  if (fournisseurs.length === 0) return [];
+  const ids = fournisseurs.map((f) => f.$id);
+  const [profils, services] = await Promise.all([
+    lignes<NonNullable<DossierAValider['profil']>>(db, TABLES.profils, [
+      Q.equal('$id', ids),
+      Q.select(['$id', 'telephone', 'specialites', 'description']),
+      Q.limit(ids.length),
+    ]),
+    listerServices(db, Q, ids),
+  ]);
+  return fournisseurs.map((fournisseur) => ({
+    fournisseur,
+    profil: profils.find((p) => p.$id === fournisseur.$id) ?? null,
+    services: services.filter((s) => s.fournisseurId === fournisseur.$id),
+  }));
+}
+
 export function getRendezVous(db: LecteurTables, id: string): Promise<RendezVousLu | null> {
   return ligneOuNull(db, TABLES.rendezVous, id);
 }

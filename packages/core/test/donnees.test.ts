@@ -7,6 +7,7 @@ import {
   getProfil,
   getRendezVous,
   type LecteurTables,
+  lireDossiersAValider,
   lireMesRendezVous,
   listerAvis,
   listerCategories,
@@ -263,5 +264,50 @@ describe('lectures des rendez-vous', () => {
     const { db } = lecteur({}, new Set(['absent']));
     expect(await getRendezVous(db, 'r1')).toMatchObject({ $id: 'r1', table: 'rendez_vous' });
     expect(await getRendezVous(db, 'absent')).toBeNull();
+  });
+});
+
+describe('lireDossiersAValider', () => {
+  it('lit les dossiers en attente, les plus recents d abord, avec profil et services', async () => {
+    const { db, appels } = lecteur({
+      fournisseurs: [
+        { $id: 'walid', nom: 'Walid Hammami' },
+        { $id: 'imen', nom: 'Imen Toumi' },
+      ],
+      profils: [
+        {
+          $id: 'walid',
+          telephone: '+216 52 418 903',
+          specialites: ['Électricien'],
+          description: 'Dépannage',
+        },
+      ],
+      services: [{ $id: 's1', fournisseurId: 'walid', titre: 'Dépannage électrique' }],
+    });
+    const dossiers = await lireDossiersAValider(db, Q);
+    expect(
+      dossiers.map((d) => [
+        d.fournisseur.$id,
+        d.profil?.telephone ?? null,
+        d.services.map((s) => s.$id),
+      ]),
+    ).toEqual([
+      ['walid', '+216 52 418 903', ['s1']],
+      ['imen', null, []],
+    ]);
+    expect(appels.map((a) => [a.tableId, a.queries])).toEqual([
+      ['fournisseurs', ['equal statutVerification "EN_ATTENTE"', 'desc $createdAt', 'limit 100']],
+      [
+        'profils',
+        ['equal $id ["walid","imen"]', 'select $id,telephone,specialites,description', 'limit 2'],
+      ],
+      ['services', ['equal fournisseurId ["walid","imen"]', 'equal estVisible true', 'limit 100']],
+    ]);
+  });
+
+  it('ne lit ni profils ni services sans dossier', async () => {
+    const { db, appels } = lecteur({});
+    expect(await lireDossiersAValider(db, Q)).toEqual([]);
+    expect(appels).toHaveLength(1);
   });
 });
