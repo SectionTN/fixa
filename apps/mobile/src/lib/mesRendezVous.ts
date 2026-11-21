@@ -30,6 +30,18 @@ export function useRendezVous(id: string): Lecture<{ rdv: RendezVousLu | null; m
   }));
 }
 
+// Publishes the review through the function, which marks the booking reviewed and counts the rating once.
+export async function laisserAvis(corps: {
+  rendezVousId: string;
+  note: number;
+  criteres: string[];
+  commentaire: string;
+}): Promise<ReponseApi<{ avisId: string }>> {
+  const r = await api<{ avisId: string }>('/avis', corps);
+  signalerChangement();
+  return r;
+}
+
 // Cancels through the function, then every booking screen reads again whatever the outcome.
 export async function annuler(
   id: string,

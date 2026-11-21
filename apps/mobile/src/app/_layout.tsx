@@ -59,6 +59,7 @@ function Navigation({ policesPretes }: { policesPretes: boolean }) {
             sheetCornerRadius: 32,
           }}
         />
+        <Stack.Screen name="rendez-vous/[id]/avis" options={{ presentation: 'fullScreenModal' }} />
       </Stack.Protected>
       <Stack.Protected guard={!connecte} redirectTo={accueil}>
         <Stack.Screen name="(auth)" />

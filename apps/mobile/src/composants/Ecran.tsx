@@ -48,11 +48,18 @@ export function CadreLateral({ children }: { children: ReactNode }) {
   );
 }
 
-export function BoutonRetour({ onPress }: { onPress: () => void }) {
+// A back arrow, or a cross with `fermer` on a screen that slides up as a modal.
+export function BoutonRetour({
+  onPress,
+  fermer = false,
+}: {
+  onPress: () => void;
+  fermer?: boolean;
+}) {
   return (
     <XStack
       role="button"
-      aria-label={fr.commun.retour}
+      aria-label={fermer ? fr.commun.fermer : fr.commun.retour}
       width={44}
       height={44}
       borderRadius="round"
@@ -63,7 +70,7 @@ export function BoutonRetour({ onPress }: { onPress: () => void }) {
       backgroundColor="transparent press:background-press"
       onPress={onPress}
     >
-      <Icone nom="arrow_back" taille={22} />
+      <Icone nom={fermer ? 'close' : 'arrow_back'} taille={22} />
     </XStack>
   );
 }

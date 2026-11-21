@@ -55,45 +55,38 @@ export default function RendezVous() {
   );
 }
 
-// The card's buttons. A review waits for its screen, which comes with the review flow.
+// The card's buttons, in the order core lists the actions.
 function actions(
   rdv: RendezVousLu,
   liste: ActionClient[],
   d: MesRendezVous,
   aller: (href: Href) => void,
 ): ActionCarteRendezVous[] {
-  return liste.flatMap((a): ActionCarteRendezVous[] => {
-    switch (a) {
-      case 'annuler':
-        return [
-          {
-            libelle: t.annuler,
-            variante: 'danger',
-            onPress: () => aller(`/rendez-vous/${rdv.$id}/annuler`),
-          },
-        ];
-      case 'reserverANouveau':
-        return [
-          {
-            libelle: t.reserverANouveau,
-            variante: 'outline',
-            onPress: () => aller(`/reserver/${rdv.fournisseurId}`),
-          },
-        ];
-      case 'reserverAilleurs': {
-        const categorie = d.pros[rdv.fournisseurId]?.categorieId;
-        return [
-          {
-            libelle: t.reserverAilleurs,
-            variante: 'outline',
-            onPress: () => aller(categorie ? `/categorie/${categorie}` : '/'),
-          },
-        ];
-      }
-      default:
-        return [];
-    }
-  });
+  const categorie = d.pros[rdv.fournisseurId]?.categorieId;
+  const boutons: Record<ActionClient, ActionCarteRendezVous> = {
+    annuler: {
+      libelle: t.annuler,
+      variante: 'danger',
+      onPress: () => aller(`/rendez-vous/${rdv.$id}/annuler`),
+    },
+    avis: {
+      libelle: t.laisserAvis,
+      variante: 'soft',
+      icone: 'star',
+      onPress: () => aller(`/rendez-vous/${rdv.$id}/avis`),
+    },
+    reserverANouveau: {
+      libelle: t.reserverANouveau,
+      variante: 'outline',
+      onPress: () => aller(`/reserver/${rdv.fournisseurId}`),
+    },
+    reserverAilleurs: {
+      libelle: t.reserverAilleurs,
+      variante: 'outline',
+      onPress: () => aller(categorie ? `/categorie/${categorie}` : '/'),
+    },
+  };
+  return liste.map((a) => boutons[a]);
 }
 
 // The client's appointments, upcoming or past, kept current by the live booking updates.
