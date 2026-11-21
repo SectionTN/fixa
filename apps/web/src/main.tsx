@@ -7,16 +7,24 @@ import { FixaProvider } from '@fixa/ui';
 import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Connexion } from './admin/Connexion';
-import { Coque } from './admin/Coque';
+import { Coque, type PageAdmin } from './admin/Coque';
 import { useAdmin } from './admin/session';
 import { TableauDeBord } from './admin/TableauDeBord';
+import { Validation } from './admin/Validation';
 import { Query, tables } from './appwrite';
-import { useChemin } from './chemin';
+import { CHEMINS, useChemin } from './chemin';
 
-const CONNEXION = '/admin/connexion';
-const ACCUEIL = '/admin';
-
-function EspaceAdmin({ nom, onDeconnexion }: { nom: string; onDeconnexion: () => void }) {
+function EspaceAdmin({
+  nom,
+  page,
+  aller,
+  onDeconnexion,
+}: {
+  nom: string;
+  page: PageAdmin;
+  aller: (chemin: string) => void;
+  onDeconnexion: () => void;
+}) {
   const [comptes, setComptes] = useState<Comptes | null>(null);
   const [anciennete, setAnciennete] = useState<number | null>(null);
   const [erreur, setErreur] = useState(false);
@@ -39,30 +47,56 @@ function EspaceAdmin({ nom, onDeconnexion }: { nom: string; onDeconnexion: () =>
     };
   }, [misAJour]);
 
+  const relire = () => setMisAJour(new Date().toISOString());
+  // Each page change reads the counts again, so the dashboard and the sidebar count are current.
+  const changerDePage = (chemin: string) => {
+    aller(chemin);
+    relire();
+  };
+
   return (
-    <Coque nom={nom} aValider={comptes?.aValider ?? null} onDeconnexion={onDeconnexion}>
-      <TableauDeBord
-        comptes={comptes}
-        anciennete={anciennete}
-        misAJour={misAJour}
-        erreur={erreur}
-        onReessayer={() => setMisAJour(new Date().toISOString())}
-      />
+    <Coque
+      nom={nom}
+      page={page}
+      aValider={comptes?.aValider ?? null}
+      aller={changerDePage}
+      onDeconnexion={onDeconnexion}
+    >
+      {page === 'validation' ? (
+        <Validation onDecision={relire} onSessionExpiree={onDeconnexion} />
+      ) : (
+        <TableauDeBord
+          comptes={comptes}
+          anciennete={anciennete}
+          misAJour={misAJour}
+          erreur={erreur}
+          onReessayer={relire}
+          aller={changerDePage}
+        />
+      )}
     </Coque>
   );
 }
 
 function App() {
   const { etat, connexion, deconnexion } = useAdmin();
-  const [chemin, remplacer] = useChemin();
-  const cible = etat.statut === 'admin' ? ACCUEIL : CONNEXION;
+  const { chemin, aller, remplacer } = useChemin();
+  const page: PageAdmin = chemin === CHEMINS.validation ? 'validation' : 'accueil';
+  const cible =
+    etat.statut !== 'admin'
+      ? CHEMINS.connexion
+      : page === 'validation'
+        ? CHEMINS.validation
+        : CHEMINS.accueil;
 
   useEffect(() => {
     if (etat.statut !== 'chargement' && chemin !== cible) remplacer(cible);
   }, [etat.statut, chemin, cible, remplacer]);
 
   if (etat.statut === 'chargement') return null;
-  if (etat.statut === 'admin') return <EspaceAdmin nom={etat.nom} onDeconnexion={deconnexion} />;
+  if (etat.statut === 'admin') {
+    return <EspaceAdmin nom={etat.nom} page={page} aller={aller} onDeconnexion={deconnexion} />;
+  }
   return <Connexion message={etat.message} onConnexion={connexion} />;
 }
 

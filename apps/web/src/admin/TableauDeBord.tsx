@@ -1,6 +1,8 @@
 import { type TableauDeBord as Comptes, fr, heureLocale, jourLocal } from '@fixa/core';
 import { Bouton, CarteStat, Icone, Texte } from '@fixa/ui';
 import { XStack, YStack } from 'tamagui';
+import { CHEMINS } from '../chemin';
+import { EnTete, suivreLien } from './Coque';
 
 const t = fr.admin;
 const nombre = new Intl.NumberFormat('fr-FR');
@@ -17,35 +19,23 @@ export function TableauDeBord({
   misAJour,
   erreur,
   onReessayer,
+  aller,
 }: {
   comptes: Comptes | null;
   anciennete: number | null;
   misAJour: string;
   erreur: boolean;
   onReessayer: () => void;
+  aller: (chemin: string) => void;
 }) {
   const valeur = (n: number | undefined) => (n === undefined ? '-' : nombre.format(n));
   const mois = fr.temps.moisCourts[new Date(misAJour).getUTCMonth()];
   return (
     <YStack flex={1}>
-      <XStack
-        height={76}
-        paddingHorizontal="7"
-        gap={14}
-        alignItems="center"
-        backgroundColor="surface"
-        borderBottomWidth={1}
-        borderColor="border-color"
-      >
-        <YStack>
-          <Texte render="h1" margin={0} fontSize={22} lineHeight="30px" fontWeight="600">
-            {t.tableauDeBord}
-          </Texte>
-          <Texte fontSize="3" color="color-muted">
-            {`${titreDuJour(misAJour)} · ${t.misAJour} ${heureLocale(misAJour)}`}
-          </Texte>
-        </YStack>
-      </XStack>
+      <EnTete
+        titre={t.tableauDeBord}
+        sousTitre={`${titreDuJour(misAJour)} · ${t.misAJour} ${heureLocale(misAJour)}`}
+      />
       <YStack paddingVertical={28} paddingHorizontal="7" gap="6">
         {erreur ? (
           <XStack gap="3" alignItems="center" role="alert">
@@ -92,7 +82,19 @@ export function TableauDeBord({
           <Texte fontSize="5" fontWeight="600">
             {t.aTraiter}
           </Texte>
-          <XStack paddingVertical={11} gap="3" alignItems="center">
+          <XStack
+            render={(props) => <a {...props} href={CHEMINS.validation} />}
+            onClick={suivreLien(CHEMINS.validation, aller)}
+            paddingVertical={11}
+            paddingHorizontal="2"
+            marginHorizontal="-2"
+            borderRadius="3"
+            gap="3"
+            alignItems="center"
+            textDecorationLine="none"
+            cursor="pointer"
+            backgroundColor="transparent hover:background-hover"
+          >
             <XStack
               width={38}
               height={38}
