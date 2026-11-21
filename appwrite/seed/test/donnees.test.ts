@@ -147,6 +147,11 @@ describe('donnees du seed', () => {
     });
   });
 
+  it('donne a Walid, en attente de validation, un telephone que l admin peut appeler', () => {
+    const walid = lignes('profils').find((p) => p.$id === 'u-walid');
+    expect(walid?.telephone).toBe('+216 52 418 903');
+  });
+
   it('pose les permissions de ligne que l api poserait', () => {
     for (const { ligne, permissions } of d.tables.rendez_vous) {
       expect(permissions.sort()).toEqual(

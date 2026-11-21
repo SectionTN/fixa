@@ -76,6 +76,7 @@ type Pro = {
   prenom: string;
   nom: string;
   enseigne: string;
+  telephone?: string;
   specialite: string;
   categorieId: string;
   ville: string;
@@ -232,6 +233,7 @@ const PROS: Pro[] = [
     prenom: 'Walid',
     nom: 'Hammami',
     enseigne: 'Walid Hammami',
+    telephone: '+216 52 418 903',
     specialite: 'Électricien',
     categorieId: 'electricite',
     aDomicile: true,
@@ -295,7 +297,7 @@ export function donnees(maintenant: Date): Donnees {
         $id: p.id,
         prenom: p.prenom,
         nom: p.nom,
-        telephone: '',
+        telephone: p.telephone ?? '',
         langue: 'fr' as const,
         ville: p.ville,
         specialites: [p.specialite],
