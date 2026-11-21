@@ -11,6 +11,7 @@ import {
 import { AppwriteException, ID, IdTokenProvider } from 'react-native-appwrite';
 import { api, quandSessionExpire } from './api';
 import { compte } from './appwrite';
+import { arreterEnDirect } from './enDirect';
 import { jetonGoogle, oublierGoogle } from './google';
 
 export type Utilisateur = { id: string; email: string; nom: string };
@@ -139,6 +140,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       },
       async deconnexion() {
         // Offline, the app still signs out, and the next start finds the session again only if the cookie survived.
+        arreterEnDirect();
         await compte.deleteSession({ sessionId: 'current' }).catch(() => undefined);
         await oublierGoogle();
         setEtat({ utilisateur: null, role: null, chargement: false });

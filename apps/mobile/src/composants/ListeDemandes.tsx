@@ -14,7 +14,7 @@ import { ErreurChargement } from './Section';
 const t = fr.demandes;
 const ONGLETS: OngletDemande[] = ['attente', 'acceptees', 'refusees'];
 
-// The provider's requests in three tabs, read again on every visit since nothing pushes changes yet.
+// The provider's requests in three tabs, read again on every visit and on every live booking change.
 export function ListeDemandes({ onOuvrir }: { onOuvrir?: (id: string, refuser: boolean) => void }) {
   const lecture = useDemandes();
   const bas = useBasOnglets();

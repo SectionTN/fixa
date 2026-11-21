@@ -13,7 +13,7 @@ import { type Lecture, useLecture } from './donnees';
 let version = 0;
 const abonnes = new Set<() => void>();
 
-// Called after a booking changes, so every provider screen reads its rows again.
+// Called after a booking changes, so every booking screen reads its rows again.
 export function signalerChangement() {
   version += 1;
   for (const abonne of abonnes) abonne();

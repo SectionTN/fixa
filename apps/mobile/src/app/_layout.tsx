@@ -11,6 +11,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { useRendezVousEnDirect } from '../lib/enDirect';
 import { SessionProvider, useSession } from '../lib/session';
 
 SplashScreen.preventAutoHideAsync();
@@ -19,6 +20,9 @@ SplashScreen.preventAutoHideAsync();
 function Navigation({ policesPretes }: { policesPretes: boolean }) {
   const { utilisateur, role, chargement } = useSession();
   const pret = policesPretes && !chargement;
+  useRendezVousEnDirect(
+    utilisateur && (role === 'client' || role === 'fournisseur') ? utilisateur.id : null,
+  );
 
   useEffect(() => {
     if (pret) SplashScreen.hideAsync();
@@ -46,6 +50,15 @@ function Navigation({ policesPretes }: { policesPretes: boolean }) {
       </Stack.Protected>
       <Stack.Protected guard={connecte && role === 'client'} redirectTo={accueil}>
         <Stack.Screen name="reserver/[fournisseurId]" />
+        <Stack.Screen
+          name="rendez-vous/[id]/annuler"
+          options={{
+            presentation: 'formSheet',
+            sheetAllowedDetents: 'fitToContents',
+            sheetGrabberVisible: true,
+            sheetCornerRadius: 32,
+          }}
+        />
       </Stack.Protected>
       <Stack.Protected guard={!connecte} redirectTo={accueil}>
         <Stack.Screen name="(auth)" />
