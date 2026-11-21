@@ -1,6 +1,7 @@
 export const fr = {
   commun: {
     retour: 'Retour',
+    fermer: 'Fermer',
     surCinq: (note: number | string) => `${note} sur 5`,
   },
   erreurs: {
@@ -23,6 +24,15 @@ export const fr = {
   },
   avis: {
     criteres: ['Ponctualité', 'Accueil', 'Travail soigné', 'Bon rapport qualité-prix', 'Propreté'],
+    notes: ['Décevant', 'Moyen', 'Bien', 'Très bien', 'Excellent'],
+    toucherEtoile: 'Touchez une étoile pour noter',
+    titre: 'Laisser un avis',
+    question: "Comment s'est passé votre rendez-vous ?",
+    plu: 'Ce qui vous a plu',
+    commentaire: 'Votre commentaire',
+    indice: 'Racontez en quelques mots, cela aide les autres clients.',
+    publier: 'Publier mon avis',
+    etoile: (n: number) => (n <= 1 ? `${n} étoile` : `${n} étoiles`),
   },
   temps: {
     jours: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],

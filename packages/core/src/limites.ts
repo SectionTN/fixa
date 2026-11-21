@@ -7,4 +7,5 @@ export const LONGUEUR_MAX = {
   adresse: 256,
   description: 300,
   motif: 500,
+  commentaire: 500,
 } as const;

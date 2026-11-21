@@ -10,3 +10,8 @@ export function moyenneApresAvis(
   const total = nb + 1;
   return { moyenne: (moyenne * nb + note) / total, nb: total };
 }
+
+// The word under the stars, or the hint before the client picks a rating.
+export function libelleNote(note: number): string {
+  return fr.avis.notes[note - 1] ?? fr.avis.toucherEtoile;
+}
