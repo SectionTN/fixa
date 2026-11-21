@@ -1,5 +1,7 @@
+import { libererCellules } from '@fixa/fn-commun';
+import { panneUneFois } from '@fixa/fn-commun/faux';
 import { describe, expect, it } from 'vitest';
-import { changerStatut, libererCellules, reserver } from '../src/routes/rendezVous';
+import { changerStatut, reserver } from '../src/routes/rendezVous';
 import { base, ines, karim, lundi0830, maintenant, reservation, yasmine } from './donnees';
 
 async function reserve() {
@@ -150,6 +152,17 @@ describe('changerStatut', () => {
       annulePar: 'client',
     });
     expect(db.table('creneaux_occupes').rows).toHaveLength(0);
+  });
+
+  it('rend le verrou si la mise a jour echoue, le pro peut accepter ensuite', async () => {
+    const { db, id } = await reserve();
+    const t = new Date('2026-10-25T09:30:00.000Z');
+    const enPanne = panneUneFois(db, 'updateRow', 'rendez_vous');
+    await expect(changerStatut(enPanne, karim, id, 'accepter', {}, t)).rejects.toThrow();
+    expect(await changerStatut(db, karim, id, 'accepter', {}, t)).toMatchObject({
+      ok: true,
+      data: { statut: 'CONFIRME' },
+    });
   });
 
   it('accepter apres la limite meme si le worker est en retard', async () => {

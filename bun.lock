@@ -86,7 +86,21 @@
       "name": "@fixa/fn-commun",
       "version": "0.0.0",
       "dependencies": {
+        "@fixa/core": "workspace:*",
         "node-appwrite": "31.3.0",
+      },
+    },
+    "appwrite/functions/worker": {
+      "name": "@fixa/fn-worker",
+      "version": "0.0.0",
+      "dependencies": {
+        "@fixa/core": "workspace:*",
+        "@fixa/fn-commun": "workspace:*",
+        "node-appwrite": "31.3.0",
+      },
+      "devDependencies": {
+        "@types/node": "22.20.5",
+        "vitest": "5.1.0",
       },
     },
     "appwrite/seed": {
@@ -451,6 +465,8 @@
     "@fixa/fn-api": ["@fixa/fn-api@workspace:appwrite/functions/api"],
 
     "@fixa/fn-commun": ["@fixa/fn-commun@workspace:appwrite/functions/commun"],
+
+    "@fixa/fn-worker": ["@fixa/fn-worker@workspace:appwrite/functions/worker"],
 
     "@fixa/mobile": ["@fixa/mobile@workspace:apps/mobile"],
 

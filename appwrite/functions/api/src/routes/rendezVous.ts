@@ -18,10 +18,17 @@ import {
   type Service,
   type StatutRendezVous,
   TABLES,
-  type Transition,
   versUtc,
 } from '@fixa/core';
-import { type Db, estAbsent, estConflit, type Ligne } from '@fixa/fn-commun';
+import {
+  type Db,
+  estConflit,
+  type Ligne,
+  libererCellules,
+  STATUTS_LIBERANT,
+  sousVerrou,
+  supprimerCellules,
+} from '@fixa/fn-commun';
 import { echec, lire, succes } from '../reponse';
 
 export type CorpsReservation = {
@@ -31,31 +38,6 @@ export type CorpsReservation = {
   adresse: string;
   description: string;
 };
-
-const STATUTS_LIBERANT: readonly StatutRendezVous[] = ['REFUSE', 'EXPIRE', 'ANNULE'];
-
-// A cell another call already deleted counts as freed.
-async function supprimer(db: Db, ids: string[]) {
-  await Promise.all(
-    ids.map(async (id) => {
-      try {
-        await db.deleteRow(TABLES.creneauxOccupes, id);
-      } catch (e) {
-        if (!estAbsent(e)) throw e;
-      }
-    }),
-  );
-}
-
-export async function libererCellules(db: Db, rendezVousId: string) {
-  const cases = await db.listRows<CreneauOccupe>(TABLES.creneauxOccupes, {
-    egal: { rendezVousId },
-  });
-  await supprimer(
-    db,
-    cases.map((c) => c.$id),
-  );
-}
 
 export async function reserver(
   db: Db,
@@ -114,7 +96,7 @@ export async function reserver(
       creees.push(id);
     }
   } catch (e) {
-    await supprimer(db, creees);
+    await supprimerCellules(db, creees);
     if (estConflit(e)) return echec('CRENEAU_PRIS');
     throw e;
   }
@@ -152,7 +134,7 @@ export async function reserver(
       [lire(acteur.id), lire(fournisseur.$id)],
     );
   } catch (e) {
-    await supprimer(db, creees);
+    await supprimerCellules(db, creees);
     throw e;
   }
   return succes({ rendezVousId });
@@ -173,28 +155,20 @@ export async function changerStatut(
   const resultat = appliquerAction(rdv, action, acteur, maintenant);
   if (!resultat.ok) return echec(resultat.code);
 
-  try {
-    await db.createRow<Transition>(TABLES.transitions, `${rendezVousId}.${rdv.statut}`, {
-      rendezVousId,
-      de: rdv.statut,
-      vers: resultat.statut,
-      par: acteur.role,
+  const change = () =>
+    db.updateRow<RendezVous>(TABLES.rendezVous, rendezVousId, {
+      statut: resultat.statut,
+      motif: corps.motif ?? rdv.motif ?? null,
+      ...(action === 'annuler'
+        ? {
+            annulePar: acteur.role === 'client' ? 'client' : 'fournisseur',
+            annulationTardive: resultat.annulationTardive,
+          }
+        : {}),
     });
-  } catch (e) {
-    if (estConflit(e)) return echec('TRANSITION_INVALIDE');
-    throw e;
+  if (!(await sousVerrou(db, rdv, resultat.statut, acteur.role, change))) {
+    return echec('TRANSITION_INVALIDE');
   }
-
-  await db.updateRow<RendezVous>(TABLES.rendezVous, rendezVousId, {
-    statut: resultat.statut,
-    motif: corps.motif ?? rdv.motif ?? null,
-    ...(action === 'annuler'
-      ? {
-          annulePar: acteur.role === 'client' ? 'client' : 'fournisseur',
-          annulationTardive: resultat.annulationTardive,
-        }
-      : {}),
-  });
 
   if (STATUTS_LIBERANT.includes(resultat.statut)) await libererCellules(db, rendezVousId);
   return succes({ statut: resultat.statut });

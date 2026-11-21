@@ -124,3 +124,19 @@ export function fauxDb(uniques: Record<string, string[][]> = {}) {
 }
 
 export type FauxDb = ReturnType<typeof fauxDb>;
+
+// The same tables, where the first call of `methode` on `table` fails like a server error.
+export function panneUneFois(db: Db, methode: 'updateRow' | 'deleteRow', table: string): Db {
+  let restantes = 1;
+  const appeler = db[methode] as (nom: string, ...reste: unknown[]) => Promise<never>;
+  return {
+    ...db,
+    [methode]: async (nom: string, ...reste: unknown[]) => {
+      if (nom === table && restantes > 0) {
+        restantes -= 1;
+        throw new ErreurFaux(503, `${nom} indisponible`);
+      }
+      return appeler(nom, ...reste);
+    },
+  };
+}
