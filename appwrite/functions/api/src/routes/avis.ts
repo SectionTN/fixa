@@ -3,6 +3,7 @@ import {
   type Avis,
   CRITERES_AVIS,
   type Fournisseur,
+  LONGUEUR_MAX,
   moyenneApresAvis,
   type RendezVous,
   type ReponseApi,
@@ -18,8 +19,6 @@ export type CorpsAvis = {
   commentaire: string;
 };
 
-const COMMENTAIRE_MAX = 1000;
-
 export async function publierAvis(
   db: Db,
   acteur: Acteur,
@@ -27,7 +26,7 @@ export async function publierAvis(
 ): Promise<ReponseApi<{ avisId: string }>> {
   const noteValide = Number.isInteger(corps.note) && corps.note >= 1 && corps.note <= 5;
   const criteresValides = corps.criteres.every((c) => CRITERES_AVIS.includes(c));
-  if (!noteValide || !criteresValides || corps.commentaire.length > COMMENTAIRE_MAX) {
+  if (!noteValide || !criteresValides || corps.commentaire.length > LONGUEUR_MAX.commentaire) {
     return echec('REQUETE_INVALIDE');
   }
 

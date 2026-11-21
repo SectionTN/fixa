@@ -91,4 +91,14 @@ describe('publierAvis', () => {
       code: 'REQUETE_INVALIDE',
     });
   });
+
+  it('accepte un commentaire de 500 caracteres, pas un de 501, comme le formulaire', async () => {
+    const trop = { ...avis, criteres: [], commentaire: 'x'.repeat(501) };
+    expect(await publierAvis(avecRdv('TERMINE'), yasmine, trop)).toMatchObject({
+      ok: false,
+      code: 'REQUETE_INVALIDE',
+    });
+    const juste = { ...avis, criteres: [], commentaire: 'x'.repeat(500) };
+    expect(await publierAvis(avecRdv('TERMINE'), yasmine, juste)).toMatchObject({ ok: true });
+  });
 });
