@@ -1,8 +1,9 @@
 import { fr } from '@fixa/core';
 import { Icone, type NomIcone, Texte } from '@fixa/ui';
-import type { MouseEvent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { XStack, YStack } from 'tamagui';
-import { CHEMINS } from '../chemin';
+import { CHEMINS, suivreLien } from '../chemin';
+import { initiales } from './initiales';
 
 const t = fr.admin;
 
@@ -19,15 +20,6 @@ function Groupe({ children }: { children: string }) {
       {children}
     </Texte>
   );
-}
-
-// A plain click stays in the app, a modified click keeps the browser's new tab or window.
-export function suivreLien(href: string, aller: (chemin: string) => void) {
-  return (e: MouseEvent) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    e.preventDefault();
-    aller(href);
-  };
 }
 
 function Lien({
@@ -86,14 +78,6 @@ function Lien({
     </XStack>
   );
 }
-
-export const initiales = (nom: string) =>
-  nom
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((mot) => mot[0]?.toUpperCase())
-    .join('');
 
 // The admin sidebar trimmed to the demo: dashboard, validation with its count, users greyed.
 export type PageAdmin = 'accueil' | 'validation';

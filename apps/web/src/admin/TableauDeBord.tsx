@@ -1,8 +1,8 @@
 import { type TableauDeBord as Comptes, fr, heureLocale, jourLocal } from '@fixa/core';
 import { Bouton, CarteStat, Icone, Texte } from '@fixa/ui';
 import { XStack, YStack } from 'tamagui';
-import { CHEMINS } from '../chemin';
-import { EnTete, suivreLien } from './Coque';
+import { CHEMINS, suivreLien } from '../chemin';
+import { EnTete } from './Coque';
 
 const t = fr.admin;
 const nombre = new Intl.NumberFormat('fr-FR');
@@ -87,7 +87,7 @@ export function TableauDeBord({
             onClick={suivreLien(CHEMINS.validation, aller)}
             paddingVertical={11}
             paddingHorizontal="2"
-            marginHorizontal="-2"
+            marginHorizontal={-8}
             borderRadius="3"
             gap="3"
             alignItems="center"

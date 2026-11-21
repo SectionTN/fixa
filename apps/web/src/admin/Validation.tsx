@@ -14,8 +14,9 @@ import { BadgeStatut, Bouton, EtatVide, Icone, Texte } from '@fixa/ui';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { XStack, YStack } from 'tamagui';
 import { fonctions, Query, tables } from '../appwrite';
-import { EnTete, initiales } from './Coque';
+import { EnTete } from './Coque';
 import { DialogueRefus } from './DialogueRefus';
+import { initiales } from './initiales';
 
 const t = fr.admin;
 const JOUR_MS = 86_400_000;
