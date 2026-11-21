@@ -11,6 +11,7 @@ export {
 export { CarteStat, type CarteStatProps } from './CarteStat';
 export { ChampRecherche, type ChampRechercheProps } from './ChampRecherche';
 export { ChampTexte, type ChampTexteProps } from './ChampTexte';
+export { ChoixNote, type ChoixNoteProps } from './ChoixNote';
 export { CurseurPlage, type CurseurPlageProps } from './CurseurPlage';
 export { Etapes, type EtapesProps } from './Etapes';
 export { EtatVide, type EtatVideProps } from './EtatVide';

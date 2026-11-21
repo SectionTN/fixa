@@ -97,9 +97,10 @@ export function CarteRendezVous(p: CarteRendezVousProps) {
         </XStack>
       ) : null}
       {p.actions && p.actions.length > 0 ? (
-        <XStack gap="2">
+        // Side by side when both labels fit, else one per row, so no label is cut.
+        <XStack gap="2" flexWrap="wrap">
           {p.actions.map((a) => (
-            <YStack key={a.libelle} flex={1} minWidth={0}>
+            <YStack key={a.libelle} flexGrow={1} flexBasis="auto">
               <Bouton taille="sm" variante={a.variante} icone={a.icone} onPress={a.onPress}>
                 {a.libelle}
               </Bouton>
