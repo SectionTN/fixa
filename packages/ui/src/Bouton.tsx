@@ -11,7 +11,10 @@ const CIBLE_TACTILE = 44;
 const HAUTEUR = { sm: 36, md: 44, lg: 52 } as const;
 const TEXTE = { sm: 14, md: 15, lg: 16 } as const;
 
+// A real button element on the web, so it takes focus and answers Enter and Space.
 const Cadre = styled(XStack, {
+  render: 'button',
+  borderWidth: 0,
   role: 'button',
   alignItems: 'center',
   justifyContent: 'center',

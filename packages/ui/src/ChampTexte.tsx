@@ -1,6 +1,6 @@
-import { Input, type InputProps, type InputRef } from '@tamagui/input';
+import { Input, type InputProps, type InputRef, TextArea } from '@tamagui/input';
 import { type Ref, useState } from 'react';
-import { XStack, YStack } from 'tamagui';
+import { isWeb, XStack, YStack } from 'tamagui';
 import { Icone } from './Icone';
 import type { NomIcone } from './icones.generated';
 import { Texte } from './Texte';
@@ -46,6 +46,8 @@ export function ChampTexte({
   const [focus, setFocus] = useState(false);
   const [visible, setVisible] = useState(false);
   const masque = motDePasse && !visible;
+  // The web Input is always a one-line input element, so a message field needs the textarea.
+  const Champ = multiligne && isWeb ? TextArea : Input;
   return (
     <YStack gap={6}>
       <Texte fontSize="3" fontWeight="500" color="color-muted">
@@ -75,7 +77,7 @@ export function ChampTexte({
             {prefixe}
           </Texte>
         ) : null}
-        <Input
+        <Champ
           ref={ref}
           flex={1}
           minWidth={0}
@@ -87,6 +89,8 @@ export function ChampTexte({
           padding={0}
           borderWidth={0}
           outlineWidth={0}
+          outlineStyle={isWeb ? 'none' : undefined}
+          resize={isWeb ? 'none' : undefined}
           backgroundColor="transparent"
           fontFamily="body"
           fontSize="5"

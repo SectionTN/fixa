@@ -1,4 +1,4 @@
-import { XStack } from 'tamagui';
+import { isWeb, XStack } from 'tamagui';
 import { Icone } from './Icone';
 import type { NomIcone } from './icones.generated';
 import { Texte } from './Texte';
@@ -30,9 +30,12 @@ export function Puce({ libelle, etat = 'repos', icone, deroulant, onPress }: Puc
   const couleur = TEXTE[etat];
   return (
     <XStack
+      render="button"
       role="button"
       aria-label={libelle}
-      aria-selected={etat === 'choisi'}
+      // aria-pressed for a web button, aria-selected on native, which has no aria-pressed.
+      aria-pressed={isWeb ? etat === 'choisi' : undefined}
+      aria-selected={isWeb ? undefined : etat === 'choisi'}
       height={HAUTEUR}
       borderRadius="round"
       borderWidth={etat === 'primaire' ? 0 : 1}
