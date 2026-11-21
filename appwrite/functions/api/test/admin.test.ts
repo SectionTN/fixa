@@ -33,6 +33,22 @@ describe('deciderFournisseur', () => {
       code: 'INTROUVABLE',
     });
   });
+
+  it('ne decide qu un dossier en attente, une seconde decision ne change rien', async () => {
+    const db = base();
+    await deciderFournisseur(db, salma, 'u-walid', 'valider', undefined, maintenant);
+    const plusTard = new Date(maintenant.getTime() + 86_400_000);
+    for (const decision of ['valider', 'refuser'] as const) {
+      expect(
+        await deciderFournisseur(db, salma, 'u-walid', decision, 'Trop tard', plusTard),
+      ).toMatchObject({ ok: false, code: 'DOSSIER_TRAITE' });
+    }
+    expect(db.table('fournisseurs').get('u-walid')).toMatchObject({
+      statutVerification: 'VALIDE',
+      visible: true,
+      finEssai: '2027-01-23T09:00:00.000Z',
+    });
+  });
 });
 
 describe('choisirRole', () => {

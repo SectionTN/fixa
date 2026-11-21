@@ -16,6 +16,8 @@ export async function deciderFournisseur(
   if (acteur.role !== 'admin') return echec('NON_AUTORISE');
   const fournisseur = await db.getRow<Fournisseur>(TABLES.fournisseurs, fournisseurId);
   if (!fournisseur) return echec('INTROUVABLE');
+  // A second decision would restart the trial or hide a provider already validated.
+  if (fournisseur.statutVerification !== 'EN_ATTENTE') return echec('DOSSIER_TRAITE');
 
   if (decision === 'valider') {
     await db.updateRow<Fournisseur>(TABLES.fournisseurs, fournisseurId, {
