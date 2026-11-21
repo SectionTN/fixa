@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  blocDateLocal,
   dateLocale,
   heureLocale,
   jourCourtLocal,
@@ -28,5 +29,12 @@ describe('temps', () => {
   it('numbers weekdays from lundi = 1 in Tunis', () => {
     expect(jourSemaineLocal('2026-10-25T23:30:00.000Z')).toBe(1); // 00:30 lundi a Tunis
     expect(jourSemaineLocal('2026-10-25T12:00:00.000Z')).toBe(7);
+  });
+});
+
+describe('blocDateLocal', () => {
+  it('gives the Tunis weekday in capitals and the day of the month', () => {
+    expect(blocDateLocal('2026-10-25T23:30:00.000Z')).toEqual({ jour: 'LUN', numero: '26' });
+    expect(blocDateLocal('2026-11-07T10:00:00.000Z')).toEqual({ jour: 'SAM', numero: '7' });
   });
 });

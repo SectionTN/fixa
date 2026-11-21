@@ -265,6 +265,61 @@ export function listerRendezVousFournisseur(
   ]);
 }
 
+export function listerRendezVousClient(
+  db: TablesLike,
+  Q: RequeteLike,
+  clientId: string,
+): Promise<RendezVousLu[]> {
+  return lignes(db, TABLES.rendezVous, [
+    Q.equal('clientId', clientId),
+    Q.orderDesc('debut'),
+    Q.limit(LIMITE_LISTE),
+  ]);
+}
+
+export type LieuPro = Pick<Fournisseur, 'ville' | 'categorieId'>;
+
+export type MesRendezVous = {
+  liste: RendezVousLu[];
+  /** The rating given, by appointment id, for the reviewed ones. */
+  notes: Record<string, number>;
+  pros: Record<string, LieuPro>;
+};
+
+// A client's appointments, with the stars of their reviews and each provider's city and category.
+export async function lireMesRendezVous(
+  db: TablesLike,
+  Q: RequeteLike,
+  clientId: string,
+): Promise<MesRendezVous> {
+  const liste = await listerRendezVousClient(db, Q, clientId);
+  const notes = liste.filter((r) => r.aAvis).map((r) => r.$id);
+  const proIds = [...new Set(liste.map((r) => r.fournisseurId))];
+  const [avis, pros] = await Promise.all([
+    notes.length === 0
+      ? []
+      : lignes<Pick<Avis, 'rendezVousId' | 'note'>>(db, TABLES.avis, [
+          Q.equal('rendezVousId', notes),
+          Q.select(['rendezVousId', 'note']),
+          Q.limit(notes.length),
+        ]),
+    proIds.length === 0
+      ? []
+      : lignes<LieuPro & { $id: string }>(db, TABLES.fournisseurs, [
+          Q.equal('$id', proIds),
+          Q.select(['$id', 'ville', 'categorieId']),
+          Q.limit(proIds.length),
+        ]),
+  ]);
+  return {
+    liste,
+    notes: Object.fromEntries(avis.map((a) => [a.rendezVousId, a.note])),
+    pros: Object.fromEntries(
+      pros.map((p) => [p.$id, { ville: p.ville, categorieId: p.categorieId }]),
+    ),
+  };
+}
+
 export function getRendezVous(db: LecteurTables, id: string): Promise<RendezVousLu | null> {
   return ligneOuNull(db, TABLES.rendezVous, id);
 }

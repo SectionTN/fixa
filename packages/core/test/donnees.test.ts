@@ -7,8 +7,10 @@ import {
   getProfil,
   getRendezVous,
   type LecteurTables,
+  lireMesRendezVous,
   listerAvis,
   listerCategories,
+  listerRendezVousClient,
   listerRendezVousFournisseur,
   listerServices,
   type RequeteLike,
@@ -203,6 +205,8 @@ describe('lectures de la recherche', () => {
   });
 });
 
+const ids = (liste: { $id: string }[]) => liste.map((r) => r.$id);
+
 describe('lectures des rendez-vous', () => {
   it("lit les rendez-vous d'un pro, les plus recents d'abord, avec une limite", async () => {
     const { db, appels } = lecteur({
@@ -212,6 +216,47 @@ describe('lectures des rendez-vous', () => {
     expect(liste).toHaveLength(1);
     expect(liste[0]).toHaveProperty('$createdAt');
     expect(appels[0]?.queries).toEqual(['equal fournisseurId "karim"', 'desc debut', 'limit 100']);
+  });
+
+  it("lit les rendez-vous d'un client, les plus recents d'abord, avec une limite", async () => {
+    const { db, appels } = lecteur({ rendez_vous: [{ clientId: 'yasmine' }] });
+    expect(await listerRendezVousClient(db, Q, 'yasmine')).toHaveLength(1);
+    expect(appels[0]?.queries).toEqual(['equal clientId "yasmine"', 'desc debut', 'limit 100']);
+  });
+
+  it('lit les notes des seuls rendez-vous notes et le lieu de chaque pro une fois', async () => {
+    const { db, appels } = lecteur({
+      rendez_vous: [
+        { $id: 'r1', fournisseurId: 'karim', aAvis: true },
+        { $id: 'r2', fournisseurId: 'karim', aAvis: false },
+        { $id: 'r3', fournisseurId: 'leila', aAvis: true },
+      ],
+      avis: [
+        { rendezVousId: 'r1', note: 5 },
+        { rendezVousId: 'r3', note: 4 },
+      ],
+      fournisseurs: [
+        { $id: 'karim', ville: 'La Marsa', categorieId: 'plomberie' },
+        { $id: 'leila', ville: 'Ennasr', categorieId: 'beaute' },
+      ],
+    });
+    const lu = await lireMesRendezVous(db, Q, 'yasmine');
+    expect(ids(lu.liste)).toEqual(['r1', 'r2', 'r3']);
+    expect(lu.notes).toEqual({ r1: 5, r3: 4 });
+    expect(lu.pros).toEqual({
+      karim: { ville: 'La Marsa', categorieId: 'plomberie' },
+      leila: { ville: 'Ennasr', categorieId: 'beaute' },
+    });
+    expect(appels.slice(1).map((a) => [a.tableId, a.queries])).toEqual([
+      ['avis', ['equal rendezVousId ["r1","r3"]', 'select rendezVousId,note', 'limit 2']],
+      ['fournisseurs', ['equal $id ["karim","leila"]', 'select $id,ville,categorieId', 'limit 2']],
+    ]);
+  });
+
+  it("ne lit ni avis ni pros quand le client n'a aucun rendez-vous", async () => {
+    const { db, appels } = lecteur({});
+    expect(await lireMesRendezVous(db, Q, 'yasmine')).toEqual({ liste: [], notes: {}, pros: {} });
+    expect(appels).toHaveLength(1);
   });
 
   it('rend null pour un rendez-vous absent', async () => {

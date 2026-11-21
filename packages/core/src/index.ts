@@ -13,6 +13,7 @@ export * from './formulaires';
 export { fr } from './i18n/fr';
 export * from './ids';
 export * from './limites';
+export * from './mesRendezVous';
 export * from './recherche';
 export * from './reservation';
 export * from './temps';

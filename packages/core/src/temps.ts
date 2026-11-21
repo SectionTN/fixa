@@ -33,6 +33,13 @@ export function jourCourtLocal(iso: string): string {
   return `${fr.temps.joursCourts[d.getUTCDay()]} ${d.getUTCDate()} ${fr.temps.moisCourts[d.getUTCMonth()]}`;
 }
 
+// The date block of an appointment card, such as LUN over 26.
+export function blocDateLocal(iso: string): { jour: string; numero: string } {
+  const d = murTunis(iso);
+  const jour = fr.temps.joursCourts[d.getUTCDay()] ?? '';
+  return { jour: jour.replace('.', '').toUpperCase(), numero: String(d.getUTCDate()) };
+}
+
 export function jourSemaineLocal(iso: string): JourSemaine {
   const jour = murTunis(iso).getUTCDay();
   return (jour === 0 ? 7 : jour) as JourSemaine;
