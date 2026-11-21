@@ -341,6 +341,22 @@
       "path": "functions/api",
       "ignore": ["node_modules", "src", "test", "tsconfig.json", "vitest.config.ts"],
       "scopes": ["rows.read", "rows.write", "users.read", "users.write"]
+    },
+    {
+      "$id": "worker",
+      "name": "worker",
+      "runtime": "node-22",
+      "execute": [],
+      "events": [],
+      "schedule": "*/5 * * * *",
+      "timeout": 30,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "dist/main.js",
+      "commands": "",
+      "path": "functions/worker",
+      "ignore": ["node_modules", "src", "test", "tsconfig.json", "vitest.config.ts"],
+      "scopes": ["rows.read", "rows.write"]
     }
   ]
 }
