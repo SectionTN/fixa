@@ -66,6 +66,7 @@ const NOMS = [
   'inbox',
   'timer',
   'notes',
+  'event_busy',
 ] as const;
 
 const racine = dirname(

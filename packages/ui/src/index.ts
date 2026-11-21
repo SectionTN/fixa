@@ -3,6 +3,11 @@ export { BadgeStatut, type StatutBadge } from './BadgeStatut';
 export { Bouton, type BoutonProps, type TailleBouton, type VarianteBouton } from './Bouton';
 export { CarteDemande, type CarteDemandeProps } from './CarteDemande';
 export { CarteFournisseur, type CarteFournisseurProps } from './CarteFournisseur';
+export {
+  type ActionCarteRendezVous,
+  CarteRendezVous,
+  type CarteRendezVousProps,
+} from './CarteRendezVous';
 export { CarteStat, type CarteStatProps } from './CarteStat';
 export { ChampRecherche, type ChampRechercheProps } from './ChampRecherche';
 export { ChampTexte, type ChampTexteProps } from './ChampTexte';
@@ -16,6 +21,7 @@ export { Icone, type IconeProps } from './Icone';
 export { ICONES, type NomIcone } from './icones.generated';
 export { type EtatPuce, Puce, type PuceProps } from './Puce';
 export { type EtatCreneau, PuceCreneau, type PuceCreneauProps } from './PuceCreneau';
+export { Segments, type SegmentsProps } from './Segments';
 export { Texte, type TexteProps } from './Texte';
 export { TuileCategorie, type TuileCategorieProps } from './TuileCategorie';
 export { config } from './tamagui.config';
