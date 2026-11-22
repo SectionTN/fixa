@@ -10,6 +10,7 @@ import {
   infoRendezVous,
   type MesRendezVous,
   type RendezVousLu,
+  statutAffiche,
 } from '@fixa/core';
 import {
   type ActionCarteRendezVous,
@@ -144,6 +145,7 @@ function Liste({ uid }: { uid: string }) {
                   </Texte>
                   {s.rendezVous.map((rdv) => {
                     const passe = !estAVenir(rdv, d.maintenant);
+                    const statut = statutAffiche(rdv, d.maintenant);
                     const lieu = rdv.adresse?.trim() || d.pros[rdv.fournisseurId]?.ville;
                     const note = rdv.aAvis ? d.notes[rdv.$id] : undefined;
                     const date = blocDateLocal(rdv.debut);
@@ -162,8 +164,8 @@ function Liste({ uid }: { uid: string }) {
                         horaire={
                           lieu ? `${heureLocale(rdv.debut)} · ${lieu}` : heureLocale(rdv.debut)
                         }
-                        badge={<BadgeStatut statut={rdv.statut} libelle={fr.statuts[rdv.statut]} />}
-                        info={infoRendezVous(rdv)}
+                        badge={<BadgeStatut statut={statut} libelle={fr.statuts[statut]} />}
+                        info={infoRendezVous(rdv, d.maintenant)}
                         avis={
                           note === undefined
                             ? null
