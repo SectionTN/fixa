@@ -12,10 +12,12 @@ import {
 import { Bouton, ChampTexte, ChoixNote, Icone, Puce, Texte } from '@fixa/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
+import { Keyboard } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XStack, YStack } from 'tamagui';
 import { BoutonRetour, CadreLateral, useHaut } from '../../../composants/Ecran';
+import { decalageChamp, PiedClavier } from '../../../composants/PiedClavier';
 import { tables } from '../../../lib/appwrite';
 import { couleurDe, lireCategories, useLecture } from '../../../lib/donnees';
 import { laisserAvis } from '../../../lib/mesRendezVous';
@@ -33,6 +35,7 @@ function Avis() {
   const [commentaire, setCommentaire] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [envoi, setEnvoi] = useState(false);
+  const [hauteurPied, setHauteurPied] = useState(0);
   const verrou = useRef(false);
 
   const lecture = useLecture(`avis:${id}`, async () => {
@@ -56,6 +59,8 @@ function Avis() {
 
   const publier = async () => {
     if (!rdv || note === 0 || verrou.current) return;
+    // The footer rides on the keyboard, so a failure line under the field would stay behind it.
+    Keyboard.dismiss();
     verrou.current = true;
     setEnvoi(true);
     setMessage(null);
@@ -89,8 +94,9 @@ function Avis() {
 
       <KeyboardAwareScrollView
         style={{ flex: 1 }}
-        bottomOffset={24}
+        bottomOffset={decalageChamp(hauteurPied, bottom, true)}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 20,
@@ -187,20 +193,13 @@ function Avis() {
         ) : null}
       </KeyboardAwareScrollView>
 
-      <XStack
-        paddingTop={14}
-        paddingHorizontal="5"
-        paddingBottom={Math.max(bottom, 16) + 8}
-        borderTopWidth={1}
-        borderColor="border-color"
-        backgroundColor="surface"
-      >
+      <PiedClavier bas={bottom} onHauteur={setHauteurPied} paddingTop={14}>
         <YStack flex={1}>
           <Bouton taille="lg" desactive={note === 0 || envoi || !possible} onPress={publier}>
             {t.publier}
           </Bouton>
         </YStack>
-      </XStack>
+      </PiedClavier>
     </YStack>
   );
 }

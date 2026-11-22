@@ -37,12 +37,13 @@ import {
 } from '@fixa/ui';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { BackHandler, useWindowDimensions } from 'react-native';
+import { BackHandler, Keyboard, useWindowDimensions } from 'react-native';
 import { Query } from 'react-native-appwrite';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XStack, YStack } from 'tamagui';
 import { BoutonRetour, CadreLateral, useHaut } from '../../composants/Ecran';
+import { decalageChamp, PiedClavier } from '../../composants/PiedClavier';
 import { ErreurChargement } from '../../composants/Section';
 import { api } from '../../lib/api';
 import { tables } from '../../lib/appwrite';
@@ -250,6 +251,7 @@ function Reserver() {
   const [message, setMessage] = useState<string | null>(null);
   const [envoi, setEnvoi] = useState(false);
   const [envoye, setEnvoye] = useState<{ debut: string; service: Service } | null>(null);
+  const [hauteurPied, setHauteurPied] = useState(0);
   const verrou = useRef(false);
 
   const lecture = useLecture(`reserver:${fournisseurId}:${uid}`, async () => {
@@ -322,6 +324,8 @@ function Reserver() {
 
   const confirmer = async () => {
     if (!service || !choisi || sansAdresse || verrou.current) return;
+    // The footer rides on the keyboard, so a failure line at the top could stay out of view.
+    Keyboard.dismiss();
     verrou.current = true;
     setEnvoi(true);
     setMessage(null);
@@ -545,8 +549,9 @@ function Reserver() {
 
       <KeyboardAwareScrollView
         style={{ flex: 1 }}
-        bottomOffset={24}
+        bottomOffset={decalageChamp(hauteurPied, bottom, etape === 0)}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: MARGE, paddingTop: 20, paddingBottom: 24 }}
       >
@@ -768,18 +773,15 @@ function Reserver() {
         ) : null}
       </KeyboardAwareScrollView>
 
-      <XStack
+      <PiedClavier
+        bas={bottom}
+        onHauteur={setHauteurPied}
         paddingTop="4"
-        paddingHorizontal="5"
-        paddingBottom={Math.max(bottom, 16) + 8}
         gap="5"
         alignItems="center"
-        borderTopWidth={1}
-        borderColor="border-color"
-        backgroundColor="surface"
       >
         {pied}
-      </XStack>
+      </PiedClavier>
     </YStack>
   );
 }
