@@ -187,7 +187,6 @@ export const fr = {
       'Activité non autorisée',
       'Autre',
     ],
-    messagePrestataire: 'Message au prestataire (optionnel)',
     annuler: 'Annuler',
     refuserDossier: 'Refuser le dossier',
   },

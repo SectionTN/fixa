@@ -1,5 +1,5 @@
-import { fr, motifRefus } from '@fixa/core';
-import { Bouton, ChampTexte, Icone, Puce, Texte } from '@fixa/ui';
+import { fr } from '@fixa/core';
+import { Bouton, Icone, Puce, Texte } from '@fixa/ui';
 import {
   type MouseEvent,
   type PointerEvent,
@@ -11,9 +11,6 @@ import {
 import { XStack, YStack } from 'tamagui';
 
 const t = fr.admin;
-
-// Leaves room for the reason, the motif column holds 500 characters.
-const MESSAGE_MAX = 400;
 
 // The browser's modal dialog: the page behind is inert, Escape closes it and focus returns to the opener.
 const CADRE = {
@@ -28,7 +25,7 @@ const CADRE = {
   overflow: 'hidden',
 } as const;
 
-// Mounted while open, so each opening starts with no reason picked and an empty message.
+// Mounted while open, so each opening starts with no reason picked.
 export function DialogueRefus({
   nom,
   envoi,
@@ -46,7 +43,6 @@ export function DialogueRefus({
   const titreId = useId();
   const motifId = useId();
   const [raison, setRaison] = useState<string | null>(null);
-  const [mot, setMot] = useState('');
 
   // A layout cleanup closes the dialog while it is still in the page, so the browser returns focus to the opener.
   useLayoutEffect(() => {
@@ -146,14 +142,6 @@ export function DialogueRefus({
                 />
               ))}
             </XStack>
-            <ChampTexte
-              libelle={t.messagePrestataire}
-              valeur={mot}
-              onChange={setMot}
-              maxLength={MESSAGE_MAX}
-              aide={fr.reservation.compteur(mot.length, MESSAGE_MAX)}
-              multiligne
-            />
             {erreur ? (
               <XStack gap="2" alignItems="center" role="alert">
                 <Icone nom="error" taille={18} couleur="cancelled" />
@@ -177,7 +165,7 @@ export function DialogueRefus({
             <Bouton
               variante="destructif"
               desactive={!raison || envoi}
-              onPress={() => raison && onRefuser(motifRefus(raison, mot))}
+              onPress={() => raison && onRefuser(raison)}
             >
               {t.refuserDossier}
             </Bouton>
