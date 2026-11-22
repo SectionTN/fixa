@@ -1,5 +1,6 @@
-import type { RendezVous } from './domaine';
+import type { RendezVous, StatutRendezVous } from './domaine';
 import { fr } from './i18n/fr';
+import { delaiDepasse } from './reservation';
 import { dateLocale } from './temps';
 import { appliquerAction } from './transitions';
 
@@ -12,8 +13,14 @@ export type ActionClient = 'annuler' | 'avis' | 'reserverANouveau' | 'reserverAi
 
 const fin = (r: Pick<RendezVous, 'debut' | 'duree'>) => Date.parse(r.debut) + r.duree * MINUTE_MS;
 
+// A request past its response deadline reads as expired before the worker writes it.
+export function statutAffiche(r: RendezVous, maintenant: Date): StatutRendezVous {
+  return delaiDepasse(r, maintenant) ? 'EXPIRE' : r.statut;
+}
+
 export function estAVenir(r: RendezVous, maintenant: Date): boolean {
-  return (r.statut === 'EN_ATTENTE' || r.statut === 'CONFIRME') && fin(r) > maintenant.getTime();
+  const statut = statutAffiche(r, maintenant);
+  return (statut === 'EN_ATTENTE' || statut === 'CONFIRME') && fin(r) > maintenant.getTime();
 }
 
 // Month name in Tunis time, with the year only when it is not the current one.
@@ -68,7 +75,7 @@ export function actionsRendezVous(r: RendezVous, maintenant: Date): ActionClient
     );
     return annulation.ok ? ['annuler'] : [];
   }
-  switch (r.statut) {
+  switch (statutAffiche(r, maintenant)) {
     case 'TERMINE':
       return r.aAvis ? [] : ['avis', 'reserverANouveau'];
     case 'CONFIRME':
@@ -79,8 +86,8 @@ export function actionsRendezVous(r: RendezVous, maintenant: Date): ActionClient
 }
 
 // The line under a closed appointment: who cancelled and why, the refusal reason, or the missed deadline.
-export function infoRendezVous(r: RendezVous): string | null {
-  switch (r.statut) {
+export function infoRendezVous(r: RendezVous, maintenant: Date): string | null {
+  switch (statutAffiche(r, maintenant)) {
     case 'ANNULE': {
       const qui =
         r.annulePar === 'client'

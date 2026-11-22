@@ -5,6 +5,7 @@ import {
   actionsRendezVous,
   classerMesRendezVous,
   infoRendezVous,
+  statutAffiche,
 } from '../src/mesRendezVous';
 
 // Samedi 21 novembre 2026, 10:00 a Tunis.
@@ -144,6 +145,7 @@ describe('infoRendezVous', () => {
     expect(
       infoRendezVous(
         rdv('a', { statut: 'ANNULE', annulePar: 'fournisseur', motif: 'Pièce indisponible' }),
+        maintenant,
       ),
     ).toBe('Annulé par Garage Mansour · Pièce indisponible');
     expect(
@@ -154,22 +156,50 @@ describe('infoRendezVous', () => {
           motif: 'Un imprévu',
           annulationTardive: true,
         }),
+        maintenant,
       ),
     ).toBe('Annulé par vous · Un imprévu · moins de 2 h avant');
-    expect(infoRendezVous(rdv('c', { statut: 'ANNULE', annulePar: 'systeme' }))).toBe(
+    expect(infoRendezVous(rdv('c', { statut: 'ANNULE', annulePar: 'systeme' }), maintenant)).toBe(
       'Annulé automatiquement',
     );
   });
 
   it('donne le motif d un refus et explique une expiration', () => {
     expect(
-      infoRendezVous(rdv('r', { statut: 'REFUSE', motif: 'Pas disponible à cette heure' })),
+      infoRendezVous(
+        rdv('r', { statut: 'REFUSE', motif: 'Pas disponible à cette heure' }),
+        maintenant,
+      ),
     ).toBe('Motif : Pas disponible à cette heure');
-    expect(infoRendezVous(rdv('r2', { statut: 'REFUSE' }))).toBeNull();
-    expect(infoRendezVous(rdv('e', { statut: 'EXPIRE' }))).toBe(
+    expect(infoRendezVous(rdv('r2', { statut: 'REFUSE' }), maintenant)).toBeNull();
+    expect(infoRendezVous(rdv('e', { statut: 'EXPIRE' }), maintenant)).toBe(
       'Sans réponse avant la date limite',
     );
-    expect(infoRendezVous(rdv('t', { statut: 'TERMINE' }))).toBeNull();
+    expect(infoRendezVous(rdv('t', { statut: 'TERMINE' }), maintenant)).toBeNull();
+  });
+});
+
+describe('une demande sans reponse apres sa date limite', () => {
+  const morte = rdv('morte', {
+    statut: 'EN_ATTENTE',
+    debut: jours(1),
+    dateLimiteReponse: new Date(maintenant.getTime() - 60_000).toISOString(),
+  });
+
+  it('se lit expiree avant le passage du worker, et reste en attente avant la date limite', () => {
+    expect(statutAffiche(morte, maintenant)).toBe('EXPIRE');
+    expect(statutAffiche({ ...morte, dateLimiteReponse: jours(1, '05:00') }, maintenant)).toBe(
+      'EN_ATTENTE',
+    );
+    expect(statutAffiche(rdv('c', { statut: 'CONFIRME' }), maintenant)).toBe('CONFIRME');
+  });
+
+  it('passe dans les rendez-vous passes, sans Annuler, avec la raison', () => {
+    const { aVenir, passes } = classerMesRendezVous([morte], maintenant);
+    expect(aVenir).toEqual([]);
+    expect(ids(passes.flatMap((s) => s.rendezVous))).toEqual(['morte']);
+    expect(actionsRendezVous(morte, maintenant)).toEqual(['reserverAilleurs']);
+    expect(infoRendezVous(morte, maintenant)).toBe('Sans réponse avant la date limite');
   });
 });
 
