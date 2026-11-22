@@ -16,18 +16,23 @@ export function useMesRendezVous(
   uid: string | null,
 ): Lecture<MesRendezVous & { maintenant: Date }> {
   const v = useVersion();
-  return useLecture(`mes-rdv:${uid}:${v}`, async () => ({
-    ...(uid ? await lireMesRendezVous(tables, Query, uid) : { liste: [], notes: {}, pros: {} }),
-    maintenant: new Date(),
-  }));
+  return useLecture(
+    `mes-rdv:${uid}`,
+    async () => ({
+      ...(uid ? await lireMesRendezVous(tables, Query, uid) : { liste: [], notes: {}, pros: {} }),
+      maintenant: new Date(),
+    }),
+    v,
+  );
 }
 
 export function useRendezVous(id: string): Lecture<{ rdv: RendezVousLu | null; maintenant: Date }> {
   const v = useVersion();
-  return useLecture(`rdv:${id}:${v}`, async () => ({
-    rdv: await getRendezVous(tables, id),
-    maintenant: new Date(),
-  }));
+  return useLecture(
+    `rdv:${id}`,
+    async () => ({ rdv: await getRendezVous(tables, id), maintenant: new Date() }),
+    v,
+  );
 }
 
 // Publishes the review through the function, which marks the booking reviewed and counts the rating once.

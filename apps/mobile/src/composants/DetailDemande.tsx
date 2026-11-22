@@ -93,10 +93,11 @@ export function DetailDemande({ id, refuser = false, onRetour }: DetailDemandePr
   const [envoi, setEnvoi] = useState(false);
   const verrou = useRef(false);
 
-  const lecture = useLecture(`demande:${id}:${version}`, async () => ({
-    rdv: await getRendezVous(tables, id),
-    maintenant: new Date(),
-  }));
+  const lecture = useLecture(
+    `demande:${id}`,
+    async () => ({ rdv: await getRendezVous(tables, id), maintenant: new Date() }),
+    version,
+  );
   const d = lecture.donnees;
   const rdv = d?.rdv ?? null;
 

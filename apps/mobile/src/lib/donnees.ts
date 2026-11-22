@@ -32,8 +32,8 @@ type EtatLecture<T> = Omit<Lecture<T>, 'recharger'> & {
   cleDonnees: string | null;
 };
 
-// Reads again when the key changes. A failed retry keeps what was shown, a failed new key drops it.
-export function useLecture<T>(cle: string, lire: () => Promise<T>): Lecture<T> {
+// Reads again when the key or the version changes. A failed refresh keeps what was shown, a failed new key drops it.
+export function useLecture<T>(cle: string, lire: () => Promise<T>, version = 0): Lecture<T> {
   const lecteur = useRef(lire);
   lecteur.current = lire;
   const [essai, setEssai] = useState(0);
@@ -64,7 +64,7 @@ export function useLecture<T>(cle: string, lire: () => Promise<T>): Lecture<T> {
     return () => {
       actif = false;
     };
-  }, [cle, essai]);
+  }, [cle, essai, version]);
   const recharger = useCallback(() => setEssai((n) => n + 1), []);
   // Before the effect runs for a new key, the state still describes the previous one.
   const aJour = etat.cle === cle;

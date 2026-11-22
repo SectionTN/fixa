@@ -40,7 +40,7 @@ export default function Accueil() {
   const uid = utilisateur?.id ?? '';
   const demandes = useDemandes();
   const version = useVersion();
-  const fiche = useLecture(`fiche:${uid}:${version}`, () => getFournisseur(tables, uid));
+  const fiche = useLecture(`fiche:${uid}`, () => getFournisseur(tables, uid), version);
   const [message, setMessage] = useState<string | null>(null);
   const verrou = useRef(false);
 

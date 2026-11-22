@@ -35,10 +35,14 @@ export type Demandes = { liste: RendezVousLu[]; maintenant: Date };
 
 export function useLireDemandes(uid: string | null): Lecture<Demandes> {
   const v = useVersion();
-  return useLecture(`demandes:${uid}:${v}`, async () => ({
-    liste: uid ? await listerRendezVousFournisseur(tables, Query, uid) : [],
-    maintenant: new Date(),
-  }));
+  return useLecture(
+    `demandes:${uid}`,
+    async () => ({
+      liste: uid ? await listerRendezVousFournisseur(tables, Query, uid) : [],
+      maintenant: new Date(),
+    }),
+    v,
+  );
 }
 
 // Read once by the provider tabs, so the Demandes badge and the list never disagree.
