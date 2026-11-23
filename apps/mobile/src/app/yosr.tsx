@@ -1,15 +1,34 @@
 import {
+  adresseManquante,
+  ajouterJours,
   analyserMessage,
   type Categorie,
+  type CreneauxFournisseur,
+  dateLocale,
+  donneesCreneaux,
   type FournisseurAffiche,
+  formatDuree,
+  formatPrixService,
+  getProfil,
+  heureLocale,
+  JOURS_RECHERCHE,
+  jourCourtLocal,
+  jourLocal,
+  LONGUEUR_MAX,
+  listerServices,
+  normaliserMessage,
+  prochainsCreneaux,
+  type Service,
   textes,
   trierFournisseurs,
+  versUtc,
   villeCitee,
 } from '@fixa/core';
-import { Icone, Puce, Texte } from '@fixa/ui';
+import { Bouton, Icone, type NomIcone, Puce, Texte } from '@fixa/ui';
 import { useRouter } from 'expo-router';
 import { type ComponentRef, useEffect, useRef, useState } from 'react';
 import { I18nManager, Platform, ScrollView, TextInput } from 'react-native';
+import { Query } from 'react-native-appwrite';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,6 +38,8 @@ import { BoutonRetour } from '../composants/Ecran';
 import { Appui, entreeDouce, PointsEcriture } from '../composants/Mouvement';
 import { useCouleur } from '../composants/Onglet';
 import { VisageYosr } from '../composants/VisageYosr';
+import { api } from '../lib/api';
+import { tables } from '../lib/appwrite';
 import {
   chargerFournisseurs,
   couleurDe,
@@ -26,6 +47,7 @@ import {
   lireProfil,
   positionDe,
 } from '../lib/donnees';
+import { ecouterRendezVous } from '../lib/enDirect';
 import { useSession } from '../lib/session';
 import { vibrer } from '../lib/vibrer';
 
@@ -34,8 +56,21 @@ const PAUSE = 650;
 
 type Choix = {
   libelle: string;
-  action: 'urgence' | 'trouver' | 'rdv' | 'categorie' | 'tous';
+  action:
+    | 'urgence'
+    | 'trouver'
+    | 'rdv'
+    | 'categorie'
+    | 'tous'
+    | 'reserver'
+    | 'service'
+    | 'creneau'
+    | 'autres'
+    | 'connexion'
+    | 'ouvrirReservation';
   id?: string;
+  /** The pro's name, for a booking chip. */
+  nom?: string;
 };
 type Message =
   | { id: number; de: 'yosr'; texte: string; choix?: Choix[] }
@@ -47,7 +82,36 @@ type Message =
       pros: FournisseurAffiche[];
       categories: Categorie[];
       maintenant: Date;
-    };
+    }
+  | { id: number; de: 'recap'; proNom: string; service: Service; debut: string; adresse: string };
+
+// A booking Yosr is putting together, from the pro's chip to the summary card.
+type Reservation = {
+  proId: string;
+  proNom: string;
+  services: Service[];
+  creneaux: CreneauxFournisseur;
+  adresse: string;
+  service: Service | null;
+};
+
+const AUCUN_CRENEAU: CreneauxFournisseur = { disponibilites: [], conges: [], occupees: [] };
+
+// The booking window the booking screen reads: from now to the end of the seventh day.
+function fenetre() {
+  const depuis = new Date().toISOString();
+  return { depuis, jusqua: versUtc(ajouterJours(dateLocale(depuis), JOURS_RECHERCHE), '00:00') };
+}
+
+// The pro's services, the one the conversation talks about first ("fuite" puts the leak repair on top).
+function parPertinence(services: Service[], dits: string[]): Service[] {
+  const fil = normaliserMessage(dits.join(' '));
+  const score = (s: Service) =>
+    normaliserMessage(s.titre)
+      .split(' ')
+      .filter((mot) => mot.length >= 4 && fil.includes(mot.slice(0, 5))).length;
+  return [...services].sort((a, b) => score(b) - score(a));
+}
 type Nouveau = Message extends infer M ? (M extends Message ? Omit<M, 'id'> : never) : never;
 
 const attendre = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -66,6 +130,79 @@ function Avatar({ taille }: { taille: number }) {
   return <VisageYosr taille={taille} fond="yosr-face" encre="yosr-ink" />;
 }
 
+function LigneRecap({ icone, texte }: { icone: NomIcone; texte: string }) {
+  return (
+    <XStack gap="3" alignItems="center">
+      <XStack
+        width={32}
+        height={32}
+        borderRadius={10}
+        backgroundColor="background-soft"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Icone nom={icone} taille={18} couleur="color-muted" />
+      </XStack>
+      <Texte flex={1} fontSize="4">
+        {texte}
+      </Texte>
+    </XStack>
+  );
+}
+
+// The booking summary in the chat, with Modifier and Confirmer while it is the last message.
+function Recap({
+  m,
+  actif,
+  onModifier,
+  onConfirmer,
+}: {
+  m: Extract<Message, { de: 'recap' }>;
+  actif: boolean;
+  onModifier: () => void;
+  onConfirmer: () => void;
+}) {
+  return (
+    <YStack
+      marginStart={36}
+      backgroundColor="surface"
+      borderWidth={1}
+      borderColor="border-color"
+      borderRadius={22}
+      padding="4"
+      gap="3"
+    >
+      <Texte fontSize="5" fontWeight="600">
+        {t.recap}
+      </Texte>
+      <LigneRecap icone="person" texte={m.proNom} />
+      <LigneRecap icone="handyman" texte={`${m.service.titre} · ${formatDuree(m.service.duree)}`} />
+      <LigneRecap
+        icone="calendar_month"
+        texte={t.creneau(jourLocal(m.debut), heureLocale(m.debut))}
+      />
+      {m.service.aDomicile && m.adresse ? (
+        <LigneRecap icone="location_on" texte={m.adresse} />
+      ) : null}
+      <LigneRecap icone="payments" texte={formatPrixService(m.service)} />
+      {actif ? (
+        <XStack gap="2" marginTop="1">
+          <YStack flex={1}>
+            <Bouton taille="sm" variante="outline" onPress={onModifier}>
+              {t.modifier}
+            </Bouton>
+          </YStack>
+          <YStack flex={1}>
+            <Bouton taille="sm" onPress={onConfirmer}>
+              {t.confirmer}
+            </Bouton>
+          </YStack>
+        </XStack>
+      ) : null}
+    </YStack>
+  );
+}
+
 // Yosr in guided mode: reads the need in French, Derja, Arabic or English and shows matching pros.
 export default function Yosr() {
   const router = useRouter();
@@ -78,6 +215,10 @@ export default function Yosr() {
   const urgence = useRef(false);
   const moinsChers = useRef(false);
   const dits = useRef<string[]>([]);
+  const resa = useRef<Reservation | null>(null);
+  const categorieFil = useRef<string | null>(null);
+  // The request Yosr sent, so its answer can land in the chat.
+  const attendu = useRef<{ id: string; nom: string } | null>(null);
   const occupe = useRef(false);
   const compteur = useRef(0);
   const liste = useRef<ComponentRef<typeof ScrollView>>(null);
@@ -114,6 +255,7 @@ export default function Yosr() {
   };
 
   const chercher = async (categorieId: string) => {
+    categorieFil.current = categorieId;
     const categories = await lireCategories().catch(() => [] as Categorie[]);
     const metier =
       textes.recherche.metiers[categorieId] ??
@@ -161,12 +303,174 @@ export default function Yosr() {
         {
           de: 'yosr',
           texte: '',
-          choix: [{ libelle: t.voirTous, action: 'tous', id: categorieId }],
+          choix: [
+            ...pros.slice(0, 1).map(
+              (p): Choix => ({
+                libelle: t.reserverAvec(p.nom),
+                action: 'reserver',
+                id: p.$id,
+                nom: p.nom,
+              }),
+            ),
+            { libelle: t.voirTous, action: 'tous', id: categorieId },
+          ],
         },
       ]);
     } catch {
       await repondre([{ de: 'yosr', texte: t.erreur }]);
     }
+  };
+
+  // The next free starts for the chosen service, as chips.
+  const proposerCreneaux = async (intro?: string) => {
+    const r = resa.current;
+    if (!r?.service) return;
+    const debuts = prochainsCreneaux({
+      dureeMin: r.service.duree,
+      creneaux: r.creneaux,
+      maintenant: new Date(),
+      nombre: 4,
+      parJour: 2,
+    });
+    if (debuts.length === 0) {
+      await repondre([
+        {
+          de: 'yosr',
+          texte: t.aucunCreneau(r.proNom),
+          choix: [{ libelle: t.autresPros, action: 'autres' }],
+        },
+      ]);
+      return;
+    }
+    await repondre([
+      {
+        de: 'yosr',
+        texte: intro ?? t.quelCreneau,
+        choix: debuts.map((d) => ({
+          libelle: t.creneau(jourCourtLocal(d), heureLocale(d)),
+          action: 'creneau',
+          id: d,
+        })),
+      },
+    ]);
+  };
+
+  // Reads the pro's services, free slots and the client's address, then asks for the service.
+  const commencerReservation = async (proId: string, proNom: string) => {
+    if (!utilisateur) {
+      await repondre([
+        {
+          de: 'yosr',
+          texte: t.connexion,
+          choix: [{ libelle: t.seConnecter, action: 'connexion' }],
+        },
+      ]);
+      return;
+    }
+    try {
+      const { depuis, jusqua } = fenetre();
+      const [services, creneaux, moi] = await Promise.all([
+        listerServices(tables, Query, [proId]),
+        donneesCreneaux(tables, Query, [proId], depuis, jusqua),
+        getProfil(tables, utilisateur.id),
+      ]);
+      const reservables = parPertinence(
+        services.filter((s) => s.typePrix !== 'SUR_DEVIS'),
+        dits.current,
+      );
+      resa.current = {
+        proId,
+        proNom,
+        services: reservables,
+        creneaux: creneaux[proId] ?? AUCUN_CRENEAU,
+        adresse: moi?.adresse ?? '',
+        service: reservables.length === 1 ? (reservables[0] ?? null) : null,
+      };
+      if (reservables.length === 0) {
+        await repondre([
+          {
+            de: 'yosr',
+            texte: t.aucunCreneau(proNom),
+            choix: [{ libelle: t.autresPros, action: 'autres' }],
+          },
+        ]);
+        return;
+      }
+      if (resa.current.service) {
+        await proposerCreneaux();
+        return;
+      }
+      await repondre([
+        {
+          de: 'yosr',
+          texte: t.quelService,
+          choix: reservables
+            .slice(0, 4)
+            .map((s) => ({ libelle: s.titre, action: 'service', id: s.$id })),
+        },
+      ]);
+    } catch {
+      await repondre([{ de: 'yosr', texte: t.erreur }]);
+    }
+  };
+
+  // The summary card, unless an at-home service still needs an address.
+  const recapituler = async (debut: string) => {
+    const r = resa.current;
+    if (!r?.service) return;
+    if (adresseManquante(r.service, r.adresse)) {
+      await repondre([
+        {
+          de: 'yosr',
+          texte: t.sansAdresse,
+          choix: [{ libelle: t.ouvrirReservation, action: 'ouvrirReservation', id: r.proId }],
+        },
+      ]);
+      return;
+    }
+    await repondre([
+      { de: 'recap', proNom: r.proNom, service: r.service, debut, adresse: r.adresse },
+    ]);
+  };
+
+  // Sends the request as the booking screen does, then waits for the pro's answer in the chat.
+  const confirmer = async (m: Extract<Message, { de: 'recap' }>) => {
+    const r = resa.current;
+    if (!r) return;
+    vibrer.selection();
+    setEcrit(true);
+    const reponse = await api<{ rendezVousId: string }>('/rendez-vous', {
+      fournisseurId: r.proId,
+      serviceId: m.service.$id,
+      debut: m.debut,
+      adresse: m.service.aDomicile ? m.adresse.trim() : '',
+      // What the client wrote about the need, without the greetings and thanks.
+      description: dits.current
+        .filter((d) => analyserMessage(d).intention === null)
+        .join(' · ')
+        .slice(0, LONGUEUR_MAX.description),
+    });
+    setEcrit(false);
+    if (reponse.ok) {
+      vibrer.succes();
+      attendu.current = { id: reponse.data.rendezVousId, nom: r.proNom };
+      ajouter({
+        de: 'yosr',
+        texte: t.envoye(r.proNom),
+        choix: [{ libelle: t.choixRdv, action: 'rdv' }],
+      });
+      return;
+    }
+    if (reponse.code === 'CRENEAU_PRIS') {
+      const { depuis, jusqua } = fenetre();
+      const creneaux = await donneesCreneaux(tables, Query, [r.proId], depuis, jusqua).catch(
+        () => null,
+      );
+      if (creneaux) r.creneaux = creneaux[r.proId] ?? AUCUN_CRENEAU;
+      await proposerCreneaux(t.creneauPris);
+      return;
+    }
+    ajouter({ de: 'yosr', texte: reponse.message });
   };
 
   // One exchange at a time, so a second message waits for Yosr's whole answer.
@@ -224,12 +528,31 @@ export default function Yosr() {
       router.push({ pathname: '/categorie/[id]', params: { id: c.id } });
       return;
     }
+    if (c.action === 'connexion') {
+      router.back();
+      router.push('/connexion');
+      return;
+    }
+    if (c.action === 'ouvrirReservation' && c.id) {
+      router.back();
+      router.push({ pathname: '/reserver/[fournisseurId]', params: { fournisseurId: c.id } });
+      return;
+    }
     ajouter({ de: 'moi', texte: c.libelle });
     if (c.action === 'urgence') {
       urgence.current = true;
       await repondre([{ de: 'yosr', texte: t.questionUrgence }]);
     } else if (c.action === 'trouver') {
       await repondre([{ de: 'yosr', texte: t.questionService, choix: await choixCategories() }]);
+    } else if (c.action === 'reserver' && c.id) {
+      await commencerReservation(c.id, c.nom ?? '');
+    } else if (c.action === 'service' && c.id && resa.current) {
+      resa.current.service = resa.current.services.find((s) => s.$id === c.id) ?? null;
+      await proposerCreneaux();
+    } else if (c.action === 'creneau' && c.id) {
+      await recapituler(c.id);
+    } else if (c.action === 'autres') {
+      if (categorieFil.current) await chercher(categorieFil.current);
     } else if (c.id) {
       await chercher(c.id);
     }
@@ -246,6 +569,31 @@ export default function Yosr() {
       ]),
     );
   }, []);
+
+  // The pro's answer to the request Yosr sent lands in the chat, the banner sits behind this modal.
+  useEffect(
+    () =>
+      ecouterRendezVous((rdv) => {
+        const a = attendu.current;
+        if (!a || rdv.$id !== a.id) return;
+        if (rdv.statut === 'CONFIRME') {
+          attendu.current = null;
+          ajouter({
+            de: 'yosr',
+            texte: t.confirmeChat(a.nom),
+            choix: [{ libelle: t.choixRdv, action: 'rdv' }],
+          });
+        } else if (rdv.statut === 'REFUSE') {
+          attendu.current = null;
+          ajouter({
+            de: 'yosr',
+            texte: t.refuseChat(a.nom),
+            choix: [{ libelle: t.autresPros, action: 'autres' }],
+          });
+        }
+      }),
+    [],
+  );
 
   const dernier = messages.at(-1);
   return (
@@ -335,6 +683,13 @@ export default function Yosr() {
                     />
                   ))}
                 </ScrollView>
+              ) : m.de === 'recap' ? (
+                <Recap
+                  m={m}
+                  actif={m === dernier}
+                  onModifier={() => seul(() => proposerCreneaux())}
+                  onConfirmer={() => seul(() => confirmer(m))}
+                />
               ) : (
                 <YStack gap="3">
                   {m.texte ? (
