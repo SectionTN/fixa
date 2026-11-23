@@ -1,7 +1,7 @@
 import { creneauxLibres } from './creneaux';
 import type { RendezVous, Service, StatutRendezVous } from './domaine';
 import { JOURS_FERIES_TN } from './feries';
-import { fr } from './i18n/fr';
+import { textes } from './i18n/textes';
 import { LONGUEUR_MAX } from './limites';
 import { type CreneauxFournisseur, ecartDepuis, formatDuree, JOURS_RECHERCHE } from './recherche';
 import { ajouterJours, dateLocale, heureLocale, jourCourtLocal, jourSemaineLocal } from './temps';
@@ -71,9 +71,9 @@ export function nbARepondre(
 export function libelleAvant(limite: string, maintenant: Date): string {
   const heure = heureLocale(limite);
   const ecart = ecartDepuis(limite, maintenant);
-  if (ecart === 0) return fr.demandes.avant(heure);
-  if (ecart === 1) return fr.demandes.avantDemain(heure);
-  return fr.demandes.avantLe(fr.temps.jours[jourSemaineLocal(limite) % 7] ?? '', heure);
+  if (ecart === 0) return textes.demandes.avant(heure);
+  if (ecart === 1) return textes.demandes.avantDemain(heure);
+  return textes.demandes.avantLe(textes.temps.jours[jourSemaineLocal(limite) % 7] ?? '', heure);
 }
 
 export function tempsRestant(limite: string, maintenant: Date): string | null {
@@ -85,18 +85,18 @@ const jourCourt = (iso: string) => jourCourtLocal(iso).toLowerCase();
 
 export function ilYA(iso: string, maintenant: Date): string {
   const minutes = Math.floor((maintenant.getTime() - Date.parse(iso)) / MINUTE_MS);
-  if (minutes < 1) return fr.demandes.aLInstant;
-  if (minutes < 60) return fr.demandes.ilYAMin(minutes);
-  if (minutes < 24 * 60) return fr.demandes.ilYAH(Math.floor(minutes / 60));
-  return fr.demandes.leJour(jourCourt(iso));
+  if (minutes < 1) return textes.demandes.aLInstant;
+  if (minutes < 60) return textes.demandes.ilYAMin(minutes);
+  if (minutes < 24 * 60) return textes.demandes.ilYAH(Math.floor(minutes / 60));
+  return textes.demandes.leJour(jourCourt(iso));
 }
 
 export function libelleRecue(iso: string, maintenant: Date): string {
   const heure = heureLocale(iso);
   const ecart = ecartDepuis(iso, maintenant);
-  if (ecart === 0) return fr.demandes.aujourdhuiA(heure);
-  if (ecart === -1) return fr.demandes.hierA(heure);
-  return fr.demandes.leA(jourCourt(iso), heure);
+  if (ecart === 0) return textes.demandes.aujourdhuiA(heure);
+  if (ecart === -1) return textes.demandes.hierA(heure);
+  return textes.demandes.leA(jourCourt(iso), heure);
 }
 
 export function adresseManquante(service: Pick<Service, 'aDomicile'>, adresse: string): boolean {
