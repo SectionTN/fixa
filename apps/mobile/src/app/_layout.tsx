@@ -51,6 +51,7 @@ function Navigation({ policesPretes }: { policesPretes: boolean }) {
         <Stack.Screen name="(client)" />
         <Stack.Screen name="categorie/[id]" />
         <Stack.Screen name="pro/[id]" />
+        <Stack.Screen name="yosr" options={{ presentation: 'modal' }} />
       </Stack.Protected>
       <Stack.Protected guard={connecte && role === 'client'} redirectTo={accueil}>
         <Stack.Screen name="reserver/[fournisseurId]" />
