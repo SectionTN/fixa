@@ -113,6 +113,7 @@ export const ar = {
       titre: 'الملف الشخصي',
       deconnexion: 'تسجيل الخروج',
       langue: 'اللغة',
+      preferences: 'التفضيلات',
       redemarrerTitre: 'تم اختيار العربية',
       redemarrer: 'أغلق Fixa ثم أعد فتحه لعرض التطبيق من اليمين إلى اليسار.',
     },

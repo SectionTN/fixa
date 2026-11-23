@@ -113,6 +113,7 @@ export const en = {
       titre: 'Profile',
       deconnexion: 'Sign out',
       langue: 'Language',
+      preferences: 'Preferences',
       redemarrerTitre: 'Language changed',
       redemarrer: 'Close and reopen Fixa to change the layout direction.',
     },

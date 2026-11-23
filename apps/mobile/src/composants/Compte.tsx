@@ -7,7 +7,7 @@ import { Ecran } from './Ecran';
 
 const t = textes.auth.profil;
 
-// The signed-in account: identity and sign-out, the other rows come with their features.
+// The signed-in account: identity, preferences, then sign-out last.
 export function Compte({ titre }: { titre: string }) {
   const { utilisateur, deconnexion } = useSession();
   const nom = utilisateur?.nom ?? '';
@@ -38,6 +38,7 @@ export function Compte({ titre }: { titre: string }) {
           </Texte>
         </YStack>
       </XStack>
+      <ChoixLangue />
       <YStack borderRadius="5" backgroundColor="surface" paddingHorizontal="4">
         <XStack
           role="button"
@@ -63,7 +64,6 @@ export function Compte({ titre }: { titre: string }) {
           </Texte>
         </XStack>
       </YStack>
-      <ChoixLangue />
     </Ecran>
   );
 }

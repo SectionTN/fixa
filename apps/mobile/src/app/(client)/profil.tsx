@@ -10,17 +10,17 @@ import { useSession } from '../../lib/session';
 const t = textes.auth.profil;
 const v = textes.auth.visiteur;
 
-// The client profile: a visitor is invited to sign in, a client sees the account.
+// The client profile: a visitor gets the sign-in card first, then the same preferences as a client.
 export default function Profil() {
   const { utilisateur } = useSession();
   const router = useRouter();
   if (utilisateur) return <Compte titre={t.titre} />;
   return (
-    <Ecran paddingTop="2" paddingHorizontal="5" gap="5">
+    <Ecran paddingTop="2" paddingHorizontal="5" paddingBottom="6" gap="5">
       <Texte fontSize="9" fontWeight="600" paddingTop="1" paddingHorizontal="1">
         {t.titre}
       </Texte>
-      <YStack flex={1} justifyContent="center" paddingBottom="9">
+      <YStack borderRadius="5" backgroundColor="surface" paddingVertical="3">
         <EtatVide
           icone="person"
           titre={v.profilTitre}

@@ -112,6 +112,7 @@ export const fr = {
       titre: 'Profil',
       deconnexion: 'Se déconnecter',
       langue: 'Langue',
+      preferences: 'Préférences',
       redemarrerTitre: 'Langue changée',
       redemarrer: "Fermez puis rouvrez Fixa pour changer le sens de l'affichage.",
     },
