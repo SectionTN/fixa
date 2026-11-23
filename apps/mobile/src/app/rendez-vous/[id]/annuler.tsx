@@ -32,7 +32,8 @@ export default function Annuler() {
   const d = lecture.donnees;
   const rdv = d?.rdv ?? null;
   const possible = rdv && d ? actionsRendezVous(rdv, d.maintenant).includes('annuler') : false;
-  const change = !fait && d !== null && !lecture.chargement && !possible;
+  // Realtime can bring our own cancellation before the request answers, so a change counts only when idle.
+  const change = !fait && !envoi && d !== null && !lecture.chargement && !possible;
 
   const confirmer = async () => {
     if (!rdv || !raison || verrou.current) return;
