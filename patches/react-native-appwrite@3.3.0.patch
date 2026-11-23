@@ -1,0 +1,26 @@
+diff --git a/dist/cjs/sdk.js b/dist/cjs/sdk.js
+index 18e51feab68941049452e95b106b94af2bcedbc2..5d42f8caa41ddb5b5fbec9cceb6761582464a8ab 100644
+--- a/dist/cjs/sdk.js
++++ b/dist/cjs/sdk.js
+@@ -1003,7 +1003,7 @@ class Client {
+                 }
+                 this.realtime.heartbeat = window === null || window === void 0 ? void 0 : window.setInterval(() => {
+                     var _a;
+-                    (_a = this.realtime.socket) === null || _a === void 0 ? void 0 : _a.send(JSONbig.stringify({
++                    (_a = this.realtime.socket) === null || _a === void 0 || _a.readyState !== WebSocket.OPEN ? void 0 : _a.send(JSONbig.stringify({
+                         type: 'ping',
+                     }));
+                 }, 20000);
+diff --git a/dist/esm/sdk.js b/dist/esm/sdk.js
+index 198581440034197f5a2d64767e27d2c716bfbf3f..5ce2cd8c10c28ccd49dbd6fbabbef5f3704e72ac 100644
+--- a/dist/esm/sdk.js
++++ b/dist/esm/sdk.js
+@@ -1001,7 +1001,7 @@ class Client {
+                 }
+                 this.realtime.heartbeat = window === null || window === void 0 ? void 0 : window.setInterval(() => {
+                     var _a;
+-                    (_a = this.realtime.socket) === null || _a === void 0 ? void 0 : _a.send(JSONbig.stringify({
++                    (_a = this.realtime.socket) === null || _a === void 0 || _a.readyState !== WebSocket.OPEN ? void 0 : _a.send(JSONbig.stringify({
+                         type: 'ping',
+                     }));
+                 }, 20000);

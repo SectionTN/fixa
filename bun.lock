@@ -148,6 +148,9 @@
       },
     },
   },
+  "patchedDependencies": {
+    "react-native-appwrite@3.3.0": "patches/react-native-appwrite@3.3.0.patch",
+  },
   "overrides": {
     "@tamagui/core": "3.3.3",
     "@tamagui/web": "3.3.3",
