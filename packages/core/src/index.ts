@@ -15,6 +15,7 @@ export { choisirLangue, langueCourante, type Textes, textes } from './i18n/texte
 export * from './ids';
 export * from './limites';
 export * from './mesRendezVous';
+export * from './notifications';
 export * from './recherche';
 export * from './reservation';
 export * from './temps';

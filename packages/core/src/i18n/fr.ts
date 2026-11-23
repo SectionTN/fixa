@@ -1,3 +1,6 @@
+// "à La Marsa" but "au Kram", as French contracts à le.
+const a = (ville: string) => (ville.startsWith('Le ') ? `au ${ville.slice(3)}` : `à ${ville}`);
+
 export const fr = {
   commun: {
     retour: 'Retour',
@@ -209,6 +212,11 @@ export const fr = {
     annulePar: (nom: string) => `Annulé par ${nom}`,
     annuleParVous: 'Annulé par vous',
     annuleAuto: 'Annulé automatiquement',
+    bandeau: {
+      confirme: (nom: string) => `${nom} a confirmé`,
+      refuse: (nom: string) => `${nom} a refusé`,
+      annule: (nom: string) => `${nom} a annulé`,
+    },
     tardive: 'moins de 2 h avant',
     motifRefus: (motif: string) => `Motif : ${motif}`,
     sansReponse: 'Sans réponse avant la date limite',
@@ -335,6 +343,13 @@ export const fr = {
       `Pas de panique, on s'en occupe : je cherche ${metier} libre au plus vite.`,
     trouves: (n: number) =>
       n === 1 ? 'Voici le pro le mieux placé :' : `Voici ${n} pros bien notés près de vous :`,
+    trouvesVille: (n: number, ville: string) =>
+      n === 1 ? `Voici le pro le mieux placé ${a(ville)} :` : `Voici ${n} pros ${a(ville)} :`,
+    aucunVille: (ville: string) => `Personne ${a(ville)} pour le moment, voici les plus proches :`,
+    moinsChers: 'Je les classe du moins cher au plus cher.',
+    salut: (prenom?: string) =>
+      `Bonjour${prenom ? ` ${prenom}` : ''} ! Comment puis-je vous aider ?`,
+    deRien: 'Avec plaisir ! Autre chose ?',
     aucunPro: "Personne n'est libre pour le moment dans ce service. Essayez un autre.",
     incompris: 'Je n\'ai pas bien compris. Décrivez le problème, par exemple "ma douche fuit".',
     voirTous: 'Voir tous les résultats',
@@ -348,6 +363,33 @@ export const fr = {
       clim: 'En attendant, éteignez la clim et débranchez-la si elle fait un bruit anormal.',
       medecins: "Si c'est grave, appelez le 190 (SAMU) sans attendre.",
     } as Record<string, string>,
+  },
+  notifications: {
+    titre: 'Notifications',
+    ouvrir: 'Ouvrir les notifications',
+    toutLire: 'Tout lire',
+    sections: { aujourdhui: "Aujourd'hui", semaine: 'Cette semaine', plusTot: 'Plus tôt' },
+    vide: 'Aucune notification',
+    videTexte: 'Les réponses des pros à vos demandes apparaîtront ici.',
+    aLinstant: "À l'instant",
+    ilYa: (min: number) => `${min} min`,
+    confirme: 'Rendez-vous confirmé',
+    confirmeTexte: (nom: string, quand: string) => `${nom} vous attend ${quand}.`,
+    envoye: 'Demande envoyée',
+    envoyeTexte: (nom: string, quand: string) => `${nom}, ${quand}. En attente de sa réponse.`,
+    refuse: 'Demande refusée',
+    refuseTexte: (nom: string, service: string) =>
+      `${nom} ne peut pas assurer votre ${service}. Essayez un autre pro.`,
+    annule: 'Rendez-vous annulé',
+    annuleTexte: (nom: string, service: string, quand: string) =>
+      `${nom} a annulé votre ${service}, ${quand}. Aucun frais.`,
+    expire: 'Sans réponse',
+    expireTexte: (nom: string) => `${nom} n'a pas répondu à temps. Aucun frais.`,
+    avis: 'Votre avis compte',
+    avisTexte: (service: string, nom: string) =>
+      `Comment s'est passé votre ${service} avec ${nom} ?`,
+    laisserAvis: 'Laisser un avis',
+    quand: (jour: string, heure: string) => `${jour} à ${heure}`,
   },
   onglets: {
     accueil: 'Accueil',
