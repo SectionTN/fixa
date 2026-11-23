@@ -10,12 +10,13 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-import { YStack } from 'tamagui';
 import { Bandeau } from '../composants/Bandeau';
 import { useRendezVousEnDirect } from '../lib/enDirect';
 import { chargerLangue, LangueProvider, useLangue } from '../lib/langue';
 import { SessionProvider, useSession } from '../lib/session';
+import { ThemeProvider } from '../lib/theme';
 
 SplashScreen.preventAutoHideAsync();
 chargerLangue();
@@ -48,7 +49,7 @@ function Navigation({ policesPretes }: { policesPretes: boolean }) {
   // Visitors browse the client tabs, so that group comes first and is the start screen.
   // A new language remounts the screens, so every string is read again.
   return (
-    <YStack flex={1}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <Stack key={langue} screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={!connecte || role === 'client'} redirectTo={accueil}>
           <Stack.Screen name="(client)" />
@@ -88,7 +89,7 @@ function Navigation({ policesPretes }: { policesPretes: boolean }) {
         </Stack.Protected>
       </Stack>
       <Bandeau />
-    </YStack>
+    </GestureHandlerRootView>
   );
 }
 
@@ -103,14 +104,18 @@ export default function RootLayout() {
 
   return (
     <KeyboardProvider>
-      <FixaProvider>
-        <StatusBar style="dark" />
-        <SessionProvider>
-          <LangueProvider>
-            <Navigation policesPretes={policesChargees || erreurPolices !== null} />
-          </LangueProvider>
-        </SessionProvider>
-      </FixaProvider>
+      <ThemeProvider>
+        {(theme) => (
+          <FixaProvider theme={theme}>
+            <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+            <SessionProvider>
+              <LangueProvider>
+                <Navigation policesPretes={policesChargees || erreurPolices !== null} />
+              </LangueProvider>
+            </SessionProvider>
+          </FixaProvider>
+        )}
+      </ThemeProvider>
     </KeyboardProvider>
   );
 }
