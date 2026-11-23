@@ -5,6 +5,7 @@ import {
   initiales,
   libelleCreneau,
   libelleDispo,
+  textes,
 } from '@fixa/core';
 import { CarteFournisseur } from '@fixa/ui';
 import { useRouter } from 'expo-router';
@@ -37,6 +38,7 @@ export function CartePro({ pro, variante, couleur, maintenant, onPress }: CarteP
       dispo={pro.prochainCreneau ? libelle(pro.prochainCreneau, maintenant) : null}
       initiales={initiales(pro.nom)}
       couleur={couleur}
+      nouveau={textes.recherche.nouveau}
       onPress={onPress ?? (() => router.push({ pathname: '/pro/[id]', params: { id: pro.$id } }))}
     />
   );

@@ -262,9 +262,11 @@ function ProfilPro() {
 
           <XStack gap={10}>
             <Stat
-              valeur={formatNote(pro.noteMoyenne)}
+              valeur={pro.nbAvis === 0 ? textes.recherche.nouveau : formatNote(pro.noteMoyenne)}
               libelle={t.avis(pro.nbAvis)}
-              icone={<Icone nom="star_fill" taille={18} couleur="star" />}
+              icone={
+                pro.nbAvis === 0 ? undefined : <Icone nom="star_fill" taille={18} couleur="star" />
+              }
             />
             <Stat
               valeur={pro.distanceKm === null ? pro.ville : formatDistance(pro.distanceKm)}
@@ -304,28 +306,30 @@ function ProfilPro() {
 
           <YStack gap="3">
             <Titre>{t.titreAvis}</Titre>
-            <XStack
-              paddingVertical="4"
-              paddingHorizontal="5"
-              borderRadius="5"
-              backgroundColor="surface"
-              gap="4"
-              alignItems="center"
-            >
-              <Texte fontSize={40} lineHeight="44px" fontWeight="600">
-                {formatNote(pro.noteMoyenne)}
-              </Texte>
-              <YStack gap={5}>
-                <Etoiles
-                  note={pro.noteMoyenne}
-                  libelle={textes.commun.surCinq(formatNote(pro.noteMoyenne))}
-                  taille={14}
-                />
-                <Texte fontSize="2" color="color-muted">
-                  {t.avis(pro.nbAvis)}
+            {pro.nbAvis === 0 ? null : (
+              <XStack
+                paddingVertical="4"
+                paddingHorizontal="5"
+                borderRadius="5"
+                backgroundColor="surface"
+                gap="4"
+                alignItems="center"
+              >
+                <Texte fontSize={40} lineHeight="44px" fontWeight="600">
+                  {formatNote(pro.noteMoyenne)}
                 </Texte>
-              </YStack>
-            </XStack>
+                <YStack gap={5}>
+                  <Etoiles
+                    note={pro.noteMoyenne}
+                    libelle={textes.commun.surCinq(formatNote(pro.noteMoyenne))}
+                    taille={14}
+                  />
+                  <Texte fontSize="2" color="color-muted">
+                    {t.avis(pro.nbAvis)}
+                  </Texte>
+                </YStack>
+              </XStack>
+            )}
             {avis.length === 0 && pro.nbAvis === 0 ? (
               <Texte fontSize="4" color="color-muted">
                 {t.aucunAvis}

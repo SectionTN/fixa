@@ -10,6 +10,8 @@ export type CarteFournisseurProps = {
   sousTitre: string;
   note: string;
   nbAvis: number;
+  /** Shown instead of the rating while nbAvis is 0. */
+  nouveau?: string;
   /** Shown after the review count on the vertical card. */
   distance?: string | null;
   prix: string | null;
@@ -25,6 +27,52 @@ const OMBRE = {
   shadowOffset: { width: 0, height: 1 },
   shadowRadius: 3,
 } as const;
+
+// The rating, or a "new" pill while a pro has no review yet, since 0,0 (0) reads as a bad score.
+function Note({
+  note,
+  nbAvis,
+  nouveau,
+  suite,
+}: {
+  note: string;
+  nbAvis: number;
+  nouveau?: string;
+  suite?: string;
+}) {
+  if (nbAvis === 0 && nouveau) {
+    return (
+      <XStack gap={5} alignItems="center" flexShrink={1}>
+        <XStack
+          backgroundColor="primary-soft"
+          borderRadius="round"
+          paddingHorizontal={8}
+          paddingVertical={2}
+        >
+          <Texte fontSize="2" fontWeight="600" color="on-primary-soft">
+            {nouveau}
+          </Texte>
+        </XStack>
+        {suite ? (
+          <Texte fontSize="3" color="color-muted" numberOfLines={1} flexShrink={1}>
+            {suite}
+          </Texte>
+        ) : null}
+      </XStack>
+    );
+  }
+  return (
+    <XStack gap={5} alignItems="center" flexShrink={1}>
+      <Icone nom="star_fill" taille={16} couleur="star" />
+      <Texte fontSize="3" fontWeight="600">
+        {note}
+      </Texte>
+      <Texte fontSize="3" color="color-muted" numberOfLines={1} flexShrink={1}>
+        ({nbAvis}){suite ? ` · ${suite}` : ''}
+      </Texte>
+    </XStack>
+  );
+}
 
 function Nom({ nom, verifie }: { nom: string; verifie: boolean }) {
   return (
@@ -68,13 +116,7 @@ function Ligne(p: CarteFournisseurProps) {
           {p.sousTitre}
         </Texte>
         <XStack gap={5} alignItems="center" marginTop={2}>
-          <Icone nom="star_fill" taille={16} couleur="star" />
-          <Texte fontSize="3" fontWeight="600">
-            {p.note}
-          </Texte>
-          <Texte fontSize="3" color="color-muted">
-            ({p.nbAvis})
-          </Texte>
+          <Note note={p.note} nbAvis={p.nbAvis} nouveau={p.nouveau} />
           <XStack flex={1} />
           {p.prix ? (
             <Texte fontSize="4" fontWeight="600">
@@ -149,13 +191,12 @@ function Verticale(p: CarteFournisseurProps) {
           {p.sousTitre}
         </Texte>
         <XStack gap={5} alignItems="center" marginTop={2}>
-          <Icone nom="star_fill" taille={16} couleur="star" />
-          <Texte fontSize="3" fontWeight="600">
-            {p.note}
-          </Texte>
-          <Texte fontSize="3" color="color-muted" numberOfLines={1} flexShrink={1}>
-            ({p.nbAvis}){p.distance ? ` · ${p.distance}` : ''}
-          </Texte>
+          <Note
+            note={p.note}
+            nbAvis={p.nbAvis}
+            nouveau={p.nouveau}
+            suite={p.distance ?? undefined}
+          />
           <XStack flex={1} />
           {p.prix ? (
             <Texte fontSize="3" fontWeight="600">

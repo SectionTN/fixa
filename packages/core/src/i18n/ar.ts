@@ -363,6 +363,7 @@ export const ar = {
     voirTout: 'عرض الكل',
     tousLesPros: 'كل المهنيين',
     resultatsPour: (texte: string) => `"${texte}"`,
+    nouveau: 'جديد',
     nbPros: (n: number) => `${n} مهني`,
     nbResultats: (n: number) => `${n} نتيجة`,
     rechercher: (metier?: string) => `البحث عن ${metier ?? 'مهني'}`,

@@ -366,6 +366,7 @@ export const fr = {
     voirTout: 'Voir tout',
     tousLesPros: 'Tous les pros',
     resultatsPour: (texte: string) => `"${texte}"`,
+    nouveau: 'Nouveau',
     nbPros: (n: number) => (n <= 1 ? `${n} pro` : `${n} pros`),
     nbResultats: (n: number) => (n <= 1 ? `${n} résultat` : `${n} résultats`),
     rechercher: (metier?: string) => `Rechercher ${metier ?? 'un pro'}`,
