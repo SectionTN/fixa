@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
-import { TamaguiProvider } from 'tamagui';
+import { isWeb, TamaguiProvider, Theme } from 'tamagui';
 import { config } from './tamagui.config';
 
+// Theme follows a change at runtime on native. The web admin stays light without a wrapper element.
 export function FixaProvider({
   children,
   theme = 'light',
@@ -11,7 +12,7 @@ export function FixaProvider({
 }) {
   return (
     <TamaguiProvider config={config} defaultTheme={theme}>
-      {children}
+      {isWeb ? children : <Theme name={theme}>{children}</Theme>}
     </TamaguiProvider>
   );
 }
