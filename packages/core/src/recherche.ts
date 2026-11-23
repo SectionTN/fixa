@@ -3,7 +3,7 @@ import { distanceKm } from './classement';
 import { creneauxLibres } from './creneaux';
 import type { Categorie, Conge, Disponibilite, Fournisseur, Service } from './domaine';
 import { JOURS_FERIES_TN } from './feries';
-import { fr } from './i18n/fr';
+import { textes } from './i18n/textes';
 import { ajouterJours, dateLocale, heureLocale, jourSemaineLocal } from './temps';
 
 // Badges, the availability filter and "Cette semaine" all look this many days ahead.
@@ -85,22 +85,22 @@ export function libelleCreneau(iso: string, maintenant: Date): string {
   const ecart = ecartDepuis(iso, maintenant);
   const jour =
     ecart === 0
-      ? fr.recherche.aujourdhui
+      ? textes.recherche.aujourdhui
       : ecart === 1
-        ? fr.recherche.demain
-        : fr.temps.joursCourts[jourSemaineLocal(iso) % 7];
+        ? textes.recherche.demain
+        : textes.temps.joursCourts[jourSemaineLocal(iso) % 7];
   return `${jour} ${heureLocale(iso)}`;
 }
 
 export function libelleDispo(iso: string, maintenant: Date): string {
   const ecart = ecartDepuis(iso, maintenant);
-  if (ecart === 0) return fr.recherche.dispoAujourdhui;
-  if (ecart === 1) return fr.recherche.dispoDemain;
-  return fr.recherche.dispoLe(fr.temps.jours[jourSemaineLocal(iso) % 7] ?? '');
+  if (ecart === 0) return textes.recherche.dispoAujourdhui;
+  if (ecart === 1) return textes.recherche.dispoDemain;
+  return textes.recherche.dispoLe(textes.temps.jours[jourSemaineLocal(iso) % 7] ?? '');
 }
 
 export function libelleDispoDes(iso: string, maintenant: Date): string {
-  return fr.recherche.dispoDes(libelleDispo(iso, maintenant), heureLocale(iso));
+  return textes.recherche.dispoDes(libelleDispo(iso, maintenant), heureLocale(iso));
 }
 
 // "dès" unless a single fixed price, "Sur devis" when nothing has a price.
@@ -109,9 +109,9 @@ export function prixDepart(services: Pick<Service, 'typePrix' | 'prix'>[]): stri
     s.typePrix !== 'SUR_DEVIS' && s.prix !== null ? [{ typePrix: s.typePrix, prix: s.prix }] : [],
   );
   const [premier, ...autres] = avecPrix.sort((a, b) => a.prix - b.prix);
-  if (!premier) return services.length > 0 ? fr.prix.surDevis : null;
+  if (!premier) return services.length > 0 ? textes.prix.surDevis : null;
   if (autres.length === 0 && premier.typePrix === 'FIXE') return formatPrix(premier.prix);
-  return `${fr.prix.aPartirDe} ${formatPrix(premier.prix)}`;
+  return `${textes.prix.aPartirDe} ${formatPrix(premier.prix)}`;
 }
 
 // Availability uses each provider's shortest visible service, so a shown start can always be booked.
@@ -219,7 +219,7 @@ export function interpreterRecherche(
 
 // q is already without accents. A word and the query match when one starts with the other.
 function categorieCorrespond(c: Categorie, q: string): boolean {
-  return [c.nom, ...(fr.recherche.motsCles[c.$id] ?? [])].some((mot) => {
+  return [c.nom, ...(textes.recherche.motsCles[c.$id] ?? [])].some((mot) => {
     const m = sansAccents(mot);
     return m.startsWith(q) || q.startsWith(m);
   });

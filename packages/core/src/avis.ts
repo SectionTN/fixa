@@ -1,4 +1,5 @@
 import { fr } from './i18n/fr';
+import { textes } from './i18n/textes';
 
 export const CRITERES_AVIS: readonly string[] = fr.avis.criteres;
 
@@ -13,5 +14,5 @@ export function moyenneApresAvis(
 
 // The word under the stars, or the hint before the client picks a rating.
 export function libelleNote(note: number): string {
-  return fr.avis.notes[note - 1] ?? fr.avis.toucherEtoile;
+  return textes.avis.notes[note - 1] ?? textes.avis.toucherEtoile;
 }

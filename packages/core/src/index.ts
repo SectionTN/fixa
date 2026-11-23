@@ -11,6 +11,7 @@ export * from './erreurs';
 export * from './feries';
 export * from './formulaires';
 export { fr } from './i18n/fr';
+export { choisirLangue, langueCourante, type Textes, textes } from './i18n/textes';
 export * from './ids';
 export * from './limites';
 export * from './mesRendezVous';

@@ -1,6 +1,6 @@
 import type { Role } from './domaine';
 import { MESSAGES_ERREUR } from './erreurs';
-import { fr } from './i18n/fr';
+import { textes } from './i18n/textes';
 import { LABELS } from './ids';
 
 export const LONGUEUR_MIN_MOT_DE_PASSE = 8;
@@ -19,7 +19,7 @@ export function separerNom(complet: string): { prenom: string; nom: string } {
   return { prenom, nom: reste.join(' ') };
 }
 
-// 0 empty, then 1 to 4 for the four labels of fr.auth.inscription.force.
+// 0 empty, then 1 to 4 for the four labels of textes.auth.inscription.force.
 export function forceMotDePasse(mdp: string): 0 | 1 | 2 | 3 | 4 {
   if (!mdp) return 0;
   if (mdp.length < LONGUEUR_MIN_MOT_DE_PASSE) return 1;
@@ -50,8 +50,8 @@ export function nonceDuJeton(idToken: string): string | undefined {
 
 // An Appwrite error without a type never reached the server.
 export function messageAuth(type: string | undefined): string {
-  if (!type) return fr.auth.erreurs.reseau;
-  if (IDENTIFIANTS.includes(type)) return fr.auth.erreurs.identifiants;
-  if (COMPTE_EXISTE.includes(type)) return fr.auth.erreurs.compteExiste;
+  if (!type) return textes.auth.erreurs.reseau;
+  if (IDENTIFIANTS.includes(type)) return textes.auth.erreurs.identifiants;
+  if (COMPTE_EXISTE.includes(type)) return textes.auth.erreurs.compteExiste;
   return MESSAGES_ERREUR.REQUETE_INVALIDE;
 }

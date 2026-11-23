@@ -1,4 +1,5 @@
 import { fr } from './i18n/fr';
+import { textes } from './i18n/textes';
 
 export type CodeErreur =
   | 'NON_AUTORISE'
@@ -15,7 +16,16 @@ export type CodeErreur =
   | 'SESSION_EXPIREE'
   | 'RESEAU';
 
-export const MESSAGES_ERREUR: Record<CodeErreur, string> = fr.erreurs;
+// Getters, so each message is read in the current language.
+export const MESSAGES_ERREUR = Object.defineProperties(
+  {} as Record<CodeErreur, string>,
+  Object.fromEntries(
+    (Object.keys(fr.erreurs) as CodeErreur[]).map((code) => [
+      code,
+      { enumerable: true, get: () => textes.erreurs[code] },
+    ]),
+  ),
+);
 
 export type ReponseApi<T> =
   | { ok: true; data: T }

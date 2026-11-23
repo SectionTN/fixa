@@ -1,28 +1,26 @@
 import { z } from 'zod';
 import { LONGUEUR_MIN_MOT_DE_PASSE, separerNom } from './auth';
-import { fr } from './i18n/fr';
+import { textes } from './i18n/textes';
 import { LONGUEUR_MAX } from './limites';
-
-const e = fr.auth.erreurs;
 
 const CHIFFRES_TELEPHONE = 8;
 
 export const champEmail = z
   .string()
   .trim()
-  .pipe(z.email({ error: e.emailInvalide }));
+  .pipe(z.email({ error: () => textes.auth.erreurs.emailInvalide }));
 
 // The api splits the name into the profile's prenom and nom columns, so each part must fit its own.
 const champNomComplet = z
   .string()
   .trim()
-  .min(1, { error: e.nomRequis })
+  .min(1, { error: () => textes.auth.erreurs.nomRequis })
   .refine(
     (complet) => {
       const { prenom, nom } = separerNom(complet);
       return prenom.length <= LONGUEUR_MAX.prenom && nom.length <= LONGUEUR_MAX.nom;
     },
-    { error: e.nomTropLong },
+    { error: () => textes.auth.erreurs.nomTropLong },
   );
 
 export const schemaInscription = z.object({
@@ -30,8 +28,12 @@ export const schemaInscription = z.object({
   email: champEmail,
   telephone: z
     .string()
-    .regex(new RegExp(`^(\\d{${CHIFFRES_TELEPHONE}})?$`), { error: e.telephoneInvalide }),
-  motDePasse: z.string().min(LONGUEUR_MIN_MOT_DE_PASSE, { error: e.motDePasseCourt }),
+    .regex(new RegExp(`^(\\d{${CHIFFRES_TELEPHONE}})?$`), {
+      error: () => textes.auth.erreurs.telephoneInvalide,
+    }),
+  motDePasse: z
+    .string()
+    .min(LONGUEUR_MIN_MOT_DE_PASSE, { error: () => textes.auth.erreurs.motDePasseCourt }),
 });
 
 export const schemaConnexion = z.object({

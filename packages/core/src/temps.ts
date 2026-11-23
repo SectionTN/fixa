@@ -1,5 +1,5 @@
 import type { JourSemaine } from './domaine';
-import { fr } from './i18n/fr';
+import { textes } from './i18n/textes';
 
 // Tunis is UTC+1 all year, so a fixed shift avoids Intl time zones, which Hermes handles unevenly.
 export const DECALAGE_TUNIS_MIN = 60;
@@ -25,18 +25,18 @@ export function dateLocale(iso: string): string {
 
 export function jourLocal(iso: string): string {
   const d = murTunis(iso);
-  return `${fr.temps.jours[d.getUTCDay()]} ${d.getUTCDate()} ${fr.temps.mois[d.getUTCMonth()]}`;
+  return `${textes.temps.jours[d.getUTCDay()]} ${d.getUTCDate()} ${textes.temps.mois[d.getUTCMonth()]}`;
 }
 
 export function jourCourtLocal(iso: string): string {
   const d = murTunis(iso);
-  return `${fr.temps.joursCourts[d.getUTCDay()]} ${d.getUTCDate()} ${fr.temps.moisCourts[d.getUTCMonth()]}`;
+  return `${textes.temps.joursCourts[d.getUTCDay()]} ${d.getUTCDate()} ${textes.temps.moisCourts[d.getUTCMonth()]}`;
 }
 
 // The date block of an appointment card, such as LUN over 26.
 export function blocDateLocal(iso: string): { jour: string; numero: string } {
   const d = murTunis(iso);
-  const jour = fr.temps.joursCourts[d.getUTCDay()] ?? '';
+  const jour = textes.temps.joursCourts[d.getUTCDay()] ?? '';
   return { jour: jour.replace('.', '').toUpperCase(), numero: String(d.getUTCDate()) };
 }
 

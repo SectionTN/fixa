@@ -1,10 +1,9 @@
 import type { RendezVous, StatutRendezVous } from './domaine';
-import { fr } from './i18n/fr';
+import { textes } from './i18n/textes';
 import { delaiDepasse } from './reservation';
 import { dateLocale } from './temps';
 import { appliquerAction } from './transitions';
 
-const t = fr.rendezVous;
 const MINUTE_MS = 60_000;
 const SEMAINE_MS = 7 * 24 * 60 * MINUTE_MS;
 
@@ -26,7 +25,7 @@ export function estAVenir(r: RendezVous, maintenant: Date): boolean {
 // Month name in Tunis time, with the year only when it is not the current one.
 function titreMois(iso: string, maintenant: Date): string {
   const [annee, mois] = dateLocale(iso).split('-').map(Number);
-  const nom = fr.temps.mois[(mois ?? 1) - 1] ?? '';
+  const nom = textes.temps.mois[(mois ?? 1) - 1] ?? '';
   const titre = `${nom.charAt(0).toUpperCase()}${nom.slice(1)}`;
   return annee === Number(dateLocale(maintenant.toISOString()).slice(0, 4))
     ? titre
@@ -58,7 +57,9 @@ export function classerMesRendezVous<T extends RendezVous>(
   const semaine = maintenant.getTime() + SEMAINE_MS;
   return {
     aVenir: grouper(aVenir, (r) =>
-      Date.parse(r.debut) < semaine ? t.cetteSemaine : titreMois(r.debut, maintenant),
+      Date.parse(r.debut) < semaine
+        ? textes.rendezVous.cetteSemaine
+        : titreMois(r.debut, maintenant),
     ),
     passes: grouper(passes, (r) => titreMois(r.debut, maintenant)),
   };
@@ -91,16 +92,18 @@ export function infoRendezVous(r: RendezVous, maintenant: Date): string | null {
     case 'ANNULE': {
       const qui =
         r.annulePar === 'client'
-          ? t.annuleParVous
+          ? textes.rendezVous.annuleParVous
           : r.annulePar === 'fournisseur'
-            ? t.annulePar(r.fournisseurNom)
-            : t.annuleAuto;
-      return [qui, r.motif, r.annulationTardive ? t.tardive : null].filter(Boolean).join(' · ');
+            ? textes.rendezVous.annulePar(r.fournisseurNom)
+            : textes.rendezVous.annuleAuto;
+      return [qui, r.motif, r.annulationTardive ? textes.rendezVous.tardive : null]
+        .filter(Boolean)
+        .join(' · ');
     }
     case 'REFUSE':
-      return r.motif ? t.motifRefus(r.motif) : null;
+      return r.motif ? textes.rendezVous.motifRefus(r.motif) : null;
     case 'EXPIRE':
-      return t.sansReponse;
+      return textes.rendezVous.sansReponse;
     default:
       return null;
   }
