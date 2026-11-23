@@ -134,10 +134,11 @@ export function listerCategories(db: TablesLike, Q: RequeteLike): Promise<Catego
 export function rechercherFournisseurs(
   db: TablesLike,
   Q: RequeteLike,
-  f: { categorieIds?: string[]; nom?: string },
+  f: { categorieIds?: string[]; nom?: string; ids?: string[] },
 ): Promise<Fournisseur[]> {
   return lignes(db, TABLES.fournisseurs, [
     Q.equal('visible', true),
+    ...(f.ids ? [Q.equal('$id', f.ids)] : []),
     ...(f.categorieIds ? [Q.equal('categorieId', f.categorieIds)] : []),
     ...(f.nom ? [Q.search('nom', f.nom)] : []),
     Q.limit(LIMITE_LISTE),

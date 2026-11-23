@@ -120,6 +120,12 @@ describe('lectures de la recherche', () => {
     const { db, appels } = lecteur({});
     await rechercherFournisseurs(db, Q, { categorieIds: ['plomberie'] });
     await rechercherFournisseurs(db, Q, { nom: 'Karim' });
+    await rechercherFournisseurs(db, Q, { ids: ['karim', 'sami'] });
+    expect(appels[2]?.queries).toEqual([
+      'equal visible true',
+      'equal $id ["karim","sami"]',
+      'limit 100',
+    ]);
     expect(appels[0]?.queries).toEqual([
       'equal visible true',
       'equal categorieId ["plomberie"]',
