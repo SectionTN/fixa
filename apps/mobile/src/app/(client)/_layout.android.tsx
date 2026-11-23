@@ -6,7 +6,7 @@ import { HauteurOngletsContexte, Onglet } from '../../composants/Onglet';
 
 const t = textes.onglets;
 
-// The client tab bar on Android: Favoris waits until favourites exist.
+// The client tab bar on Android, drawn to the design.
 export default function ClientLayout() {
   const [hauteur, setHauteur] = useState(0);
   return (
@@ -21,6 +21,9 @@ export default function ClientLayout() {
             </TabTrigger>
             <TabTrigger name="rendez-vous" href="/rendez-vous" asChild>
               <Onglet icone="calendar_month" iconeActive="calendar_month_fill" libelle={t.mesRdv} />
+            </TabTrigger>
+            <TabTrigger name="favoris" href="/favoris" asChild>
+              <Onglet icone="favorite" iconeActive="favorite_fill" libelle={t.favoris} />
             </TabTrigger>
             <TabTrigger name="profil" href="/profil" asChild>
               <Onglet icone="person" iconeActive="person_fill" libelle={t.profil} />

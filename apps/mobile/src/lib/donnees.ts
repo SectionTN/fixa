@@ -113,7 +113,7 @@ export function positionDe(profil: Profil | null): Position | null {
 
 // Providers with their next slot, distance and starting price, ready to sort and filter.
 export async function chargerFournisseurs(
-  recherche: { categorieIds?: string[]; nom?: string },
+  recherche: { categorieIds?: string[]; nom?: string; ids?: string[] },
   position: Position | null,
   maintenant: Date,
 ): Promise<FournisseurAffiche[]> {

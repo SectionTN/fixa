@@ -18,6 +18,10 @@ export default function ClientLayout() {
           <NativeTabs.Trigger.Icon sf="calendar" />
           <NativeTabs.Trigger.Label>{t.mesRdv}</NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="favoris">
+          <NativeTabs.Trigger.Icon sf={{ default: 'heart', selected: 'heart.fill' }} />
+          <NativeTabs.Trigger.Label>{t.favoris}</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
         <NativeTabs.Trigger name="profil">
           <NativeTabs.Trigger.Icon sf={{ default: 'person', selected: 'person.fill' }} />
           <NativeTabs.Trigger.Label>{t.profil}</NativeTabs.Trigger.Label>
