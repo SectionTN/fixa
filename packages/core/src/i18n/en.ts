@@ -343,6 +343,23 @@ export const en = {
     cherche: (metier: string) => `I am looking for ${metier} near you.`,
     chercheUrgence: (metier: string) =>
       `Do not worry, we are on it: I am looking for ${metier} free as soon as possible.`,
+    reserverAvec: (nom: string) => `Book with ${nom}`,
+    quelService: 'Which service?',
+    quelCreneau: 'Which time suits you?',
+    creneau: (jour: string, heure: string) => `${jour} · ${heure}`,
+    aucunCreneau: (nom: string) => `${nom} has no free slot left this week.`,
+    recap: 'Summary',
+    modifier: 'Change',
+    confirmer: 'Confirm',
+    envoye: (nom: string) => `Sent! ${nom} needs to confirm, I will tell you here.`,
+    confirmeChat: (nom: string) => `Good news: ${nom} confirmed your appointment.`,
+    refuseChat: (nom: string) => `${nom} cannot make it this time. Want to see other pros?`,
+    autresPros: 'See other pros',
+    creneauPris: 'That slot was just taken. Here are others:',
+    connexion: 'Sign in and I will book for you.',
+    seConnecter: 'Sign in',
+    sansAdresse: 'This service happens at your place: add your address in the booking.',
+    ouvrirReservation: 'Open the booking',
     trouves: (n: number) =>
       n === 1 ? 'Here is the best match:' : `Here are ${n} top rated pros near you:`,
     trouvesVille: (n: number, ville: string) =>

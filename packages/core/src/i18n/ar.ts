@@ -342,6 +342,23 @@ export const ar = {
     cherche: (metier: string) => `أبحث عن ${metier} قريب منك.`,
     chercheUrgence: (metier: string) =>
       `لا تقلق، سنتكفل بالأمر: أبحث عن ${metier} متاح في أقرب وقت.`,
+    reserverAvec: (nom: string) => `احجز مع ${nom}`,
+    quelService: 'لأي خدمة؟',
+    quelCreneau: 'أي موعد يناسبك؟',
+    creneau: (jour: string, heure: string) => `${jour} · ${heure}`,
+    aucunCreneau: (nom: string) => `لم يعد لدى ${nom} موعد شاغر هذا الأسبوع.`,
+    recap: 'الملخص',
+    modifier: 'تعديل',
+    confirmer: 'تأكيد',
+    envoye: (nom: string) => `تم الإرسال! بانتظار تأكيد ${nom}، وسأخبرك هنا.`,
+    confirmeChat: (nom: string) => `خبر سار: تم تأكيد موعدك مع ${nom}.`,
+    refuseChat: (nom: string) => `تعذّر على ${nom} الحضور هذه المرة. هل تريد رؤية مهنيين آخرين؟`,
+    autresPros: 'مهنيون آخرون',
+    creneauPris: 'تم حجز هذا الموعد للتو. إليك مواعيد أخرى:',
+    connexion: 'سجّل الدخول وسأحجز لك.',
+    seConnecter: 'تسجيل الدخول',
+    sansAdresse: 'هذه الخدمة تتم في منزلك: أضف عنوانك في الحجز.',
+    ouvrirReservation: 'فتح الحجز',
     trouves: (n: number) =>
       n === 1 ? 'هذا أنسب مهني:' : `هؤلاء ${n} مهنيين بتقييم عال قريبون منك:`,
     trouvesVille: (n: number, ville: string) =>

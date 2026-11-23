@@ -37,6 +37,27 @@ export function creneauxDuJour(p: {
   }));
 }
 
+// The first free starts over the booking window, a few per day so a quick pick spans more than one afternoon.
+export function prochainsCreneaux(p: {
+  dureeMin: number;
+  creneaux: CreneauxFournisseur;
+  maintenant: Date;
+  nombre: number;
+  parJour: number;
+}): string[] {
+  const libres: string[] = [];
+  for (const jour of joursReservation(p.maintenant)) {
+    const duJour = creneauxDuJour({ ...p, jour })
+      .filter((c) => c.libre)
+      .slice(0, p.parJour);
+    for (const c of duJour) {
+      libres.push(c.debut);
+      if (libres.length === p.nombre) return libres;
+    }
+  }
+  return libres;
+}
+
 export function parMoment(liste: Creneau[]): { matin: Creneau[]; apresMidi: Creneau[] } {
   return {
     matin: liste.filter((c) => heureLocale(c.debut) < '12:00'),

@@ -12,6 +12,7 @@ import {
   nbARepondre,
   ongletDemande,
   parMoment,
+  prochainsCreneaux,
   tempsRestant,
 } from '../src/reservation';
 import { heureLocale, versUtc } from '../src/temps';
@@ -169,5 +170,28 @@ describe('motifRefus', () => {
       'Hors de ma zone : Trop loin pour moi.',
     );
     expect(motifRefus('Autre', 'x'.repeat(600))).toHaveLength(500);
+  });
+});
+
+describe('prochainsCreneaux', () => {
+  it('prend les premiers debuts libres, deux par jour au plus, sans les cases prises', () => {
+    const liste = prochainsCreneaux({
+      dureeMin: 45,
+      creneaux: {
+        disponibilites: semaine,
+        conges: [],
+        occupees: [versUtc('2026-11-18', '14:00')],
+      },
+      maintenant,
+      nombre: 4,
+      parJour: 2,
+    });
+    // 90 min notice from 10:00 leaves no 45 min start before noon, and 14:00 is taken.
+    expect(liste).toEqual([
+      versUtc('2026-11-18', '14:30'),
+      versUtc('2026-11-18', '15:00'),
+      versUtc('2026-11-19', '08:00'),
+      versUtc('2026-11-19', '08:30'),
+    ]);
   });
 });

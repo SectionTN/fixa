@@ -347,6 +347,23 @@ export const fr = {
     cherche: (metier: string) => `Je cherche ${metier} près de chez vous.`,
     chercheUrgence: (metier: string) =>
       `Pas de panique, on s'en occupe : je cherche ${metier} libre au plus vite.`,
+    reserverAvec: (nom: string) => `Réserver avec ${nom}`,
+    quelService: 'Pour quel service ?',
+    quelCreneau: 'Quel créneau vous arrange ?',
+    creneau: (jour: string, heure: string) => `${jour} · ${heure}`,
+    aucunCreneau: (nom: string) => `${nom} n'a plus de créneau libre cette semaine.`,
+    recap: 'Récapitulatif',
+    modifier: 'Modifier',
+    confirmer: 'Confirmer',
+    envoye: (nom: string) => `C'est envoyé ! ${nom} doit confirmer, je vous préviens ici.`,
+    confirmeChat: (nom: string) => `Bonne nouvelle : ${nom} a confirmé votre rendez-vous.`,
+    refuseChat: (nom: string) => `${nom} ne peut pas cette fois. Voulez-vous voir d'autres pros ?`,
+    autresPros: "Voir d'autres pros",
+    creneauPris: "Ce créneau vient d'être pris. En voici d'autres :",
+    connexion: 'Connectez-vous et je réserve pour vous.',
+    seConnecter: 'Se connecter',
+    sansAdresse: 'Ce service se fait chez vous : ajoutez votre adresse dans la réservation.',
+    ouvrirReservation: 'Ouvrir la réservation',
     trouves: (n: number) =>
       n === 1 ? 'Voici le pro le mieux placé :' : `Voici ${n} pros bien notés près de vous :`,
     trouvesVille: (n: number, ville: string) =>
