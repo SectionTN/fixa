@@ -21,6 +21,7 @@ import { decalageChamp, PiedClavier } from '../../../composants/PiedClavier';
 import { tables } from '../../../lib/appwrite';
 import { couleurDe, lireCategories, useLecture } from '../../../lib/donnees';
 import { laisserAvis } from '../../../lib/mesRendezVous';
+import { vibrer } from '../../../lib/vibrer';
 
 const t = textes.avis;
 
@@ -71,6 +72,7 @@ function Avis() {
       commentaire: commentaire.trim(),
     });
     if (r.ok) {
+      vibrer.succes();
       router.back();
       return;
     }
@@ -140,7 +142,14 @@ function Avis() {
           <Texte fontSize="7" fontWeight="600" textAlign="center">
             {t.question}
           </Texte>
-          <ChoixNote note={note} onChange={setNote} libelle={t.etoile} />
+          <ChoixNote
+            note={note}
+            onChange={(n) => {
+              vibrer.selection();
+              setNote(n);
+            }}
+            libelle={t.etoile}
+          />
           <Texte fontSize={15} fontWeight="500" color="color-muted">
             {libelleNote(note)}
           </Texte>

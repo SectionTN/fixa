@@ -3,11 +3,18 @@ import { EtatVide, Icone, Texte } from '@fixa/ui';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
+import Animated, {
+  FadeOutLeft,
+  LayoutAnimationConfig,
+  LinearTransition,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { XStack, YStack } from 'tamagui';
 import { repondre, useDemandes } from '../lib/demandes';
+import { vibrer } from '../lib/vibrer';
 import { CarteRdvPro } from './CarteRdvPro';
 import { BORDS_ECRAN, MARGE_HAUT_MIN } from './Ecran';
+import { EASE_OUT, entreeDouce } from './Mouvement';
 import { useBasOnglets } from './Onglet';
 import { ErreurChargement } from './Section';
 
@@ -40,7 +47,8 @@ export function ListeDemandes({ onOuvrir }: { onOuvrir?: (id: string, refuser: b
     const r = await repondre(id, 'accepter');
     verrou.current = false;
     setOccupe(null);
-    if (!r.ok) setMessage(r.message);
+    if (r.ok) vibrer.succes();
+    else setMessage(r.message);
   };
 
   const parOnglet = (o: OngletDemande) =>
@@ -132,18 +140,27 @@ export function ListeDemandes({ onOuvrir }: { onOuvrir?: (id: string, refuser: b
           ) : null}
           {lecture.erreur && !d ? <ErreurChargement onReessayer={lecture.recharger} /> : null}
 
-          {d
-            ? visibles.map((rdv) => (
-                <CarteRdvPro
-                  key={rdv.$id}
-                  rdv={rdv}
-                  maintenant={d.maintenant}
-                  occupe={occupe === rdv.$id}
-                  onAccepter={accepter}
-                  onOuvrir={onOuvrir}
-                />
-              ))
-            : null}
+          {/* A request that arrives or leaves moves on its own, a tab switch stays still. */}
+          <LayoutAnimationConfig key={onglet} skipEntering skipExiting>
+            {d
+              ? visibles.map((rdv) => (
+                  <Animated.View
+                    key={rdv.$id}
+                    entering={entreeDouce}
+                    exiting={FadeOutLeft.duration(240).easing(EASE_OUT)}
+                    layout={LinearTransition.duration(300).easing(EASE_OUT)}
+                  >
+                    <CarteRdvPro
+                      rdv={rdv}
+                      maintenant={d.maintenant}
+                      occupe={occupe === rdv.$id}
+                      onAccepter={accepter}
+                      onOuvrir={onOuvrir}
+                    />
+                  </Animated.View>
+                ))
+              : null}
+          </LayoutAnimationConfig>
           {d && visibles.length === 0 ? (
             <YStack flex={1} justifyContent="center" paddingBottom="9">
               <EtatVide icone="inbox" titre={t.vide[onglet]} texte={t.videTexte} />

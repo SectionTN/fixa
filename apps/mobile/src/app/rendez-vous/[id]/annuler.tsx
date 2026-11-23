@@ -12,6 +12,7 @@ import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XStack, YStack } from 'tamagui';
 import { annuler, useRendezVous } from '../../../lib/mesRendezVous';
+import { vibrer } from '../../../lib/vibrer';
 
 const t = textes.rendezVous.annulation;
 
@@ -41,6 +42,7 @@ export default function Annuler() {
     const r = await annuler(rdv.$id, raison);
     setEnvoi(false);
     if (r.ok) {
+      vibrer.succes();
       setFait(true);
       router.back();
       return;

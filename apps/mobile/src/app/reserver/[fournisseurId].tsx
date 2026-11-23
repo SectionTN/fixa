@@ -40,15 +40,18 @@ import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { BackHandler, Keyboard, useWindowDimensions } from 'react-native';
 import { Query } from 'react-native-appwrite';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XStack, YStack } from 'tamagui';
 import { BoutonRetour, CadreLateral, useHaut } from '../../composants/Ecran';
+import { douceApres, popApres } from '../../composants/Mouvement';
 import { decalageChamp, PiedClavier } from '../../composants/PiedClavier';
 import { ErreurChargement } from '../../composants/Section';
 import { api } from '../../lib/api';
 import { tables } from '../../lib/appwrite';
 import { couleurDe, lireCategories, useLecture } from '../../lib/donnees';
 import { useSession } from '../../lib/session';
+import { vibrer } from '../../lib/vibrer';
 
 const t = textes.reservation;
 const MARGE = 20;
@@ -339,6 +342,7 @@ function Reserver() {
     verrou.current = false;
     setEnvoi(false);
     if (r.ok) {
+      vibrer.succes();
       setEnvoye({ debut: choisi, service });
       return;
     }
@@ -382,74 +386,84 @@ function Reserver() {
       >
         <Stack.Screen options={{ gestureEnabled: false }} />
         <YStack flex={1} justifyContent="center" alignItems="center" gap="5">
-          <YStack
-            width={124}
-            height={124}
-            borderRadius="round"
-            backgroundColor="completed-soft"
-            alignItems="center"
-            justifyContent="center"
-          >
+          <Animated.View entering={popApres(0)}>
             <YStack
-              width={84}
-              height={84}
+              width={124}
+              height={124}
               borderRadius="round"
-              backgroundColor="completed"
+              backgroundColor="completed-soft"
               alignItems="center"
               justifyContent="center"
             >
-              <Icone nom="check" taille={44} couleur="on-primary" />
+              <Animated.View entering={popApres(140)}>
+                <YStack
+                  width={84}
+                  height={84}
+                  borderRadius="round"
+                  backgroundColor="completed"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Animated.View entering={popApres(280)}>
+                    <Icone nom="check" taille={44} couleur="on-primary" />
+                  </Animated.View>
+                </YStack>
+              </Animated.View>
             </YStack>
-          </YStack>
-          <YStack gap="2" alignItems="center">
-            <Texte fontSize="9" fontWeight="600" textAlign="center">
-              {t.envoyee}
-            </Texte>
-            <Texte fontSize="5" color="color-muted" textAlign="center" lineHeight="24px">
-              {t.vaConfirmer(fournisseur.nom)}
-            </Texte>
-          </YStack>
-          <XStack
-            alignSelf="stretch"
-            padding="4"
-            gap="4"
-            borderRadius="5"
-            backgroundColor="surface"
-            alignItems="center"
-          >
-            <YStack
-              width={56}
-              height={60}
-              borderRadius={14}
-              backgroundColor="primary-soft"
+          </Animated.View>
+          <Animated.View entering={douceApres(320)}>
+            <YStack gap="2" alignItems="center">
+              <Texte fontSize="9" fontWeight="600" textAlign="center">
+                {t.envoyee}
+              </Texte>
+              <Texte fontSize="5" color="color-muted" textAlign="center" lineHeight="24px">
+                {t.vaConfirmer(fournisseur.nom)}
+              </Texte>
+            </YStack>
+          </Animated.View>
+          <Animated.View entering={douceApres(440)} style={{ alignSelf: 'stretch' }}>
+            <XStack
+              alignSelf="stretch"
+              padding="4"
+              gap="4"
+              borderRadius="5"
+              backgroundColor="surface"
               alignItems="center"
-              justifyContent="center"
             >
-              <Texte fontSize="2" fontWeight="600" color="on-primary-soft">
-                {jourCourtLocal(midi).split(' ')[0]?.replace('.', '').toUpperCase()}
-              </Texte>
-              <Texte fontSize="7" fontWeight="600" color="on-primary-soft">
-                {jourCourtLocal(midi).split(' ')[1]}
-              </Texte>
-            </YStack>
-            <YStack flex={1} gap={3}>
-              <Texte fontSize="5" fontWeight="600" numberOfLines={1}>
-                {fournisseur.nom}
-              </Texte>
-              <Texte fontSize="4" color="color-muted" numberOfLines={1}>
-                {envoye.service.titre}
-              </Texte>
-              <XStack gap={5} alignItems="center">
-                <Icone nom="schedule" taille={16} couleur="color-muted" />
-                <Texte fontSize="3" color="color-muted">
-                  {`${heureLocale(midi)} · ${fournisseur.ville}`}
+              <YStack
+                width={56}
+                height={60}
+                borderRadius={14}
+                backgroundColor="primary-soft"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Texte fontSize="2" fontWeight="600" color="on-primary-soft">
+                  {jourCourtLocal(midi).split(' ')[0]?.replace('.', '').toUpperCase()}
                 </Texte>
-              </XStack>
-              <YStack paddingTop={4}>
-                <BadgeStatut statut="EN_ATTENTE" libelle={textes.statuts.EN_ATTENTE} />
+                <Texte fontSize="7" fontWeight="600" color="on-primary-soft">
+                  {jourCourtLocal(midi).split(' ')[1]}
+                </Texte>
               </YStack>
-            </YStack>
-          </XStack>
+              <YStack flex={1} gap={3}>
+                <Texte fontSize="5" fontWeight="600" numberOfLines={1}>
+                  {fournisseur.nom}
+                </Texte>
+                <Texte fontSize="4" color="color-muted" numberOfLines={1}>
+                  {envoye.service.titre}
+                </Texte>
+                <XStack gap={5} alignItems="center">
+                  <Icone nom="schedule" taille={16} couleur="color-muted" />
+                  <Texte fontSize="3" color="color-muted">
+                    {`${heureLocale(midi)} · ${fournisseur.ville}`}
+                  </Texte>
+                </XStack>
+                <YStack paddingTop={4}>
+                  <BadgeStatut statut="EN_ATTENTE" libelle={textes.statuts.EN_ATTENTE} />
+                </YStack>
+              </YStack>
+            </XStack>
+          </Animated.View>
         </YStack>
         <Bouton taille="lg" onPress={() => router.dismissTo('/rendez-vous')}>
           {t.voirMesRdv}

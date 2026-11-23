@@ -17,6 +17,7 @@ import { tables } from '../../lib/appwrite';
 import { repondre, useDemandes, useVersion } from '../../lib/demandes';
 import { useLecture } from '../../lib/donnees';
 import { useSession } from '../../lib/session';
+import { vibrer } from '../../lib/vibrer';
 
 const t = textes.espacePro;
 
@@ -65,7 +66,8 @@ export default function Accueil() {
     setMessage(null);
     const r = await repondre(id, 'terminer');
     verrou.current = false;
-    if (!r.ok) setMessage(r.message);
+    if (r.ok) vibrer.succes();
+    else setMessage(r.message);
   };
 
   return (

@@ -26,10 +26,12 @@ import { RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { YStack } from 'tamagui';
 import { BORDS_ECRAN, Ecran, MARGE_HAUT_MIN } from '../../composants/Ecran';
+import { Pop } from '../../composants/Mouvement';
 import { useBasOnglets } from '../../composants/Onglet';
 import { ErreurChargement } from '../../composants/Section';
 import { useMesRendezVous } from '../../lib/mesRendezVous';
 import { useSession } from '../../lib/session';
+import { vibrer } from '../../lib/vibrer';
 
 const t = textes.rendezVous;
 const v = textes.auth.visiteur;
@@ -164,7 +166,14 @@ function Liste({ uid }: { uid: string }) {
                         horaire={
                           lieu ? `${heureLocale(rdv.debut)} · ${lieu}` : heureLocale(rdv.debut)
                         }
-                        badge={<BadgeStatut statut={statut} libelle={textes.statuts[statut]} />}
+                        badge={
+                          <Pop
+                            cle={statut}
+                            onChange={(s) => (s === 'CONFIRME' ? vibrer.succes() : vibrer.leger())}
+                          >
+                            <BadgeStatut statut={statut} libelle={textes.statuts[statut]} />
+                          </Pop>
+                        }
                         info={infoRendezVous(rdv, d.maintenant)}
                         avis={
                           note === undefined

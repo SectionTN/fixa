@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { Pressable, type PressableProps } from 'react-native';
 import Animated, { cubicBezier, Easing, Keyframe } from 'react-native-reanimated';
 
@@ -6,19 +6,25 @@ export const EASE_OUT = Easing.bezier(0.23, 1, 0.32, 1);
 const CSS_EASE_OUT = cubicBezier(0.23, 1, 0.32, 1);
 
 // A message or card that rises into place, never from nothing.
-export const entreeDouce = new Keyframe({
+const DOUCE = {
   0: { opacity: 0, transform: [{ translateY: 12 }, { scale: 0.96 }] },
   100: { opacity: 1, transform: [{ translateY: 0 }, { scale: 1 }], easing: EASE_OUT },
-}).duration(280);
+};
 
 // A status or a success mark that lands with a short overshoot.
-export const entreePop = new Keyframe({
+const POP = {
   0: { opacity: 0, transform: [{ scale: 0.6 }] },
   60: { opacity: 1, transform: [{ scale: 1.08 }], easing: EASE_OUT },
   100: { opacity: 1, transform: [{ scale: 1 }], easing: EASE_OUT },
-}).duration(420);
+};
 
-// Press feedback: a 0.97 scale on press-in, back on release.
+export const entreeDouce = new Keyframe(DOUCE).duration(280);
+export const entreePop = new Keyframe(POP).duration(420);
+// A builder keeps its delay, so each staggered use gets its own.
+export const douceApres = (ms: number) => new Keyframe(DOUCE).duration(320).delay(ms);
+export const popApres = (ms: number) => new Keyframe(POP).duration(460).delay(ms);
+
+// Press feedback: a 0.95 scale on press-in, back on release.
 export function Appui({ children, style, ...props }: PressableProps & { children: ReactNode }) {
   const [enfonce, setEnfonce] = useState(false);
   return (
@@ -75,6 +81,28 @@ export function PointsEcriture({ couleur }: { couleur: string }) {
           }}
         />
       ))}
+    </Animated.View>
+  );
+}
+
+// Remounts its child when `cle` changes after the first render, so a new value lands with a pop.
+export function Pop({
+  cle,
+  onChange,
+  children,
+}: {
+  cle: string;
+  onChange?: (cle: string) => void;
+  children: ReactNode;
+}) {
+  const premier = useRef(cle);
+  const change = cle !== premier.current;
+  useEffect(() => {
+    if (change) onChange?.(cle);
+  }, [cle]);
+  return (
+    <Animated.View key={cle} entering={change ? entreePop : undefined}>
+      {children}
     </Animated.View>
   );
 }

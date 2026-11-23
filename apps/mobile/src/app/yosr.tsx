@@ -180,7 +180,6 @@ export default function Yosr() {
     }
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the greeting plays once, when the chat opens.
   useEffect(() => {
     repondre([
       {

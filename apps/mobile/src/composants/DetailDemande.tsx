@@ -32,6 +32,7 @@ import { XStack, YStack } from 'tamagui';
 import { tables } from '../lib/appwrite';
 import { repondre, useVersion } from '../lib/demandes';
 import { useLecture } from '../lib/donnees';
+import { vibrer } from '../lib/vibrer';
 import { BoutonRetour, useHaut } from './Ecran';
 import { ErreurChargement } from './Section';
 
@@ -114,8 +115,10 @@ export function DetailDemande({ id, refuser = false, onRetour }: DetailDemandePr
     verrou.current = false;
     setEnvoi(false);
     setFeuille(false);
-    if (r.ok) onRetour?.();
-    else setMessage(r.message);
+    if (r.ok) {
+      vibrer.leger();
+      onRetour?.();
+    } else setMessage(r.message);
   };
 
   if (!d || !rdv) {
