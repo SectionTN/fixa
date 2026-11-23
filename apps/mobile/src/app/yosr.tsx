@@ -75,6 +75,7 @@ export default function Yosr() {
   const [ecrit, setEcrit] = useState(false);
   const [texte, setTexte] = useState('');
   const urgence = useRef(false);
+  const occupe = useRef(false);
   const compteur = useRef(0);
   const liste = useRef<ComponentRef<typeof ScrollView>>(null);
   const muted = useCouleur('color-subtle');
@@ -121,6 +122,8 @@ export default function Yosr() {
       );
       return { pros: trierFournisseurs(pros).slice(0, 3), maintenant };
     })();
+    // Read while the first lines play, a failure is handled where it is awaited below.
+    chargement.catch(() => {});
     await repondre(debut);
     try {
       const { pros, maintenant } = await chargement;
@@ -142,22 +145,35 @@ export default function Yosr() {
     }
   };
 
-  const envoyer = async (contenu: string) => {
-    const propre = contenu.trim();
-    if (!propre || ecrit) return;
-    setTexte('');
-    ajouter({ de: 'moi', texte: propre });
-    const analyse = analyserMessage(propre);
-    if (analyse.urgence) urgence.current = true;
-    if (analyse.categorieId) {
-      await chercher(analyse.categorieId);
-      return;
+  // One exchange at a time, so a second message waits for Yosr's whole answer.
+  const seul = async (action: () => Promise<void>) => {
+    if (occupe.current) return;
+    occupe.current = true;
+    try {
+      await action();
+    } finally {
+      occupe.current = false;
     }
-    await repondre([{ de: 'yosr', texte: t.incompris, choix: await choixCategories() }]);
   };
 
-  const choisir = async (c: Choix) => {
-    if (ecrit) return;
+  const envoyer = (contenu: string) =>
+    seul(async () => {
+      const propre = contenu.trim();
+      if (!propre) return;
+      setTexte('');
+      ajouter({ de: 'moi', texte: propre });
+      const analyse = analyserMessage(propre);
+      if (analyse.urgence) urgence.current = true;
+      if (analyse.categorieId) {
+        await chercher(analyse.categorieId);
+        return;
+      }
+      await repondre([{ de: 'yosr', texte: t.incompris, choix: await choixCategories() }]);
+    });
+
+  const choisir = (c: Choix) => seul(() => repondreAuChoix(c));
+
+  const repondreAuChoix = async (c: Choix) => {
     vibrer.selection();
     if (c.action === 'rdv') {
       router.back();
@@ -181,17 +197,19 @@ export default function Yosr() {
   };
 
   useEffect(() => {
-    repondre([
-      {
-        de: 'yosr',
-        texte: t.bonjour(prenom),
-        choix: [
-          { libelle: t.choixUrgence, action: 'urgence' },
-          { libelle: t.choixTrouver, action: 'trouver' },
-          { libelle: t.choixRdv, action: 'rdv' },
-        ],
-      },
-    ]);
+    seul(() =>
+      repondre([
+        {
+          de: 'yosr',
+          texte: t.bonjour(prenom),
+          choix: [
+            { libelle: t.choixUrgence, action: 'urgence' },
+            { libelle: t.choixTrouver, action: 'trouver' },
+            { libelle: t.choixRdv, action: 'rdv' },
+          ],
+        },
+      ]),
+    );
   }, []);
 
   const dernier = messages.at(-1);
@@ -240,7 +258,7 @@ export default function Yosr() {
                     paddingHorizontal="4"
                     paddingVertical="3"
                     borderRadius={22}
-                    borderBottomRightRadius={6}
+                    borderBottomEndRadius={6}
                   >
                     <Texte fontSize="5" color="on-primary">
                       {m.texte}
@@ -295,7 +313,7 @@ export default function Yosr() {
                         paddingHorizontal="4"
                         paddingVertical="3"
                         borderRadius={22}
-                        borderBottomLeftRadius={6}
+                        borderBottomStartRadius={6}
                       >
                         <Texte fontSize="5">{m.texte}</Texte>
                       </YStack>
@@ -328,7 +346,7 @@ export default function Yosr() {
                   paddingHorizontal="4"
                   paddingVertical="2"
                   borderRadius={22}
-                  borderBottomLeftRadius={6}
+                  borderBottomStartRadius={6}
                 >
                   <PointsEcriture couleur={muted} />
                 </XStack>

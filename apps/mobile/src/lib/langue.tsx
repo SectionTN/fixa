@@ -30,7 +30,7 @@ export function LangueProvider({ children }: { children: ReactNode }) {
     if (l === langue) return;
     choisirLangue(l);
     setLangue(l);
-    fichier()
+    const sauvegarde = fichier()
       .write(l)
       .catch(() => {});
     const rtl = l === 'ar';
@@ -39,7 +39,8 @@ export function LangueProvider({ children }: { children: ReactNode }) {
     I18nManager.allowRTL(rtl);
     I18nManager.forceRTL(rtl);
     if (__DEV__) {
-      DevSettings.reload();
+      // The reload waits for the save, or the next start would read the old language.
+      sauvegarde.then(() => DevSettings.reload());
       return;
     }
     Alert.alert(textes.auth.profil.redemarrerTitre, textes.auth.profil.redemarrer);

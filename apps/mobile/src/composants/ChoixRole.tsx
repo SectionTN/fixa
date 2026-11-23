@@ -16,7 +16,7 @@ type Carte = {
   texte: string;
 };
 
-const CARTES: Carte[] = [
+const cartes = (): Carte[] => [
   {
     type: 'client',
     icone: 'person_search',
@@ -60,7 +60,7 @@ export function ChoixRole({
         </Texte>
       </YStack>
       <YStack gap={14}>
-        {CARTES.map((c) => {
+        {cartes().map((c) => {
           const actif = choix === c.type;
           return (
             <YStack
