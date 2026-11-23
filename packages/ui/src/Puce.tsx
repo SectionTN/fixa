@@ -3,7 +3,7 @@ import { Icone } from './Icone';
 import type { NomIcone } from './icones.generated';
 import { Texte } from './Texte';
 
-export type EtatPuce = 'repos' | 'choisi' | 'primaire';
+export type EtatPuce = 'repos' | 'choisi' | 'primaire' | 'contour';
 
 export type PuceProps = {
   libelle: string;
@@ -21,11 +21,22 @@ const FOND = {
   repos: 'surface press:background-press',
   choisi: 'primary-soft press:background-press',
   primaire: 'primary press:primary',
+  contour: 'surface press:primary-soft',
 } as const;
-const TEXTE = { repos: 'color', choisi: 'on-primary-soft', primaire: 'on-primary' } as const;
-const BORD = { repos: 'border-strong', choisi: 'primary', primaire: 'transparent' } as const;
+const TEXTE = {
+  repos: 'color',
+  choisi: 'on-primary-soft',
+  primaire: 'on-primary',
+  contour: 'primary',
+} as const;
+const BORD = {
+  repos: 'border-strong',
+  choisi: 'primary',
+  primaire: 'transparent',
+  contour: 'primary',
+} as const;
 
-// A filter chip: idle, selected, or the primary chip that opens the filters.
+// A chip: idle, selected, the primary chip that opens the filters, or an outlined quick reply.
 export function Puce({ libelle, etat = 'repos', icone, deroulant, onPress }: PuceProps) {
   const couleur = TEXTE[etat];
   return (
@@ -38,7 +49,7 @@ export function Puce({ libelle, etat = 'repos', icone, deroulant, onPress }: Puc
       aria-selected={isWeb ? undefined : etat === 'choisi'}
       height={HAUTEUR}
       borderRadius="round"
-      borderWidth={etat === 'primaire' ? 0 : 1}
+      borderWidth={etat === 'primaire' ? 0 : etat === 'contour' ? 1.5 : 1}
       borderColor={BORD[etat]}
       backgroundColor={FOND[etat]}
       paddingStart={icone ? 10 : 14}

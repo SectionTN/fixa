@@ -74,6 +74,7 @@ const NOMS = [
   'send',
   'lightbulb',
   'language',
+  'notifications',
 ] as const;
 
 const racine = dirname(
