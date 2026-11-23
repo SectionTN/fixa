@@ -1,10 +1,4 @@
-import {
-  cellules,
-  distanceKm,
-  type Fournisseur,
-  type RendezVous,
-  TABLES,
-} from '@fixa/core';
+import { cellules, distanceKm, type Fournisseur, type RendezVous, TABLES } from '@fixa/core';
 import { describe, expect, it } from 'vitest';
 import { donnees } from '../donnees';
 
