@@ -16,6 +16,7 @@ import { CartePro } from '../../composants/CartePro';
 import { BoutonRetour, Ecran } from '../../composants/Ecran';
 import { FeuilleFiltres } from '../../composants/FeuilleFiltres';
 import { ErreurChargement } from '../../composants/Section';
+import { SqueletteResultats } from '../../composants/Squelette';
 import {
   chargerFournisseurs,
   couleurDe,
@@ -75,7 +76,7 @@ export default function Resultats() {
               <Texte fontSize="6" fontWeight="600" numberOfLines={1}>
                 {titre}
               </Texte>
-              {d ? (
+              {d && !lecture.chargement ? (
                 <Texte fontSize="3" color="color-muted">
                   {[t.nbPros(d.pros.length), filtres.ville].filter(Boolean).join(' · ')}
                 </Texte>
@@ -138,6 +139,7 @@ export default function Resultats() {
           </ScrollView>
 
           {lecture.erreur && !d ? <ErreurChargement onReessayer={lecture.recharger} /> : null}
+          {lecture.chargement || (!d && !lecture.erreur) ? <SqueletteResultats /> : null}
 
           {d && !lecture.chargement && resultats.length > 0 ? (
             <>

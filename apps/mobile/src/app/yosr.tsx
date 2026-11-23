@@ -4,6 +4,7 @@ import {
   type FournisseurAffiche,
   textes,
   trierFournisseurs,
+  villeCitee,
 } from '@fixa/core';
 import { Icone, Puce, Texte } from '@fixa/ui';
 import { useRouter } from 'expo-router';
@@ -17,6 +18,7 @@ import { CartePro } from '../composants/CartePro';
 import { BoutonRetour } from '../composants/Ecran';
 import { Appui, entreeDouce, PointsEcriture } from '../composants/Mouvement';
 import { useCouleur } from '../composants/Onglet';
+import { VisageYosr } from '../composants/VisageYosr';
 import {
   chargerFournisseurs,
   couleurDe,
@@ -49,20 +51,19 @@ type Message =
 type Nouveau = Message extends infer M ? (M extends Message ? Omit<M, 'id'> : never) : never;
 
 const attendre = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const NB_PROS = 3;
+const parPrix = (a: FournisseurAffiche, b: FournisseurAffiche) =>
+  (a.prixMin ?? Number.POSITIVE_INFINITY) - (b.prixMin ?? Number.POSITIVE_INFINITY);
+
+// Read at call time, so the chips follow the current language.
+const choixAccueil = (): Choix[] => [
+  { libelle: t.choixUrgence, action: 'urgence' },
+  { libelle: t.choixTrouver, action: 'trouver' },
+  { libelle: t.choixRdv, action: 'rdv' },
+];
 
 function Avatar({ taille }: { taille: number }) {
-  return (
-    <XStack
-      width={taille}
-      height={taille}
-      borderRadius="round"
-      backgroundColor="primary"
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Icone nom="mood" taille={taille * 0.62} couleur="on-primary" />
-    </XStack>
-  );
+  return <VisageYosr taille={taille} fond="yosr-face" encre="yosr-ink" />;
 }
 
 // Yosr in guided mode: reads the need in French, Derja, Arabic or English and shows matching pros.
@@ -75,6 +76,8 @@ export default function Yosr() {
   const [ecrit, setEcrit] = useState(false);
   const [texte, setTexte] = useState('');
   const urgence = useRef(false);
+  const moinsChers = useRef(false);
+  const dits = useRef<string[]>([]);
   const occupe = useRef(false);
   const compteur = useRef(0);
   const liste = useRef<ComponentRef<typeof ScrollView>>(null);
@@ -94,6 +97,15 @@ export default function Yosr() {
       ajouter(m);
       vibrer.leger();
     }
+  };
+
+  // The latest city the client named in this conversation, if any.
+  const villeDuFil = (villes: string[]) => {
+    for (const dit of [...dits.current].reverse()) {
+      const ville = villeCitee(dit, villes);
+      if (ville) return ville;
+    }
+    return null;
   };
 
   const choixCategories = async (): Promise<Choix[]> => {
@@ -120,19 +132,31 @@ export default function Yosr() {
         positionDe(profil),
         maintenant,
       );
-      return { pros: trierFournisseurs(pros).slice(0, 3), maintenant };
+      return { pros: trierFournisseurs(pros), maintenant };
     })();
     // Read while the first lines play, a failure is handled where it is awaited below.
     chargement.catch(() => {});
     await repondre(debut);
     try {
-      const { pros, maintenant } = await chargement;
-      if (pros.length === 0) {
+      const { pros: tous, maintenant } = await chargement;
+      if (tous.length === 0) {
         await repondre([{ de: 'yosr', texte: t.aucunPro, choix: await choixCategories() }]);
         return;
       }
+      const ville = villeDuFil(tous.map((p) => p.ville));
+      const ici = ville ? tous.filter((p) => p.ville === ville) : [];
+      const base = ici.length > 0 ? ici : tous;
+      const pros = (moinsChers.current ? [...base].sort(parPrix) : base).slice(0, NB_PROS);
+      const intro = !ville
+        ? t.trouves(pros.length)
+        : ici.length > 0
+          ? t.trouvesVille(pros.length, ville)
+          : t.aucunVille(ville);
       await repondre([
-        { de: 'yosr', texte: t.trouves(pros.length) },
+        { de: 'yosr', texte: intro },
+        ...(moinsChers.current && pros.length > 1
+          ? [{ de: 'yosr' as const, texte: t.moinsChers }]
+          : []),
         { de: 'pros', pros, categories, maintenant },
         {
           de: 'yosr',
@@ -162,13 +186,28 @@ export default function Yosr() {
       if (!propre) return;
       setTexte('');
       ajouter({ de: 'moi', texte: propre });
+      dits.current.push(propre);
       const analyse = analyserMessage(propre);
       if (analyse.urgence) urgence.current = true;
+      if (analyse.prix) moinsChers.current = true;
       if (analyse.categorieId) {
         await chercher(analyse.categorieId);
         return;
       }
-      await repondre([{ de: 'yosr', texte: t.incompris, choix: await choixCategories() }]);
+      if (analyse.intention) {
+        const texte = analyse.intention === 'merci' ? t.deRien : t.salut(prenom);
+        await repondre([{ de: 'yosr', texte, choix: choixAccueil() }]);
+        return;
+      }
+      // A city or a budget without a service is kept for the next answer.
+      const compris = analyse.prix || villeCitee(propre, []) !== null;
+      await repondre([
+        {
+          de: 'yosr',
+          texte: compris ? t.questionService : t.incompris,
+          choix: await choixCategories(),
+        },
+      ]);
     });
 
   const choisir = (c: Choix) => seul(() => repondreAuChoix(c));
@@ -202,11 +241,7 @@ export default function Yosr() {
         {
           de: 'yosr',
           texte: t.bonjour(prenom),
-          choix: [
-            { libelle: t.choixUrgence, action: 'urgence' },
-            { libelle: t.choixTrouver, action: 'trouver' },
-            { libelle: t.choixRdv, action: 'rdv' },
-          ],
+          choix: choixAccueil(),
         },
       ]),
     );
@@ -304,7 +339,7 @@ export default function Yosr() {
                 <YStack gap="3">
                   {m.texte ? (
                     <XStack gap="2" alignItems="flex-end">
-                      <Avatar taille={34} />
+                      <Avatar taille={28} />
                       <YStack
                         maxWidth="82%"
                         backgroundColor="surface"
@@ -320,12 +355,12 @@ export default function Yosr() {
                     </XStack>
                   ) : null}
                   {m.choix && m === dernier ? (
-                    <XStack marginStart={42} gap="2" flexWrap="wrap">
+                    <XStack marginStart={36} gap="2" flexWrap="wrap">
                       {m.choix.map((c) => (
                         <Puce
                           key={c.libelle}
                           libelle={c.libelle}
-                          etat="primaire"
+                          etat="contour"
                           onPress={() => choisir(c)}
                         />
                       ))}
@@ -338,7 +373,7 @@ export default function Yosr() {
           {ecrit ? (
             <Animated.View entering={entreeDouce}>
               <XStack gap="2" alignItems="flex-end">
-                <Avatar taille={34} />
+                <Avatar taille={28} />
                 <XStack
                   backgroundColor="surface"
                   borderWidth={1}
@@ -378,6 +413,7 @@ export default function Yosr() {
               placeholder={t.indice}
               placeholderTextColor={muted}
               returnKeyType="send"
+              submitBehavior="submit"
               onSubmitEditing={() => envoyer(texte)}
               style={{
                 flex: 1,

@@ -6,8 +6,10 @@ import { ScrollView } from 'react-native';
 import { XStack, YStack } from 'tamagui';
 import { BoutonYosr } from '../../composants/BoutonYosr';
 import { CartePro } from '../../composants/CartePro';
+import { Cloche } from '../../composants/Cloche';
 import { Ecran } from '../../composants/Ecran';
 import { ErreurChargement, Section } from '../../composants/Section';
+import { SqueletteAccueil } from '../../composants/Squelette';
 import {
   chargerFournisseurs,
   couleurDe,
@@ -57,22 +59,25 @@ export default function Accueil() {
   return (
     <YStack flex={1}>
       <Ecran paddingTop="1" paddingHorizontal="5" paddingBottom="6" gap="5">
-        <YStack gap={6}>
-          {d?.profil?.ville ? (
-            <XStack gap="1" alignItems="center">
-              <Icone nom="location_on_fill" taille={17} couleur="primary" />
-              <Texte fontSize="3" fontWeight="500" color="color-muted">
-                {d.profil.ville}
-              </Texte>
-            </XStack>
-          ) : null}
-          <Texte fontSize={26} lineHeight="32px" fontWeight="600" letterSpacing={-0.52}>
-            {t.bonjour(prenom)}
-          </Texte>
-          <Texte fontSize={15} color="color-muted">
-            {t.question}
-          </Texte>
-        </YStack>
+        <XStack gap="3" alignItems="flex-start">
+          <YStack flex={1} gap={6}>
+            {d?.profil?.ville ? (
+              <XStack gap="1" alignItems="center">
+                <Icone nom="location_on_fill" taille={17} couleur="primary" />
+                <Texte fontSize="3" fontWeight="500" color="color-muted">
+                  {d.profil.ville}
+                </Texte>
+              </XStack>
+            ) : null}
+            <Texte fontSize={26} lineHeight="32px" fontWeight="600" letterSpacing={-0.52}>
+              {t.bonjour(prenom)}
+            </Texte>
+            <Texte fontSize={15} color="color-muted">
+              {t.question}
+            </Texte>
+          </YStack>
+          {id ? <Cloche uid={id} /> : null}
+        </XStack>
 
         <ChampRecherche
           variante="flottant"
@@ -98,6 +103,7 @@ export default function Accueil() {
         />
 
         {lecture.erreur && !d ? <ErreurChargement onReessayer={lecture.recharger} /> : null}
+        {!d && !lecture.erreur ? <SqueletteAccueil /> : null}
 
         {d ? (
           <>
