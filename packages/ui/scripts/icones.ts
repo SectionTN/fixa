@@ -70,6 +70,9 @@ const NOMS = [
   'how_to_reg-fill',
   'call',
   'description',
+  'mood',
+  'send',
+  'lightbulb',
 ] as const;
 
 const racine = dirname(
