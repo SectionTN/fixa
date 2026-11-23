@@ -316,6 +316,35 @@ export const ar = {
     marquerTermine: 'تم الإنجاز',
     voirDemandes: (n: number) => `عرض الطلبات (${n})`,
   },
+  yosr: {
+    nom: 'يسر',
+    statut: 'مساعدة Fixa · متصلة',
+    ouvrir: 'تحدّث مع يسر',
+    bonjour: (prenom?: string) =>
+      `مرحبا${prenom ? ` ${prenom}` : ''}! أنا يسر. قل لي ماذا تحتاج، حتى في حالة عاجلة.`,
+    choixUrgence: 'عندي حالة عاجلة',
+    choixTrouver: 'ابحث عن مهني',
+    choixRdv: 'مواعيدي',
+    questionUrgence: 'لا تقلق. ماذا يحدث؟',
+    questionService: 'أي خدمة تبحث عنها؟',
+    cherche: (metier: string) => `أبحث عن ${metier} قريب منك.`,
+    chercheUrgence: (metier: string) =>
+      `لا تقلق، سنتكفل بالأمر: أبحث عن ${metier} متاح في أقرب وقت.`,
+    trouves: (n: number) =>
+      n === 1 ? 'هذا أنسب مهني:' : `هؤلاء ${n} مهنيين بتقييم عال قريبون منك:`,
+    aucunPro: 'لا أحد متاح حاليا في هذه الخدمة. جرّب خدمة أخرى.',
+    incompris: 'لم أفهم جيدا. صف المشكلة، مثلا "الدوش يسرّب".',
+    voirTous: 'عرض كل النتائج',
+    indice: 'اكتب ليسر…',
+    envoyer: 'إرسال',
+    erreur: 'لا أستطيع تحميل المهنيين. تحقّق من الشبكة.',
+    conseils: {
+      plomberie: 'في الأثناء، أغلق صمام الماء الرئيسي: غالبا تحت المغسلة أو قرب العداد.',
+      electricite: 'في الأثناء، اقطع القاطع الرئيسي ولا تلمس الأسلاك.',
+      clim: 'في الأثناء، أطفئ المكيف وافصله إذا كان يصدر صوتا غريبا.',
+      medecins: 'إذا كانت الحالة خطيرة، اتصل بالرقم 190 (الإسعاف) فورا.',
+    } as Record<string, string>,
+  },
   onglets: {
     accueil: 'الرئيسية',
     mesRdv: 'مواعيدي',

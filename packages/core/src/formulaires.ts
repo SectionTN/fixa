@@ -26,11 +26,9 @@ const champNomComplet = z
 export const schemaInscription = z.object({
   nomComplet: champNomComplet,
   email: champEmail,
-  telephone: z
-    .string()
-    .regex(new RegExp(`^(\\d{${CHIFFRES_TELEPHONE}})?$`), {
-      error: () => textes.auth.erreurs.telephoneInvalide,
-    }),
+  telephone: z.string().regex(new RegExp(`^(\\d{${CHIFFRES_TELEPHONE}})?$`), {
+    error: () => textes.auth.erreurs.telephoneInvalide,
+  }),
   motDePasse: z
     .string()
     .min(LONGUEUR_MIN_MOT_DE_PASSE, { error: () => textes.auth.erreurs.motDePasseCourt }),

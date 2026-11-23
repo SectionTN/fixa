@@ -19,3 +19,4 @@ export * from './recherche';
 export * from './reservation';
 export * from './temps';
 export * from './transitions';
+export * from './yosr';

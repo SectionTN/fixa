@@ -317,6 +317,35 @@ export const en = {
     marquerTermine: 'Mark as done',
     voirDemandes: (n: number) => `See the requests (${n})`,
   },
+  yosr: {
+    nom: 'Yosr',
+    statut: 'Fixa assistant · online',
+    ouvrir: 'Talk to Yosr',
+    bonjour: (prenom?: string) =>
+      `Hello${prenom ? ` ${prenom}` : ''}! I am Yosr. Tell me what you need, even in an emergency.`,
+    choixUrgence: 'I have an emergency',
+    choixTrouver: 'Find a pro',
+    choixRdv: 'My appointments',
+    questionUrgence: 'Do not worry. What is happening?',
+    questionService: 'Which service are you looking for?',
+    cherche: (metier: string) => `I am looking for ${metier} near you.`,
+    chercheUrgence: (metier: string) =>
+      `Do not worry, we are on it: I am looking for ${metier} free as soon as possible.`,
+    trouves: (n: number) =>
+      n === 1 ? 'Here is the best match:' : `Here are ${n} top rated pros near you:`,
+    aucunPro: 'Nobody is free in this service right now. Try another one.',
+    incompris: 'I did not quite understand. Describe the problem, for example "my shower leaks".',
+    voirTous: 'See all results',
+    indice: 'Write to Yosr…',
+    envoyer: 'Send',
+    erreur: 'I cannot load the pros. Check your network.',
+    conseils: {
+      plomberie: 'Meanwhile, close the main water valve: often under the sink or near the meter.',
+      electricite: 'Meanwhile, switch off the main breaker and do not touch the wires.',
+      clim: 'Meanwhile, turn the AC off and unplug it if it makes a strange noise.',
+      medecins: 'If it is serious, call 190 (SAMU) right away.',
+    } as Record<string, string>,
+  },
   onglets: {
     accueil: 'Home',
     mesRdv: 'Bookings',

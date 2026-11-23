@@ -318,6 +318,36 @@ export const fr = {
     marquerTermine: 'Marquer terminé',
     voirDemandes: (n: number) => `Voir les demandes (${n})`,
   },
+  yosr: {
+    nom: 'Yosr',
+    statut: 'Assistante Fixa · en ligne',
+    ouvrir: 'Parler à Yosr',
+    bonjour: (prenom?: string) =>
+      `Bonjour${prenom ? ` ${prenom}` : ''} ! Je suis Yosr. Dites-moi ce dont vous avez besoin, même en urgence.`,
+    choixUrgence: "J'ai une urgence",
+    choixTrouver: 'Trouver un pro',
+    choixRdv: 'Mes rendez-vous',
+    questionUrgence: 'Pas de panique. Que se passe-t-il ?',
+    questionService: 'Quel service cherchez-vous ?',
+    cherche: (metier: string) => `Je cherche ${metier} près de chez vous.`,
+    chercheUrgence: (metier: string) =>
+      `Pas de panique, on s'en occupe : je cherche ${metier} libre au plus vite.`,
+    trouves: (n: number) =>
+      n === 1 ? 'Voici le pro le mieux placé :' : `Voici ${n} pros bien notés près de vous :`,
+    aucunPro: "Personne n'est libre pour le moment dans ce service. Essayez un autre.",
+    incompris: 'Je n\'ai pas bien compris. Décrivez le problème, par exemple "ma douche fuit".',
+    voirTous: 'Voir tous les résultats',
+    indice: 'Écrivez à Yosr…',
+    envoyer: 'Envoyer',
+    erreur: 'Je ne peux pas charger les pros. Vérifiez votre réseau.',
+    conseils: {
+      plomberie:
+        "En attendant, fermez le robinet d'arrêt : souvent sous l'évier ou près du compteur.",
+      electricite: 'En attendant, coupez le disjoncteur général et ne touchez pas aux fils.',
+      clim: 'En attendant, éteignez la clim et débranchez-la si elle fait un bruit anormal.',
+      medecins: "Si c'est grave, appelez le 190 (SAMU) sans attendre.",
+    } as Record<string, string>,
+  },
   onglets: {
     accueil: 'Accueil',
     mesRdv: 'Mes RDV',
