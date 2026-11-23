@@ -29,6 +29,15 @@ This is a school project (PFE preparation), built in November 2026.
 
 The web admin is online at [6afcd58a003c834b19dc.appwrite.network/admin](https://6afcd58a003c834b19dc.appwrite.network/admin).
 
+## Yosr, the assistant
+
+The client describes a problem in their own words. Yosr gives a safety tip when it is urgent, suggests three professionals and books one from the chat.
+
+<p>
+  <img src="screenshots/yosr.gif" width="280" alt="Yosr answering an urgent leak and booking a plumber from the chat">
+  <img src="screenshots/ios-yosr-reservation.png" width="280" alt="The booking summary in the Yosr chat">
+</p>
+
 ## Tech stack
 
 | Part | Built with |
@@ -56,7 +65,7 @@ The web admin is online at [6afcd58a003c834b19dc.appwrite.network/admin](https:/
 
 Requirements:
 
-- Bun 1.3+
+- Bun 1.4+
 - Xcode for iOS, Android Studio for Android
 
 Install, test and start the apps:
