@@ -413,13 +413,8 @@ export function donnees(maintenant: Date): Donnees {
     };
   };
 
+  // Yasmine starts with only the job Nadia finishes live and one reviewed visit, so the bookings made on stage stand out.
   const rendezVous: RendezVous[] = [
-    rdv('r-yasmine-attente', 'u-yasmine', 's-karim-fuite', a(1, '08:30'), 'EN_ATTENTE', {
-      source: 'CHATBOT',
-      estUrgent: true,
-      description: "Fuite sous l'évier de la cuisine, l'eau coule en continu.",
-    }),
-    rdv('r-yasmine-confirme', 'u-yasmine', 's-amira-consultation', a(2, '10:00'), 'CONFIRME'),
     rdv(
       'r-yasmine-en-cours',
       'u-yasmine',
@@ -427,18 +422,9 @@ export function donnees(maintenant: Date): Donnees {
       ajouterMinutes(ancre, -60),
       'CONFIRME',
     ),
-    rdv('r-yasmine-termine', 'u-yasmine', 's-leila-brushing', a(-3, '10:00'), 'TERMINE'),
     rdv('r-yasmine-note', 'u-yasmine', 's-nadia-complet', a(-28, '09:00'), 'TERMINE', {
       aAvis: true,
     }),
-    rdv('r-yasmine-annule', 'u-yasmine', 's-mansour-vidange', a(-2, '09:00'), 'ANNULE', {
-      annulePar: 'fournisseur',
-      motif: 'Pièce indisponible',
-    }),
-    rdv('r-yasmine-refuse', 'u-yasmine', 's-hedi-fuite', a(-7, '14:00'), 'REFUSE', {
-      motif: 'Pas disponible à cette heure',
-    }),
-    rdv('r-yasmine-expire', 'u-yasmine', 's-sami-fuite', a(-6, '09:00'), 'EXPIRE'),
     rdv('r-mehdi-fuite', 'u-mehdi', 's-karim-fuite', a(-3, '08:00'), 'TERMINE', { aAvis: true }),
     rdv('r-rania-chauffe-eau', 'u-rania', 's-karim-chauffe-eau', a(-36, '14:00'), 'TERMINE', {
       aAvis: true,

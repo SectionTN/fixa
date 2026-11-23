@@ -3,7 +3,6 @@ import {
   distanceKm,
   type Fournisseur,
   type RendezVous,
-  type StatutRendezVous,
   TABLES,
 } from '@fixa/core';
 import { describe, expect, it } from 'vitest';
@@ -50,19 +49,12 @@ describe('donnees du seed', () => {
     }
   });
 
-  it('donne a Yasmine un rendez-vous par statut', () => {
+  it('donne a Yasmine le menage du jour et une visite notee, rien de plus', () => {
     const siens = rdvs.filter((r) => r.clientId === 'u-yasmine');
-    const statuts: StatutRendezVous[] = [
-      'EN_ATTENTE',
-      'CONFIRME',
-      'REFUSE',
-      'EXPIRE',
-      'ANNULE',
-      'TERMINE',
-    ];
-    expect(new Set(siens.map((r) => r.statut))).toEqual(new Set(statuts));
-    const attente = siens.find((r) => r.statut === 'EN_ATTENTE');
-    expect(attente).toMatchObject({ fournisseurId: 'u-karim', source: 'CHATBOT', estUrgent: true });
+    expect(siens.map((r) => [r.statut, r.fournisseurId])).toEqual([
+      ['CONFIRME', 'u-nadia'],
+      ['TERMINE', 'u-nadia'],
+    ]);
     const enCours = siens.find((r) => r.statut === 'CONFIRME' && r.fournisseurId === 'u-nadia');
     expect(enCours?.debut).toBe('2026-10-25T08:00:00.000Z');
   });
