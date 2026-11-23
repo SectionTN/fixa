@@ -20,7 +20,42 @@ export type CarteFournisseurProps = {
   /** Category theme key such as 'cat1'. */
   couleur: string;
   onPress: () => void;
+  /** Shows a heart when set: filled when true. */
+  favori?: boolean;
+  onFavori?: () => void;
+  favoriLibelle?: string;
+  /** A short action at the end of a row card, such as Réserver. */
+  action?: { libelle: string; onPress: () => void };
 };
+
+function Coeur({
+  favori,
+  onPress,
+  libelle,
+  surPhoto,
+}: {
+  favori: boolean;
+  onPress: () => void;
+  libelle: string;
+  surPhoto?: boolean;
+}) {
+  return (
+    <XStack
+      role="button"
+      aria-label={libelle}
+      width={36}
+      height={36}
+      borderRadius="round"
+      backgroundColor={surPhoto ? 'surface' : 'transparent'}
+      alignItems="center"
+      justifyContent="center"
+      hitSlop={6}
+      onPress={onPress}
+    >
+      <Icone nom={favori ? 'favorite_fill' : 'favorite'} taille={22} couleur="primary" />
+    </XStack>
+  );
+}
 
 const OMBRE = {
   shadowColor: 'shadow-color',
@@ -111,7 +146,21 @@ function Ligne(p: CarteFournisseurProps) {
         </Texte>
       </XStack>
       <YStack flex={1} gap="1" minWidth={0}>
-        <Nom nom={p.nom} verifie={p.verifie} />
+        <XStack alignItems="center" gap="2">
+          <YStack flex={1} minWidth={0}>
+            <Nom nom={p.nom} verifie={p.verifie} />
+          </YStack>
+          {p.onFavori ? (
+            // The heart keeps its 36 pt target without making the name row taller.
+            <YStack marginVertical={-8} marginEnd={-6}>
+              <Coeur
+                favori={p.favori ?? false}
+                onPress={p.onFavori}
+                libelle={p.favoriLibelle ?? p.nom}
+              />
+            </YStack>
+          ) : null}
+        </XStack>
         <Texte fontSize="3" color="color-muted" numberOfLines={1}>
           {p.sousTitre}
         </Texte>
@@ -124,22 +173,43 @@ function Ligne(p: CarteFournisseurProps) {
             </Texte>
           ) : null}
         </XStack>
-        {p.dispo ? (
-          <XStack
-            alignSelf="flex-start"
-            height={26}
-            paddingStart={6}
-            paddingEnd={10}
-            gap="1"
-            marginTop="1"
-            borderRadius="round"
-            backgroundColor="completed-soft"
-            alignItems="center"
-          >
-            <Icone nom="bolt" taille={15} couleur="completed" />
-            <Texte fontSize="2" fontWeight="500" color="completed">
-              {p.dispo}
-            </Texte>
+        {p.dispo || p.action ? (
+          <XStack alignItems="center" gap="2" marginTop="1">
+            {p.dispo ? (
+              <XStack
+                height={26}
+                paddingStart={6}
+                paddingEnd={10}
+                gap="1"
+                borderRadius="round"
+                backgroundColor="completed-soft"
+                alignItems="center"
+                flexShrink={1}
+              >
+                <Icone nom="bolt" taille={15} couleur="completed" />
+                <Texte fontSize="2" fontWeight="500" color="completed" numberOfLines={1}>
+                  {p.dispo}
+                </Texte>
+              </XStack>
+            ) : null}
+            <XStack flex={1} />
+            {p.action ? (
+              <XStack
+                role="button"
+                aria-label={p.action.libelle}
+                height={34}
+                paddingHorizontal="4"
+                borderRadius="round"
+                backgroundColor="primary-soft press:background-press"
+                alignItems="center"
+                hitSlop={{ top: 5, bottom: 5 }}
+                onPress={p.action.onPress}
+              >
+                <Texte fontSize="3" fontWeight="600" color="on-primary-soft">
+                  {p.action.libelle}
+                </Texte>
+              </XStack>
+            ) : null}
           </XStack>
         ) : null}
       </YStack>
@@ -183,6 +253,16 @@ function Verticale(p: CarteFournisseurProps) {
               {p.dispo}
             </Texte>
           </XStack>
+        ) : null}
+        {p.onFavori ? (
+          <YStack position="absolute" top={8} insetInlineEnd={8}>
+            <Coeur
+              favori={p.favori ?? false}
+              onPress={p.onFavori}
+              libelle={p.favoriLibelle ?? p.nom}
+              surPhoto
+            />
+          </YStack>
         ) : null}
       </XStack>
       <YStack padding={14} gap={5}>

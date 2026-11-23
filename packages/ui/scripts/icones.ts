@@ -76,6 +76,7 @@ const NOMS = [
   'language',
   'notifications',
   'dark_mode',
+  'favorite-fill',
 ] as const;
 
 const racine = dirname(
