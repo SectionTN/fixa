@@ -88,6 +88,8 @@ export const fr = {
       emailExemple: 'nom@exemple.tn',
       telephone: 'Téléphone (optionnel)',
       motDePasse: 'Mot de passe',
+      motDePasseIndice: 'Votre mot de passe',
+      motDePasseNouveauIndice: '8 caractères minimum',
       accepte: "J'accepte les ",
       conditions: "conditions d'utilisation",
       et: ' et la ',

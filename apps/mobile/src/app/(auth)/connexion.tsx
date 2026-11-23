@@ -97,6 +97,7 @@ export default function Connexion() {
         <ChampTexte
           ref={champMotDePasse}
           libelle={fr.auth.inscription.motDePasse}
+          placeholder={fr.auth.inscription.motDePasseIndice}
           motDePasse
           valeur={motDePasse}
           onChange={setMotDePasse}

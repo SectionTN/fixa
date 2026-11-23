@@ -137,6 +137,7 @@ export default function Inscription() {
         <YStack gap="2">
           <ChampTexte
             libelle={t.motDePasse}
+            placeholder={t.motDePasseNouveauIndice}
             motDePasse
             valeur={motDePasse}
             onChange={setMotDePasse}
