@@ -1,13 +1,14 @@
-import { fr } from '@fixa/core';
+import { textes } from '@fixa/core';
 import { EtatVide, Texte } from '@fixa/ui';
 import { useRouter } from 'expo-router';
 import { YStack } from 'tamagui';
+import { ChoixLangue } from '../../composants/ChoixLangue';
 import { Compte } from '../../composants/Compte';
 import { Ecran } from '../../composants/Ecran';
 import { useSession } from '../../lib/session';
 
-const t = fr.auth.profil;
-const v = fr.auth.visiteur;
+const t = textes.auth.profil;
+const v = textes.auth.visiteur;
 
 // The client profile: a visitor is invited to sign in, a client sees the account.
 export default function Profil() {
@@ -28,6 +29,7 @@ export default function Profil() {
           secondaire={{ libelle: v.creerCompte, onPress: () => router.push('/choix-role') }}
         />
       </YStack>
+      <ChoixLangue />
     </Ecran>
   );
 }

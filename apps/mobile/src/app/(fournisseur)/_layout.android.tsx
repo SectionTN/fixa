@@ -1,4 +1,4 @@
-import { fr, nbARepondre } from '@fixa/core';
+import { nbARepondre, textes } from '@fixa/core';
 import { TabList, TabSlot, Tabs, TabTrigger } from 'expo-router/ui';
 import { useState } from 'react';
 import { BarreOnglets } from '../../composants/BarreOnglets';
@@ -6,7 +6,7 @@ import { HauteurOngletsContexte, Onglet } from '../../composants/Onglet';
 import { DemandesContexte, useLireDemandes } from '../../lib/demandes';
 import { useSession } from '../../lib/session';
 
-const t = fr.onglets;
+const t = textes.onglets;
 
 // The provider tab bar on Android. Agenda and Services wait for their screens.
 export default function FournisseurLayout() {

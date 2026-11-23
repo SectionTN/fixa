@@ -2,9 +2,9 @@ import {
   correspondRecherche,
   FILTRES_VIDES,
   filtrerFournisseurs,
-  fr,
   interpreterRecherche,
   nbFiltresActifs,
+  textes,
   trierFournisseurs,
 } from '@fixa/core';
 import { ChampRecherche, EtatVide, Puce, Texte } from '@fixa/ui';
@@ -26,7 +26,7 @@ import {
 } from '../../lib/donnees';
 import { useSession } from '../../lib/session';
 
-const t = fr.recherche;
+const t = textes.recherche;
 const TOUT = 'tout';
 
 // Results for a category, or for a typed search when the id is "tout".

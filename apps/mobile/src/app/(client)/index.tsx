@@ -1,4 +1,4 @@
-import { type Categorie, fr, mieuxNotes } from '@fixa/core';
+import { type Categorie, mieuxNotes, textes } from '@fixa/core';
 import { ChampRecherche, Icone, Texte, TuileCategorie } from '@fixa/ui';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -17,7 +17,7 @@ import {
 } from '../../lib/donnees';
 import { useSession } from '../../lib/session';
 
-const t = fr.recherche;
+const t = textes.recherche;
 const COLONNES = 4;
 const NB_MIEUX_NOTES = 5;
 

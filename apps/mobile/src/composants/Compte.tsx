@@ -1,10 +1,11 @@
-import { fr, initiales } from '@fixa/core';
+import { initiales, textes } from '@fixa/core';
 import { Icone, Texte } from '@fixa/ui';
 import { XStack, YStack } from 'tamagui';
 import { useSession } from '../lib/session';
+import { ChoixLangue } from './ChoixLangue';
 import { Ecran } from './Ecran';
 
-const t = fr.auth.profil;
+const t = textes.auth.profil;
 
 // The signed-in account: identity and sign-out, the other rows come with their features.
 export function Compte({ titre }: { titre: string }) {
@@ -62,6 +63,7 @@ export function Compte({ titre }: { titre: string }) {
           </Texte>
         </XStack>
       </YStack>
+      <ChoixLangue />
     </Ecran>
   );
 }

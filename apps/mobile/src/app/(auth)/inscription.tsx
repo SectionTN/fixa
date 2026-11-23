@@ -1,4 +1,10 @@
-import { erreursParChamp, forceMotDePasse, fr, LONGUEUR_MAX, schemaInscription } from '@fixa/core';
+import {
+  erreursParChamp,
+  forceMotDePasse,
+  LONGUEUR_MAX,
+  schemaInscription,
+  textes,
+} from '@fixa/core';
 import { Bouton, ChampTexte, Icone, type InputRef, Texte } from '@fixa/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
@@ -6,7 +12,7 @@ import { XStack, YStack } from 'tamagui';
 import { BoutonRetour, Ecran } from '../../composants/Ecran';
 import { type TypeCompte, useSession } from '../../lib/session';
 
-const t = fr.auth.inscription;
+const t = textes.auth.inscription;
 const CHIFFRES_TELEPHONE = 8;
 const COULEUR_FORCE = ['cancelled', 'pending', 'completed', 'completed'] as const;
 

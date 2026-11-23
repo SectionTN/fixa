@@ -1,7 +1,7 @@
 import { Host } from '@expo/ui';
 import { ArrangementView, RNHostView } from '@expo/ui/swift-ui';
 import { arrangementViewStyle } from '@expo/ui/swift-ui/modifiers';
-import { fr } from '@fixa/core';
+import { textes } from '@fixa/core';
 import { EtatVide } from '@fixa/ui';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -11,7 +11,7 @@ import { DetailDemande } from './DetailDemande';
 import { CadreLateral } from './Ecran';
 import { ListeDemandes } from './ListeDemandes';
 
-const t = fr.demandes;
+const t = textes.demandes;
 
 // ArrangementView ships with iOS 27.1, below that @expo/ui would stack both panes.
 const AVEC_ARRANGEMENT = Number.parseFloat(String(Platform.Version)) >= 27.1;

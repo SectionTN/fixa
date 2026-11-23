@@ -1,10 +1,10 @@
-import { fr } from '@fixa/core';
+import { textes } from '@fixa/core';
 import { TabList, TabSlot, Tabs, TabTrigger } from 'expo-router/ui';
 import { useState } from 'react';
 import { BarreOnglets } from '../../composants/BarreOnglets';
 import { HauteurOngletsContexte, Onglet } from '../../composants/Onglet';
 
-const t = fr.onglets;
+const t = textes.onglets;
 
 // The client tab bar on Android: Favoris waits until favourites exist.
 export default function ClientLayout() {

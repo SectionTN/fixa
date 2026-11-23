@@ -1,4 +1,4 @@
-import { fr, schemaConnexion } from '@fixa/core';
+import { schemaConnexion, textes } from '@fixa/core';
 import { Bouton, ChampTexte, type InputRef, Texte } from '@fixa/ui';
 import { useCanGoBack, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
@@ -6,7 +6,7 @@ import { XStack, YStack } from 'tamagui';
 import { BoutonRetour, Ecran } from '../../composants/Ecran';
 import { useSession } from '../../lib/session';
 
-const t = fr.auth.connexion;
+const t = textes.auth.connexion;
 
 // Login, e-mail variant: no SMS button, no password recovery until a redirect page exists.
 export default function Connexion() {
@@ -81,11 +81,11 @@ export default function Connexion() {
       </YStack>
       <YStack gap="4">
         <ChampTexte
-          libelle={fr.auth.inscription.email}
+          libelle={textes.auth.inscription.email}
           icone="mail"
           valeur={email}
           onChange={setEmail}
-          placeholder={fr.auth.inscription.emailExemple}
+          placeholder={textes.auth.inscription.emailExemple}
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
@@ -96,8 +96,8 @@ export default function Connexion() {
         />
         <ChampTexte
           ref={champMotDePasse}
-          libelle={fr.auth.inscription.motDePasse}
-          placeholder={fr.auth.inscription.motDePasseIndice}
+          libelle={textes.auth.inscription.motDePasse}
+          placeholder={textes.auth.inscription.motDePasseIndice}
           motDePasse
           valeur={motDePasse}
           onChange={setMotDePasse}

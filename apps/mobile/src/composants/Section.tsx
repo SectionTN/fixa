@@ -1,4 +1,4 @@
-import { fr } from '@fixa/core';
+import { textes } from '@fixa/core';
 import { Bouton, Texte } from '@fixa/ui';
 import type { ReactNode } from 'react';
 import { XStack, YStack } from 'tamagui';
@@ -41,10 +41,10 @@ export function ErreurChargement({ onReessayer }: { onReessayer: () => void }) {
   return (
     <YStack gap="3" alignItems="flex-start">
       <Texte fontSize="4" color="color-muted">
-        {fr.recherche.erreur}
+        {textes.recherche.erreur}
       </Texte>
       <Bouton variante="outline" taille="sm" onPress={onReessayer}>
-        {fr.recherche.reessayer}
+        {textes.recherche.reessayer}
       </Bouton>
     </YStack>
   );

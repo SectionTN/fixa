@@ -2,11 +2,11 @@ import {
   ajouterJours,
   dateLocale,
   formatNote,
-  fr,
   getFournisseur,
   heureLocale,
   JOURS_RECHERCHE,
   nbARepondre,
+  textes,
 } from '@fixa/core';
 import { BadgeStatut, Bouton, Icone, Texte } from '@fixa/ui';
 import { useRouter } from 'expo-router';
@@ -18,7 +18,7 @@ import { repondre, useDemandes, useVersion } from '../../lib/demandes';
 import { useLecture } from '../../lib/donnees';
 import { useSession } from '../../lib/session';
 
-const t = fr.espacePro;
+const t = textes.espacePro;
 
 function Chiffre({ valeur, libelle }: { valeur: string; libelle: string }) {
   return (
@@ -126,7 +126,7 @@ export default function Accueil() {
                     {[r.serviceTitre, r.adresse].filter(Boolean).join(' · ')}
                   </Texte>
                 </YStack>
-                <BadgeStatut statut="CONFIRME" libelle={fr.statuts.CONFIRME} />
+                <BadgeStatut statut="CONFIRME" libelle={textes.statuts.CONFIRME} />
               </XStack>
               {commence ? (
                 <Bouton

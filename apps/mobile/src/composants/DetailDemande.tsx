@@ -2,7 +2,6 @@ import {
   delaiDepasse,
   formatDuree,
   formatPrixService,
-  fr,
   getRendezVous,
   heureLocale,
   initiales,
@@ -12,6 +11,7 @@ import {
   libelleRecue,
   motifRefus,
   tempsRestant,
+  textes,
 } from '@fixa/core';
 import {
   BadgeStatut,
@@ -35,7 +35,7 @@ import { useLecture } from '../lib/donnees';
 import { BoutonRetour, useHaut } from './Ecran';
 import { ErreurChargement } from './Section';
 
-const t = fr.demandes;
+const t = textes.demandes;
 const MESSAGE_MAX = 300;
 
 const majuscule = (texte: string) => `${texte.charAt(0).toUpperCase()}${texte.slice(1)}`;
@@ -167,7 +167,7 @@ export function DetailDemande({ id, refuser = false, onRetour }: DetailDemandePr
               {enRetard ? (
                 <BadgeStatut statut="EXPIRE" libelle={t.delaiDepasse} />
               ) : (
-                <BadgeStatut statut={rdv.statut} libelle={fr.statuts[rdv.statut]} />
+                <BadgeStatut statut={rdv.statut} libelle={textes.statuts[rdv.statut]} />
               )}
             </YStack>
           </XStack>
@@ -246,13 +246,13 @@ export function DetailDemande({ id, refuser = false, onRetour }: DetailDemandePr
             borderRadius="5"
             backgroundColor="surface"
           >
-            <Ligne icone="handyman" libelle={fr.reservation.service}>
+            <Ligne icone="handyman" libelle={textes.reservation.service}>
               <Texte fontSize={15} fontWeight="500">
                 {`${rdv.serviceTitre} · ${formatDuree(rdv.duree)} · ${formatPrixService(rdv)}`}
               </Texte>
             </Ligne>
             <YStack height={1} backgroundColor="border-color" />
-            <Ligne icone="calendar_month" libelle={fr.reservation.dateHeure}>
+            <Ligne icone="calendar_month" libelle={textes.reservation.dateHeure}>
               <Texte fontSize={15} fontWeight="500">
                 {`${majuscule(jourLocal(rdv.debut))} · ${heureLocale(rdv.debut)}`}
               </Texte>
@@ -260,7 +260,7 @@ export function DetailDemande({ id, refuser = false, onRetour }: DetailDemandePr
             {rdv.adresse ? (
               <>
                 <YStack height={1} backgroundColor="border-color" />
-                <Ligne icone="location_on" libelle={fr.reservation.adresse}>
+                <Ligne icone="location_on" libelle={textes.reservation.adresse}>
                   <Texte fontSize={15} fontWeight="500">
                     {rdv.adresse}
                   </Texte>
@@ -373,7 +373,7 @@ export function DetailDemande({ id, refuser = false, onRetour }: DetailDemandePr
             valeur={mot}
             onChange={setMot}
             maxLength={Math.min(MESSAGE_MAX, LONGUEUR_MAX.motif)}
-            aide={fr.reservation.compteur(mot.length, MESSAGE_MAX)}
+            aide={textes.reservation.compteur(mot.length, MESSAGE_MAX)}
             multiligne
           />
         </YStack>

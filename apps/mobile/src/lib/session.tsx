@@ -1,4 +1,4 @@
-import { fr, messageAuth, nonceDuJeton, type Role, roleDe, separerNom } from '@fixa/core';
+import { messageAuth, nonceDuJeton, type Role, roleDe, separerNom, textes } from '@fixa/core';
 import {
   createContext,
   type ReactNode,
@@ -101,7 +101,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           idToken = await jetonGoogle();
         } catch (e) {
           if (__DEV__) console.warn('google refuse', e);
-          return { ok: false, message: fr.auth.erreurs.google };
+          return { ok: false, message: textes.auth.erreurs.google };
         }
         if (!idToken) return 'annule';
         try {
@@ -115,7 +115,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           await oublierGoogle();
           const r = echec(e);
           return e instanceof AppwriteException && e.type
-            ? { ok: false, message: fr.auth.erreurs.google }
+            ? { ok: false, message: textes.auth.erreurs.google }
             : r;
         }
         await rafraichir();

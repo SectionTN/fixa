@@ -4,14 +4,14 @@ import {
   type Filtres,
   type FournisseurAffiche,
   filtrerFournisseurs,
-  fr,
+  textes,
 } from '@fixa/core';
 import { Bouton, CurseurPlage, Feuille, Icone, Puce, Texte } from '@fixa/ui';
 import { type ReactNode, useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XStack, YStack } from 'tamagui';
 
-const t = fr.recherche.filtres;
+const t = textes.recherche.filtres;
 export const PRIX_MAX = 150;
 const PAS_PRIX = 5;
 const DISPOS: FiltreDispo[] = ['aujourdhui', 'demain', 'semaine'];

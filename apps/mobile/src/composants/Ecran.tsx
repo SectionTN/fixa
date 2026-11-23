@@ -1,4 +1,4 @@
-import { fr } from '@fixa/core';
+import { textes } from '@fixa/core';
 import { Icone } from '@fixa/ui';
 import type { ReactNode } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -59,7 +59,7 @@ export function BoutonRetour({
   return (
     <XStack
       role="button"
-      aria-label={fermer ? fr.commun.fermer : fr.commun.retour}
+      aria-label={fermer ? textes.commun.fermer : textes.commun.retour}
       width={44}
       height={44}
       borderRadius="round"

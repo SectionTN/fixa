@@ -12,13 +12,16 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { useRendezVousEnDirect } from '../lib/enDirect';
+import { chargerLangue, LangueProvider, useLangue } from '../lib/langue';
 import { SessionProvider, useSession } from '../lib/session';
 
 SplashScreen.preventAutoHideAsync();
+chargerLangue();
 
 // Each group opens only for its state, so a role change or a sign-out moves the user without a manual redirect.
 function Navigation({ policesPretes }: { policesPretes: boolean }) {
   const { utilisateur, role, chargement } = useSession();
+  const { langue } = useLangue();
   const pret = policesPretes && !chargement;
   useRendezVousEnDirect(
     utilisateur && (role === 'client' || role === 'fournisseur') ? utilisateur.id : null,
@@ -41,8 +44,9 @@ function Navigation({ policesPretes }: { policesPretes: boolean }) {
           ? '/admin'
           : '/';
   // Visitors browse the client tabs, so that group comes first and is the start screen.
+  // A new language remounts the screens, so every string is read again.
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack key={langue} screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!connecte || role === 'client'} redirectTo={accueil}>
         <Stack.Screen name="(client)" />
         <Stack.Screen name="categorie/[id]" />
@@ -92,7 +96,9 @@ export default function RootLayout() {
       <FixaProvider>
         <StatusBar style="dark" />
         <SessionProvider>
-          <Navigation policesPretes={policesChargees || erreurPolices !== null} />
+          <LangueProvider>
+            <Navigation policesPretes={policesChargees || erreurPolices !== null} />
+          </LangueProvider>
         </SessionProvider>
       </FixaProvider>
     </KeyboardProvider>

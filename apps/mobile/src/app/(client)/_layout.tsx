@@ -1,8 +1,8 @@
-import { fr } from '@fixa/core';
+import { textes } from '@fixa/core';
 import { NativeTabs } from 'expo-router/native-tabs';
 import { HauteurOngletsContexte, useCouleur } from '../../composants/Onglet';
 
-const t = fr.onglets;
+const t = textes.onglets;
 
 // The client tab bar as the system draws it, Liquid Glass and the iPhone Duo side bar included. Android has its own file.
 export default function ClientLayout() {

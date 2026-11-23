@@ -8,7 +8,6 @@ import {
   formatNote,
   formatPrix,
   formatPrixService,
-  fr,
   getFournisseur,
   getProfil,
   initiales,
@@ -19,6 +18,7 @@ import {
   nomCourt,
   preparerFournisseurs,
   type Service,
+  textes,
   versUtc,
 } from '@fixa/core';
 import { Bouton, EtatVide, Etoiles, ICONES, Icone, type NomIcone, Texte } from '@fixa/ui';
@@ -34,7 +34,7 @@ import { tables } from '../../lib/appwrite';
 import { couleurDe, lireCategories, lireProfil, positionDe, useLecture } from '../../lib/donnees';
 import { useSession } from '../../lib/session';
 
-const t = fr.recherche.profil;
+const t = textes.recherche.profil;
 const NB_AVIS = 3;
 const COULEURS_AVIS = ['cat2', 'cat4', 'cat5', 'cat3', 'cat6', 'cat1'] as const;
 
@@ -110,7 +110,7 @@ function CarteAvis({ avis, couleur }: { avis: Avis; couleur: string }) {
             {avis.serviceTitre}
           </Texte>
         </YStack>
-        <Etoiles note={avis.note} libelle={fr.commun.surCinq(avis.note)} taille={15} />
+        <Etoiles note={avis.note} libelle={textes.commun.surCinq(avis.note)} taille={15} />
       </XStack>
       {avis.commentaire ? (
         <Texte fontSize={15} lineHeight="22px">
@@ -268,7 +268,7 @@ function ProfilPro() {
             />
             <Stat
               valeur={pro.distanceKm === null ? pro.ville : formatDistance(pro.distanceKm)}
-              libelle={pro.distanceKm === null ? fr.recherche.filtres.ville : pro.ville}
+              libelle={pro.distanceKm === null ? textes.recherche.filtres.ville : pro.ville}
             />
             <Stat valeur={String(services.length)} libelle={t.services(services.length)} />
           </XStack>
@@ -318,7 +318,7 @@ function ProfilPro() {
               <YStack gap={5}>
                 <Etoiles
                   note={pro.noteMoyenne}
-                  libelle={fr.commun.surCinq(formatNote(pro.noteMoyenne))}
+                  libelle={textes.commun.surCinq(formatNote(pro.noteMoyenne))}
                   taille={14}
                 />
                 <Texte fontSize="2" color="color-muted">
@@ -346,7 +346,7 @@ function ProfilPro() {
       <XStack position="absolute" top={top + 8} start={16}>
         <XStack
           role="button"
-          aria-label={fr.commun.retour}
+          aria-label={textes.commun.retour}
           width={44}
           height={44}
           borderRadius="round"

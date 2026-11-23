@@ -1,18 +1,18 @@
 import {
   delaiDepasse,
   formatPrixService,
-  fr,
   heureLocale,
   ilYA,
   initiales,
   jourCourtLocal,
   libelleAvant,
   type RendezVousLu,
+  textes,
 } from '@fixa/core';
 import { BadgeStatut, CarteDemande } from '@fixa/ui';
 import { useRouter } from 'expo-router';
 
-const t = fr.demandes;
+const t = textes.demandes;
 
 // A booking row as a request card, with Accepter and Refuser only while the provider can still answer.
 export function CarteRdvPro({
@@ -65,7 +65,7 @@ export function CarteRdvPro({
         enRetard ? (
           <BadgeStatut statut="EXPIRE" libelle={t.delaiDepasse} />
         ) : (
-          <BadgeStatut statut={rdv.statut} libelle={fr.statuts[rdv.statut]} />
+          <BadgeStatut statut={rdv.statut} libelle={textes.statuts[rdv.statut]} />
         )
       }
       refuser={ouvert ? { libelle: t.refuser, onPress: () => ouvrir(true) } : undefined}

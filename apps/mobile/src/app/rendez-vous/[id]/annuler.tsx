@@ -1,9 +1,9 @@
 import {
   actionsRendezVous,
   estAnnulationTardive,
-  fr,
   heureLocale,
   jourCourtLocal,
+  textes,
 } from '@fixa/core';
 import { Bouton, Icone, Puce, Texte } from '@fixa/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XStack, YStack } from 'tamagui';
 import { annuler, useRendezVous } from '../../../lib/mesRendezVous';
 
-const t = fr.rendezVous.annulation;
+const t = textes.rendezVous.annulation;
 
 // The cancel sheet: a reason, the free-cancellation rule, then the cancellation through the function.
 export default function Annuler() {
@@ -51,7 +51,11 @@ export default function Annuler() {
 
   const alerte =
     message ??
-    (change ? fr.erreurs.TRANSITION_INVALIDE : lecture.erreur && !d ? fr.erreurs.RESEAU : null);
+    (change
+      ? textes.erreurs.TRANSITION_INVALIDE
+      : lecture.erreur && !d
+        ? textes.erreurs.RESEAU
+        : null);
 
   return (
     <YStack

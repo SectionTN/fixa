@@ -1,4 +1,4 @@
-import { fr, nbARepondre, type OngletDemande, ongletDemande } from '@fixa/core';
+import { nbARepondre, type OngletDemande, ongletDemande, textes } from '@fixa/core';
 import { EtatVide, Icone, Texte } from '@fixa/ui';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
@@ -11,7 +11,7 @@ import { BORDS_ECRAN, MARGE_HAUT_MIN } from './Ecran';
 import { useBasOnglets } from './Onglet';
 import { ErreurChargement } from './Section';
 
-const t = fr.demandes;
+const t = textes.demandes;
 const ONGLETS: OngletDemande[] = ['attente', 'acceptees', 'refusees'];
 
 // The provider's requests in three tabs, read again on every visit and on every live booking change.

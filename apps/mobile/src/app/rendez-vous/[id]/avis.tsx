@@ -1,13 +1,13 @@
 import {
   actionsRendezVous,
   CRITERES_AVIS,
-  fr,
   getFournisseur,
   getRendezVous,
   initiales,
   jourLocal,
   LONGUEUR_MAX,
   libelleNote,
+  textes,
 } from '@fixa/core';
 import { Bouton, ChampTexte, ChoixNote, Icone, Puce, Texte } from '@fixa/ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -22,7 +22,7 @@ import { tables } from '../../../lib/appwrite';
 import { couleurDe, lireCategories, useLecture } from '../../../lib/donnees';
 import { laisserAvis } from '../../../lib/mesRendezVous';
 
-const t = fr.avis;
+const t = textes.avis;
 
 // Rate a completed appointment: stars, what went well, a comment, then one review through the function.
 function Avis() {
@@ -81,7 +81,7 @@ function Avis() {
 
   const alerte =
     message ??
-    (dejaFait ? fr.erreurs.DEJA_EVALUE : lecture.erreur && !d ? fr.erreurs.RESEAU : null);
+    (dejaFait ? textes.erreurs.DEJA_EVALUE : lecture.erreur && !d ? textes.erreurs.RESEAU : null);
 
   return (
     <YStack flex={1} backgroundColor="background">
@@ -172,7 +172,7 @@ function Avis() {
           valeur={commentaire}
           onChange={setCommentaire}
           maxLength={LONGUEUR_MAX.commentaire}
-          aide={fr.reservation.compteur(commentaire.length, LONGUEUR_MAX.commentaire)}
+          aide={textes.reservation.compteur(commentaire.length, LONGUEUR_MAX.commentaire)}
           multiligne
         />
 

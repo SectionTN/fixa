@@ -5,12 +5,12 @@ import {
   classerMesRendezVous,
   estAVenir,
   formatPrixService,
-  fr,
   heureLocale,
   infoRendezVous,
   type MesRendezVous,
   type RendezVousLu,
   statutAffiche,
+  textes,
 } from '@fixa/core';
 import {
   type ActionCarteRendezVous,
@@ -31,8 +31,8 @@ import { ErreurChargement } from '../../composants/Section';
 import { useMesRendezVous } from '../../lib/mesRendezVous';
 import { useSession } from '../../lib/session';
 
-const t = fr.rendezVous;
-const v = fr.auth.visiteur;
+const t = textes.rendezVous;
+const v = textes.auth.visiteur;
 type Vue = 'aVenir' | 'passes';
 
 export default function RendezVous() {
@@ -164,12 +164,12 @@ function Liste({ uid }: { uid: string }) {
                         horaire={
                           lieu ? `${heureLocale(rdv.debut)} · ${lieu}` : heureLocale(rdv.debut)
                         }
-                        badge={<BadgeStatut statut={statut} libelle={fr.statuts[statut]} />}
+                        badge={<BadgeStatut statut={statut} libelle={textes.statuts[statut]} />}
                         info={infoRendezVous(rdv, d.maintenant)}
                         avis={
                           note === undefined
                             ? null
-                            : { libelle: t.votreAvis, note, lecture: fr.commun.surCinq(note) }
+                            : { libelle: t.votreAvis, note, lecture: textes.commun.surCinq(note) }
                         }
                         actions={actions(rdv, actionsRendezVous(rdv, d.maintenant), d, (href) =>
                           router.push(href),

@@ -1,4 +1,4 @@
-import { fr } from '@fixa/core';
+import { textes } from '@fixa/core';
 import { Bouton, Texte } from '@fixa/ui';
 import { Ecran } from '../composants/Ecran';
 import { useSession } from '../lib/session';
@@ -8,10 +8,10 @@ export default function AdminSurMobile() {
   return (
     <Ecran padding="6" gap="6" justifyContent="center">
       <Texte fontSize="7" fontWeight="600" textAlign="center">
-        {fr.auth.admin.mobile}
+        {textes.auth.admin.mobile}
       </Texte>
       <Bouton taille="lg" variante="outline" icone="logout" onPress={deconnexion}>
-        {fr.auth.profil.deconnexion}
+        {textes.auth.profil.deconnexion}
       </Bouton>
     </Ecran>
   );

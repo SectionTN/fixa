@@ -8,7 +8,6 @@ import {
   formatDuree,
   formatNote,
   formatPrixService,
-  fr,
   getFournisseur,
   getProfil,
   heureLocale,
@@ -21,6 +20,7 @@ import {
   listerServices,
   parMoment,
   type Service,
+  textes,
   versUtc,
 } from '@fixa/core';
 import {
@@ -50,7 +50,7 @@ import { tables } from '../../lib/appwrite';
 import { couleurDe, lireCategories, useLecture } from '../../lib/donnees';
 import { useSession } from '../../lib/session';
 
-const t = fr.reservation;
+const t = textes.reservation;
 const MARGE = 20;
 const ECART_PUCES = 10;
 const ECART_JOURS = 8;
@@ -362,7 +362,7 @@ function Reserver() {
         <BoutonRetour onPress={() => router.back()} />
         {lecture.erreur ? <ErreurChargement onReessayer={lecture.recharger} /> : null}
         {!lecture.chargement && !lecture.erreur ? (
-          <EtatVide icone="person_search" titre={fr.recherche.profil.introuvable} texte="" />
+          <EtatVide icone="person_search" titre={textes.recherche.profil.introuvable} texte="" />
         ) : null}
       </YStack>
     );
@@ -446,7 +446,7 @@ function Reserver() {
                 </Texte>
               </XStack>
               <YStack paddingTop={4}>
-                <BadgeStatut statut="EN_ATTENTE" libelle={fr.statuts.EN_ATTENTE} />
+                <BadgeStatut statut="EN_ATTENTE" libelle={textes.statuts.EN_ATTENTE} />
               </YStack>
             </YStack>
           </XStack>
@@ -606,7 +606,9 @@ function Reserver() {
             {lecture.erreur ? <ErreurChargement onReessayer={lecture.recharger} /> : null}
             <Texte fontSize="7" fontWeight="600">
               {moisAffiche
-                ? majuscule(`${fr.temps.mois[Number(jour?.slice(5, 7)) - 1]} ${jour?.slice(0, 4)}`)
+                ? majuscule(
+                    `${textes.temps.mois[Number(jour?.slice(5, 7)) - 1]} ${jour?.slice(0, 4)}`,
+                  )
                 : t.aucunJour}
             </Texte>
             <XStack gap={ECART_JOURS}>

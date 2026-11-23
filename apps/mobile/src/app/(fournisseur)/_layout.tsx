@@ -1,10 +1,10 @@
-import { fr, nbARepondre } from '@fixa/core';
+import { nbARepondre, textes } from '@fixa/core';
 import { NativeTabs } from 'expo-router/native-tabs';
 import { HauteurOngletsContexte, useCouleur } from '../../composants/Onglet';
 import { DemandesContexte, useLireDemandes } from '../../lib/demandes';
 import { useSession } from '../../lib/session';
 
-const t = fr.onglets;
+const t = textes.onglets;
 
 // The provider tab bar as the system draws it. Android has its own file. Agenda and Services wait for their screens.
 export default function FournisseurLayout() {

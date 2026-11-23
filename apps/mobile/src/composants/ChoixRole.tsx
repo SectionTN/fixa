@@ -1,11 +1,11 @@
-import { fr } from '@fixa/core';
+import { textes } from '@fixa/core';
 import { Bouton, Icone, type NomIcone, Texte } from '@fixa/ui';
 import { useState } from 'react';
 import { XStack, YStack } from 'tamagui';
 import type { TypeCompte } from '../lib/session';
 import { BoutonRetour, Ecran } from './Ecran';
 
-const t = fr.auth.role;
+const t = textes.auth.role;
 
 type Carte = {
   type: TypeCompte;
